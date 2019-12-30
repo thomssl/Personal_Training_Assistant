@@ -37,7 +37,7 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
     private lateinit var timePickerDialog: TimePickerDialog
     private lateinit var session: Session
     override val coroutineContext: CoroutineContext
-        get() = Dispatchers.IO
+        get() = Dispatchers.Main
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -152,7 +152,7 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
         datePickerDialog.show()
     }
 
-    fun clickBtnChangeTime( view: View){
+    fun clickBtnChangeTime(view: View){
         timePickerDialog.show()
     }
 

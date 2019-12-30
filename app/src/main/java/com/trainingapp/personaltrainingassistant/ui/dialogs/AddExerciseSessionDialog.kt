@@ -10,6 +10,7 @@ import androidx.fragment.app.DialogFragment
 import com.trainingapp.personaltrainingassistant.database.DatabaseOperations
 import com.trainingapp.personaltrainingassistant.objects.Exercise
 import com.trainingapp.personaltrainingassistant.R
+import com.trainingapp.personaltrainingassistant.ui.adapters.SearchForExerciseSession
 import java.lang.IllegalStateException
 
 class AddExerciseSessionDialog(private val clientID: Int, private val  confirmListener: (AddExerciseSessionDialog) -> Boolean): DialogFragment() {
@@ -22,7 +23,7 @@ class AddExerciseSessionDialog(private val clientID: Int, private val  confirmLi
         return activity.let {
             val view = View.inflate(context, R.layout.add_exercise_dialog, null)
             val txtNames = view.findViewById<AutoCompleteTextView>(R.id.actxtAddExerciseName)
-            txtNames.setAdapter(ArrayAdapter<String>(context!!, android.R.layout.select_dialog_item, exerciseNames))
+            txtNames.setAdapter(SearchForExerciseSession(context!!, R.layout.simple_autocomplete_item, exercises))
             txtNames.setOnItemClickListener{ _, _, _, _ ->
                 val exerciseSession = databaseOperations.getLastOccurrence(exercises[exerciseNames.indexOf(txtNames.text.toString())], clientID)
                 if (exerciseSession.hasData()) {
