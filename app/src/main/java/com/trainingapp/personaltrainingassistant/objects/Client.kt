@@ -91,7 +91,7 @@ class Client (var id: Int, var name: String, var scheduleType: ScheduleType, day
 
     //fun getEndDate(): String = endDate
     //fun getStartDate(): String = startDate
-    fun getInsertCommand(): String = "Insert Into Clients(name, session_type, days, times, durations, start_date, end_date) Values('$name', ${scheduleType.value}, '${getDaysString(true)}', '${getTimesString(true)}', '${getDurationsString()}', '$startDate', '$endDate')"
-    fun getUpdateCommand(): String = "Update Clients Set name = '$name', session_type = ${scheduleType.value}, days = '${getDaysString(true)}', times = '${getTimesString(true)}', durations = '${getDurationsString()}', start_date = '$startDate', end_date = '$endDate' Where id = $id"
-    fun getDeleteCommand():String = "Delete From Clients Where id = $id; Delete From Session_Changes Where id = $id; Delete From Session_log Where id = $id"
+    fun getInsertCommand(): String = "Insert Into Clients(client_name, schedule_type, days, times, durations, start_date, end_date) Values('$name', ${scheduleType.value}, '${getDaysString(true)}', '${getTimesString(true)}', '${getDurationsString()}', '$startDate', '$endDate')"
+    fun getUpdateCommand(): String = "Update Clients Set client_name = '$name', schedule_type = ${scheduleType.value}, days = '${getDaysString(true)}', times = '${getTimesString(true)}', durations = '${getDurationsString()}', start_date = '$startDate', end_date = '$endDate' Where client_id = $id"
+    fun getDeleteCommand():String = "Delete From Clients Where client_id = $id; Delete From Session_Changes Where client_id = $id; Delete From Session_log Where client_id = $id"
 }
