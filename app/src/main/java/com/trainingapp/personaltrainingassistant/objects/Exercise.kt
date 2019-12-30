@@ -5,49 +5,41 @@ import com.trainingapp.personaltrainingassistant.enumerators.ExerciseType
 import java.lang.StringBuilder
 
 
-class Exercise(val id: Int, var name: String, var type: ExerciseType, var primaryMover: Int, var strPrimaryMover: String, var strSecondaryMovers: String) {
-
-    var secondaryMovers: ArrayList<Int> = StaticFunctions.toArrayListInt(strSecondaryMovers)
-    var strSecondaryMoversList = ArrayList<String>()
+class Exercise(val id: Int, var name: String, var type: ExerciseType, var primaryMover: MuscleJoint, private val secondaryMovers: ArrayList<MuscleJoint>) {
 
     fun getSecondaryMoversNames(): String{
         val builder = StringBuilder()
-        if (strSecondaryMoversList.size > 0) {
-            strSecondaryMoversList.forEach { builder.append(it);builder.append("\n") }
+        if (secondaryMovers.size > 0) {
+            secondaryMovers.forEach { builder.append(it.name);builder.append("\n") }
             builder.deleteCharAt(builder.lastIndex)
         }
         return builder.toString()
     }
 
-    fun addSecondaryMover(id: Int, name: String){
-        if (secondaryMovers[0] == 0){
-            strSecondaryMovers = id.toString()
-        } else {
-            strSecondaryMovers += ",$id"
+    private fun getStrSecondaryMovers(): String{
+        val builder = StringBuilder()
+        if (secondaryMovers.size > 0) {
+            secondaryMovers.forEach { builder.append(it.id);builder.append(',') }
+            builder.deleteCharAt(builder.lastIndex)
         }
-        secondaryMovers.add(id)
-        strSecondaryMoversList.add(name)
+        return builder.toString()
     }
 
-    fun removeSecondaryMover(id: Int, name: String){
-        secondaryMovers.remove(id)
-        strSecondaryMoversList.remove(name)
-        strSecondaryMovers = if (secondaryMovers.size == 0) ""
-        else {
-            val builder = StringBuilder()
-            secondaryMovers.forEach { builder.append("$it,") }
-            builder.deleteCharAt(builder.lastIndex)
-            builder.toString()
-        }
+    fun getLstSecondaryMovers(): ArrayList<MuscleJoint> = ArrayList(secondaryMovers.toList())
+
+    fun addSecondaryMover(muscleJoint: MuscleJoint){
+        secondaryMovers.add(muscleJoint)
+    }
+
+    fun removeSecondaryMover(muscleJoint: MuscleJoint){
+        secondaryMovers.remove(muscleJoint)
     }
 
     fun clearSecondaryMovers(){
         secondaryMovers.clear()
-        strSecondaryMovers = ""
-        strSecondaryMoversList.clear()
     }
 
-    fun getInsertCommand(): String = "Insert Into Exercises(name, type, primary_mover, secondary_movers) Values('$name', ${type.value}, $primaryMover, '$strSecondaryMovers')"
-    fun getUpdateCommand(): String = "Update Exercises Set name = '$name', type = ${type.value}, primary_mover = $primaryMover, secondary_movers = '$strSecondaryMovers' Where id = $id"
+    fun getInsertCommand(): String = "Insert Into Exercises(name, type, primary_mover, secondary_movers) Values('$name', ${type.value}, ${primaryMover.id}, '${getStrSecondaryMovers()}')"
+    fun getUpdateCommand(): String = "Update Exercises Set name = '$name', type = ${type.value}, primary_mover = ${primaryMover.id}, secondary_movers = '${getStrSecondaryMovers()}' Where id = $id"
     fun getDeleteCommand(): String = "Delete From Exercises Where id = $id"
 }

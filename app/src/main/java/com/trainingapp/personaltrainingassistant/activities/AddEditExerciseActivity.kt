@@ -49,7 +49,7 @@ class AddEditExerciseActivity : AppCompatActivity(), AdapterView.OnItemSelectedL
                 muscles.forEach { temp.add(it) }
             else
                 joints.forEach { temp.add(it) }
-            temp.remove(MuscleJoint(exercise.primaryMover, exercise.strPrimaryMover))
+            temp.remove(exercise.primaryMover)
         }
         spnAddEditExerciseType.adapter = ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1, StaticFunctions.getExerciseTypeNameArray())
         spnAddEditExerciseType.onItemSelectedListener = this
@@ -57,12 +57,12 @@ class AddEditExerciseActivity : AppCompatActivity(), AdapterView.OnItemSelectedL
         etxtAddEditExerciseName.setText(exercise.name)
         if (exercise.type == ExerciseType.STRENGTH){
             if (!isAdd)
-                rvAddEditExerciseSecondaryMover.adapter = EditExerciseSecondaryRVAdapter(temp, exercise.strSecondaryMoversList) { muscleJoint, isSelected -> onSecondaryItemClick(muscleJoint, isSelected) }
-            rvAddEditExercisePrimeMover.adapter = EditExercisePrimaryRVAdapter(muscles, muscleNames.indexOf(exercise.strPrimaryMover)) { muscleJoint -> onPrimaryItemClick(muscleJoint) }
+                rvAddEditExerciseSecondaryMover.adapter = EditExerciseSecondaryRVAdapter(temp, exercise.getLstSecondaryMovers()) { muscleJoint, isSelected -> onSecondaryItemClick(muscleJoint, isSelected) }
+            rvAddEditExercisePrimeMover.adapter = EditExercisePrimaryRVAdapter(muscles, muscles.indexOf(exercise.primaryMover)) { muscleJoint -> onPrimaryItemClick(muscleJoint) }
         } else {
             if (!isAdd)
-                rvAddEditExerciseSecondaryMover.adapter = EditExerciseSecondaryRVAdapter(temp, exercise.strSecondaryMoversList) { muscleJoint, isSelected -> onSecondaryItemClick(muscleJoint, isSelected) }
-            rvAddEditExercisePrimeMover.adapter = EditExercisePrimaryRVAdapter(joints, jointNames.indexOf(exercise.strPrimaryMover)) { muscleJoint -> onPrimaryItemClick(muscleJoint) }
+                rvAddEditExerciseSecondaryMover.adapter = EditExerciseSecondaryRVAdapter(temp, exercise.getLstSecondaryMovers()) { muscleJoint, isSelected -> onSecondaryItemClick(muscleJoint, isSelected) }
+            rvAddEditExercisePrimeMover.adapter = EditExercisePrimaryRVAdapter(joints, joints.indexOf(exercise.primaryMover)) { muscleJoint -> onPrimaryItemClick(muscleJoint) }
         }
     }
 
@@ -94,8 +94,7 @@ class AddEditExerciseActivity : AppCompatActivity(), AdapterView.OnItemSelectedL
 
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
         if (position != exercise.type.value - 1) {
-            exercise.primaryMover = 0
-            exercise.strPrimaryMover = ""
+            exercise.primaryMover = MuscleJoint(0,"")
             exercise.clearSecondaryMovers()
             when (position) {
                 0 -> {
@@ -118,8 +117,7 @@ class AddEditExerciseActivity : AppCompatActivity(), AdapterView.OnItemSelectedL
     }
 
     private fun onPrimaryItemClick(muscleJoint: MuscleJoint){
-        exercise.primaryMover = muscleJoint.id
-        exercise.strPrimaryMover = muscleJoint.name
+        exercise.primaryMover = muscleJoint
         val temp = ArrayList<MuscleJoint>()
         if (exercise.type == ExerciseType.STRENGTH)
             muscles.forEach { temp.add(it) }
@@ -130,7 +128,7 @@ class AddEditExerciseActivity : AppCompatActivity(), AdapterView.OnItemSelectedL
     }
 
     private fun onSecondaryItemClick(muscleJoint: MuscleJoint, isSelected: Boolean){
-        if (isSelected) exercise.addSecondaryMover(muscleJoint.id, muscleJoint.name) else exercise.removeSecondaryMover(muscleJoint.id, muscleJoint.name)
+        if (isSelected) exercise.addSecondaryMover(muscleJoint) else exercise.removeSecondaryMover(muscleJoint)
     }
 
     override fun onNothingSelected(p0: AdapterView<*>?) {

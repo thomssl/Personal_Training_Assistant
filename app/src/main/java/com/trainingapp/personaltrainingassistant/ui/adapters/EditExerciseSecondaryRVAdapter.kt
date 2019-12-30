@@ -8,13 +8,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.trainingapp.personaltrainingassistant.R
 import com.trainingapp.personaltrainingassistant.objects.MuscleJoint
 
-class EditExerciseSecondaryRVAdapter(val muscleJoints: ArrayList<MuscleJoint>, private val secondaryMovers: ArrayList<String>, private val clickListener: (MuscleJoint, Boolean) -> Unit): RecyclerView.Adapter<EditExerciseSecondaryRVAdapter.AddExerciseSecondaryViewHolder>() {
+class EditExerciseSecondaryRVAdapter(val muscleJoints: ArrayList<MuscleJoint>, private val secondaryMovers: ArrayList<MuscleJoint>, private val clickListener: (MuscleJoint, Boolean) -> Unit): RecyclerView.Adapter<EditExerciseSecondaryRVAdapter.AddExerciseSecondaryViewHolder>() {
 
     val isSelected = Array(muscleJoints.size) {false}
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AddExerciseSecondaryViewHolder {
         if (secondaryMovers.isNotEmpty())
-            muscleJoints.forEach { isSelected[muscleJoints.indexOf(it)] = secondaryMovers.contains(it.name) }
+            muscleJoints.forEach { isSelected[muscleJoints.indexOf(it)] = secondaryMovers.contains(it) }
         return AddExerciseSecondaryViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.mover_row, parent, false))
     }
 

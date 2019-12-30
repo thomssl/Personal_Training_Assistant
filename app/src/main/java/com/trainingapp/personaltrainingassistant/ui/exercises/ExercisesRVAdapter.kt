@@ -26,7 +26,7 @@ class ExercisesRVAdapter(private val exercises: ArrayList<Exercise>, private val
         fun onBindItems(exercise: Exercise, clickListener: (Int) -> Unit, longClickListener: (Exercise) -> Boolean){
             itemView.findViewById<TextView>(R.id.txtExercisesRowName).text = exercise.name
             itemView.findViewById<TextView>(R.id.txtExercisesRowType).text = exercise.type.text
-            itemView.findViewById<TextView>(R.id.txtExercisesRowPrimaryMover).text = exercise.strPrimaryMover
+            itemView.findViewById<TextView>(R.id.txtExercisesRowPrimaryMover).text = exercise.primaryMover.name
             itemView.findViewById<TextView>(R.id.txtExercisesRowSecondaryMovers).text = exercise.getSecondaryMoversNames()
             itemView.setOnClickListener { clickListener(exercise.id) }
             itemView.setOnLongClickListener { longClickListener(exercise) }

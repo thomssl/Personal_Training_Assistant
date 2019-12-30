@@ -107,9 +107,8 @@ class DatabaseOperations(context: Context) {
         }
     }
 
-    private fun addSecondaryMoversNames(exercise: Exercise): Exercise{
-        if (exercise.id == 0 || exercise.strSecondaryMovers == "0"){
-            exercise.strSecondaryMoversList.add("")
+    /*private fun addSecondaryMoversNames(exercise: Exercise): Exercise{
+        if (exercise.id == 0 || exercise.strSecondaryMovers == ""){
             return exercise
         }
         val tableName = if (exercise.type == ExerciseType.STRENGTH) "Muscles" else "Joints"
@@ -122,6 +121,23 @@ class DatabaseOperations(context: Context) {
         }
         cursor.close()
         return exercise
+    }*/
+
+    private fun getSecondaryMovers(id: Int, strSecondaryMovers: String, exerciseType: ExerciseType): ArrayList<MuscleJoint>{
+        val secondaryMovers = ArrayList<MuscleJoint>()
+        if (id == 0 || strSecondaryMovers == ""){
+            return secondaryMovers
+        }
+        val tableName = if (exerciseType == ExerciseType.STRENGTH) "Muscles" else "Joints"
+        val cursor = db.rawQuery("Select id, name From $tableName Where id in (${strSecondaryMovers})", null)
+        if (cursor.moveToFirst()){
+            while (!cursor.isAfterLast){
+                secondaryMovers.add(MuscleJoint(cursor.getInt(0), cursor.getString(1)))
+                cursor.moveToNext()
+            }
+        }
+        cursor.close()
+        return secondaryMovers
     }
 
     fun getUserSettings(): ArrayList<Int>{
@@ -400,24 +416,27 @@ class DatabaseOperations(context: Context) {
      */
     fun getExercise(id: Int): Exercise {
         val cursor = db.rawQuery("Select e.id, e.name, e.type, e.primary_mover, e.secondary_movers, Case When e.type = 1 then m.name When e.type = 2 or e.type = 3 then j.name End From Exercises e inner join Exercise_Types t on e.type=t.id left join Muscles m on e.primary_mover=m.id left join Joints j on e.primary_mover=j.id Where e.id = $id", null)
-        var exercise = if (cursor.moveToFirst()) Exercise(
-            cursor.getInt(EXERCISE_ID),
-            cursor.getString(EXERCISE_NAME),
-            getExerciseType(cursor.getInt(EXERCISE_TYPE)),
-            cursor.getInt(EXERCISE_PRIMARY_MOVER),
-            cursor.getString(5),
-            cursor.getString(EXERCISE_SECONDARY_MOVERS)
-        )
+        val exercise = if (cursor.moveToFirst()) {
+            val exerciseID = cursor.getInt(EXERCISE_ID)
+            val strSecondaryMovers = cursor.getString(EXERCISE_SECONDARY_MOVERS)
+            val exerciseType = getExerciseType(cursor.getInt(EXERCISE_TYPE))
+            val primaryMover = MuscleJoint(cursor.getInt(EXERCISE_PRIMARY_MOVER), cursor.getString(5))
+            Exercise(
+                exerciseID,
+                cursor.getString(EXERCISE_NAME),
+                exerciseType,
+                primaryMover,
+                getSecondaryMovers(exerciseID,strSecondaryMovers,exerciseType)
+            )
+        }
         else Exercise(
             0,
             "",
             ExerciseType.BLANK,
-            0,
-            "",
-            ""
+            MuscleJoint(0,""),
+            ArrayList()
         )
         cursor.close()
-        exercise = addSecondaryMoversNames(exercise)
         return exercise
     }
 
@@ -430,23 +449,23 @@ class DatabaseOperations(context: Context) {
         val exercises = ArrayList<Exercise>()
         if (cursor.moveToFirst()){
             while (!cursor.isAfterLast){
+                val id = cursor.getInt(EXERCISE_ID)
+                val strSecondaryMovers = cursor.getString(EXERCISE_SECONDARY_MOVERS)
+                val exerciseType = getExerciseType(cursor.getInt(EXERCISE_TYPE))
+                val primaryMover = MuscleJoint(cursor.getInt(EXERCISE_PRIMARY_MOVER), cursor.getString(5))
                 exercises.add(
                     Exercise(
-                        cursor.getInt(EXERCISE_ID),
+                        id,
                         cursor.getString(EXERCISE_NAME),
-                        getExerciseType(cursor.getInt(EXERCISE_TYPE)),
-                        cursor.getInt(EXERCISE_PRIMARY_MOVER),
-                        cursor.getString(5),
-                        cursor.getString(EXERCISE_SECONDARY_MOVERS)
+                        exerciseType,
+                        primaryMover,
+                        getSecondaryMovers(id,strSecondaryMovers,exerciseType)
                     )
                 )
                 cursor.moveToNext()
             }
         }
         cursor.close()
-        for(exercise in exercises){
-            exercises[exercises.indexOf(exercise)] = addSecondaryMoversNames(exercise)
-        }
         return exercises
     }
 
