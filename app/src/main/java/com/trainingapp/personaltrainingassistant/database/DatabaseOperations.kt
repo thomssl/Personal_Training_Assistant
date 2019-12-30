@@ -107,32 +107,20 @@ class DatabaseOperations(context: Context) {
         }
     }
 
-    /*private fun addSecondaryMoversNames(exercise: Exercise): Exercise{
-        if (exercise.id == 0 || exercise.strSecondaryMovers == ""){
-            return exercise
-        }
-        val tableName = if (exercise.type == ExerciseType.STRENGTH) "Muscles" else "Joints"
-        val cursor = db.rawQuery("Select name From $tableName Where id in (${exercise.strSecondaryMovers})", null)
-        if (cursor.moveToFirst()){
-            while (!cursor.isAfterLast){
-                exercise.strSecondaryMoversList.add(cursor.getString(0))
-                cursor.moveToNext()
-            }
-        }
-        cursor.close()
-        return exercise
-    }*/
-
     private fun getSecondaryMovers(id: Int, strSecondaryMovers: String, exerciseType: ExerciseType): ArrayList<MuscleJoint>{
         val secondaryMovers = ArrayList<MuscleJoint>()
         if (id == 0 || strSecondaryMovers == ""){
             return secondaryMovers
         }
         val tableName = if (exerciseType == ExerciseType.STRENGTH) "Muscles" else "Joints"
-        val cursor = db.rawQuery("Select id, name From $tableName Where id in (${strSecondaryMovers})", null)
+        val prefix = if (exerciseType == ExerciseType.STRENGTH) "muscle_" else "joint_"
+        val cursor = db.rawQuery("Select ${prefix}id, ${prefix}name From $tableName Where ${prefix}id in (${strSecondaryMovers})", null)
         if (cursor.moveToFirst()){
             while (!cursor.isAfterLast){
-                secondaryMovers.add(MuscleJoint(cursor.getInt(0), cursor.getString(1)))
+                secondaryMovers.add(MuscleJoint(
+                    if (exerciseType == ExerciseType.STRENGTH) cursor.getInt(cursor.getColumnIndex(DBInfo.MusclesEntry.ID)) else cursor.getInt(cursor.getColumnIndex(DBInfo.JointsEntry.ID)),
+                    if (exerciseType == ExerciseType.STRENGTH) cursor.getString(cursor.getColumnIndex(DBInfo.MusclesEntry.NAME)) else cursor.getString(cursor.getColumnIndex(DBInfo.JointsEntry.NAME))
+                ))
                 cursor.moveToNext()
             }
         }
@@ -142,7 +130,12 @@ class DatabaseOperations(context: Context) {
 
     fun getUserSettings(): ArrayList<Int>{
         val cursor = db.rawQuery("Select default_duration, '24_clock' From User_Settings", null)
-        val result = if (cursor.moveToFirst()) ArrayList<Int>(arrayOf(cursor.getInt(SETTINGS_DEFAULT_DURATIONS), cursor.getInt(SETTINGS_24_CLOCK)).asList()) else ArrayList()
+        val result = if (cursor.moveToFirst()) ArrayList<Int>(arrayOf(
+            cursor.getInt(cursor.getColumnIndex(DBInfo.UserSettingsEntry.DEFAULT_DURATION)),
+            cursor.getInt(cursor.getColumnIndex(DBInfo.UserSettingsEntry.CLOCK_24))
+        ).asList())
+        else
+            ArrayList()
         cursor.close()
         return result
     }
@@ -155,10 +148,10 @@ class DatabaseOperations(context: Context) {
      * @return joint name corresponding with the given id
      */
     fun getJoint(id: Int): MuscleJoint {
-        val cursor = db.rawQuery("Select id, name From Joints Where id = $id", null)
+        val cursor = db.rawQuery("Select joint_id, joint_name From Joints Where joint_id = $id", null)
         val result = if (cursor.moveToFirst()) MuscleJoint(
-            cursor.getInt(0),
-            cursor.getString(1)
+            cursor.getInt(cursor.getColumnIndex(DBInfo.JointsEntry.ID)),
+            cursor.getString(cursor.getColumnIndex(DBInfo.JointsEntry.NAME))
         ) else MuscleJoint(
             0,
             ""
@@ -169,13 +162,13 @@ class DatabaseOperations(context: Context) {
 
     fun getAllJoints(): ArrayList<MuscleJoint>{
         val joints = ArrayList<MuscleJoint>()
-        val cursor = db.rawQuery("Select id, name From Joints", null)
+        val cursor = db.rawQuery("Select joint_id, joint_name From Joints", null)
         if (cursor.moveToFirst()){
             while (!cursor.isAfterLast){
                 joints.add(
                     MuscleJoint(
-                        cursor.getInt(0),
-                        cursor.getString(1)
+                        cursor.getInt(cursor.getColumnIndex(DBInfo.JointsEntry.ID)),
+                        cursor.getString(cursor.getColumnIndex(DBInfo.JointsEntry.NAME))
                     )
                 )
                 cursor.moveToNext()
@@ -185,42 +178,13 @@ class DatabaseOperations(context: Context) {
         return joints
     }
 
-    /** DEPRECATED
-     * Method to get the name of the mover muscle from the muscle id. See Muscles Table for more information
-     * @param id id of the muscle as found in the Muscles Table
-     * @return muscle name corresponding with the given id
-     */
-    fun getMoverName(id: Int, exerciseType: Int): String{
-        if (id == 0)
-            return ""
-        return when (exerciseType){
-            1 -> {
-                val cursor = db.rawQuery("Select name From Muscles Where id = $id", null)
-                var result = ""
-                if (cursor.moveToFirst())
-                    result = cursor.getString(0)
-                cursor.close()
-                result
-            }
-            2 -> {
-                val cursor = db.rawQuery("Select name From Joints Where id = $id", null)
-                var result = ""
-                if (cursor.moveToFirst())
-                    result = cursor.getString(0)
-                cursor.close()
-                result
-            }
-            else -> "error"
-        }
-    }
-
     fun getMuscle(id: Int): MuscleJoint {
-        val cursor = db.rawQuery("Select id, name From Muscles Where id = $id", null)
+        val cursor = db.rawQuery("Select muscle_id, muscle_name From Muscles Where muscle_id = $id", null)
         val muscle = if (cursor.moveToFirst()) MuscleJoint(
-            cursor.getInt(0),
-            cursor.getString(1)
+            cursor.getInt(cursor.getColumnIndex(DBInfo.MusclesEntry.ID)),
+            cursor.getString(cursor.getColumnIndex(DBInfo.MusclesEntry.NAME))
         ) else MuscleJoint(
-            -1,
+            0,
             ""
         )
         cursor.close()
@@ -229,13 +193,13 @@ class DatabaseOperations(context: Context) {
 
     fun getAllMuscles(): ArrayList<MuscleJoint>{
         val muscles = ArrayList<MuscleJoint>()
-        val cursor = db.rawQuery("Select id, name From Muscles Order By name", null)
+        val cursor = db.rawQuery("Select muscle_id, muscle_name From Muscles Order By muscle_name", null)
         if (cursor.moveToFirst()) {
             while(!cursor.isAfterLast) {
                 muscles.add(
                     MuscleJoint(
-                        cursor.getInt(0),
-                        cursor.getString(1)
+                        cursor.getInt(cursor.getColumnIndex(DBInfo.MusclesEntry.ID)),
+                        cursor.getString(cursor.getColumnIndex(DBInfo.MusclesEntry.NAME))
                     )
                 )
                 cursor.moveToNext()
@@ -261,28 +225,9 @@ class DatabaseOperations(context: Context) {
         return result
     }
 
-    fun addMuscle(muscleJoint: MuscleJoint): Boolean = trySQLCommand("Insert Into Muscles(name) Values('${muscleJoint.name}')")
-    fun updateMuscle(muscleJoint: MuscleJoint): Boolean = trySQLCommand("Update Muscles Set name = '${muscleJoint.name}' Where id = ${muscleJoint.id}")
-    private fun deleteMuscle(muscleJoint: MuscleJoint): Boolean = trySQLCommand("Delete From Muscles Where id = ${muscleJoint.id}")
-
-    /** DEPRECATED
-     * Method takes the result of ExerciseSession.getSecondaryMoversString() or Exercise.getSecondaryMoversString() and returns a csv string representing the names of the secondary movers
-     * @param strMovers csv text representing the ids of the secondary movers within an exercise
-     * @return csv text with the names of each id given in the parameter text
-     */
-    fun getSecondaryMoversNames(strMovers: String): String{
-        val cursor = db.rawQuery("Select name From Muscles Where id in ($strMovers)", null)
-        val builder = StringBuilder()
-        if (cursor.moveToFirst()){
-            while(!cursor.isAfterLast){
-                builder.append(cursor.getString(0))
-                builder.append(',')
-            }
-            builder.deleteCharAt(builder.lastIndex)
-        }
-        cursor.close()
-        return builder.toString()
-    }
+    fun addMuscle(muscleJoint: MuscleJoint): Boolean = trySQLCommand("Insert Into Muscles(muscle_name) Values('${muscleJoint.name}')")
+    fun updateMuscle(muscleJoint: MuscleJoint): Boolean = trySQLCommand("Update Muscles Set muscle_name = '${muscleJoint.name}' Where muscle_id = ${muscleJoint.id}")
+    private fun deleteMuscle(muscleJoint: MuscleJoint): Boolean = trySQLCommand("Delete From Muscles Where muscle_id = ${muscleJoint.id}")
 
     /**
      * Method to get a Client object given a client id by searching for that client's information. If a client is not found with the given id, a blank client is returned
@@ -290,17 +235,17 @@ class DatabaseOperations(context: Context) {
      * @return Client object for the given client id
      */
     fun getClient(id: Int): Client {
-        val cursor = db.rawQuery("Select * From Clients Where id = $id", null)
+        val cursor = db.rawQuery("Select * From Clients Where client_id = $id", null)
         val client: Client = if (cursor.moveToFirst())
             Client(
-                cursor.getInt(CLIENT_ID),
-                cursor.getString(CLIENT_NAME),
-                getScheduleType(cursor.getInt(CLIENT_SESSIONS_TYPE)),
-                cursor.getString(CLIENT_DAYS),
-                cursor.getString(CLIENT_TIMES),
-                cursor.getString(CLIENT_DURATIONS),
-                cursor.getString(CLIENT_START_DATE),
-                cursor.getString(CLIENT_END_DATE)
+                cursor.getInt(cursor.getColumnIndex(DBInfo.ClientsEntry.ID)),
+                cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.NAME)),
+                getScheduleType(cursor.getInt(cursor.getColumnIndex(DBInfo.ClientsEntry.SCHEDULE_TYPE))),
+                cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.DAYS)),
+                cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.TIMES)),
+                cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.DURATIONS)),
+                cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.START_DATE)),
+                cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.END_DATE))
             )
         else
             Client(
@@ -322,20 +267,20 @@ class DatabaseOperations(context: Context) {
      * @return ArrayList of Client objects
      */
     fun getAllClients(): ArrayList<Client>{
-        val cursor = db.rawQuery("Select * From Clients Order By name", null)
+        val cursor = db.rawQuery("Select * From Clients Order By client_name", null)
         val clients = ArrayList<Client>()
         if (cursor.moveToFirst()){
             while (!cursor.isAfterLast){
                 clients.add(
                     Client(
-                        cursor.getInt(CLIENT_ID),
-                        cursor.getString(CLIENT_NAME),
-                        getScheduleType(cursor.getInt(CLIENT_SESSIONS_TYPE)),
-                        cursor.getString(CLIENT_DAYS),
-                        cursor.getString(CLIENT_TIMES),
-                        cursor.getString(CLIENT_DURATIONS),
-                        cursor.getString(CLIENT_START_DATE),
-                        cursor.getString(CLIENT_END_DATE)
+                        cursor.getInt(cursor.getColumnIndex(DBInfo.ClientsEntry.ID)),
+                        cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.NAME)),
+                        getScheduleType(cursor.getInt(cursor.getColumnIndex(DBInfo.ClientsEntry.SCHEDULE_TYPE))),
+                        cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.DAYS)),
+                        cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.TIMES)),
+                        cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.DURATIONS)),
+                        cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.START_DATE)),
+                        cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.END_DATE))
                     )
                 )
                 cursor.moveToNext()
@@ -351,8 +296,9 @@ class DatabaseOperations(context: Context) {
      * @return Int value representing the schedule type that a given client follows
      */
     private fun getClientType(clientID: Int): ScheduleType{
-        val cursor = db.rawQuery("Select session_type From Clients Where client_id = $clientID", null)
-        val result: ScheduleType = if (cursor.moveToFirst()) getScheduleType(cursor.getInt(0)) else ScheduleType.NO_SCHEDULE
+        val cursor = db.rawQuery("Select schedule_type From Clients Where client_id = $clientID", null)
+        val result: ScheduleType = if (cursor.moveToFirst()) getScheduleType(cursor.getInt(cursor.getColumnIndex(DBInfo.ClientsEntry.SCHEDULE_TYPE)))
+        else ScheduleType.NO_SCHEDULE
         cursor.close()
         return result
     }
@@ -366,12 +312,12 @@ class DatabaseOperations(context: Context) {
         var conflicts = ""
         for(index in client.days.indices) {
             val day = client.days[index]
-            val cursor = db.rawQuery("Select times, durations, name, days From Clients Where days Like '%$day%' And start_date <= date('now') And end_date >= date('now') And session_type = 1", null)
+            val cursor = db.rawQuery("Select times, durations, client_name, days From Clients Where days Like '%$day%' And start_date <= date('now') And end_date >= date('now') And schedule_type = 1", null)
             if (cursor.moveToFirst()) {
                 while(!cursor.isAfterLast) {
-                    val position = cursor.getString(3).split(",").indexOf(day.toString())
-                    val time = cursor.getString(0).split(",")[position].toInt()
-                    val duration = cursor.getString(1).split(",")[position].toInt()
+                    val position = cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.DAYS)).split(",").indexOf(day.toString())
+                    val time = cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.TIMES)).split(",")[position].toInt()
+                    val duration = cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.DURATIONS)).split(",")[position].toInt()
                     val upper = time + duration
                     if (StaticFunctions.compareTimeRanges(time..upper,client.times[index] until (client.times[index] + client.durations[index])))
                         conflicts += "${cursor.getString(2)},"
@@ -390,16 +336,6 @@ class DatabaseOperations(context: Context) {
     fun updateClient(client: Client): Boolean = trySQLCommand(client.getUpdateCommand())
     fun deleteClient(client: Client): Boolean = trySQLCommand(client.getDeleteCommand())
 
-    /**
-     * DEPRECATED
-     */
-    fun checkExerciseType(id: Int): Int{
-        val cursor = db.rawQuery("Select e.type From Exercises e Where e.id = $id", null)
-        val exerciseType = if (cursor.moveToFirst()) cursor.getInt(0) else -1
-        cursor.close()
-        return exerciseType
-    }
-
     private fun getExerciseType(value: Int): ExerciseType{
         return when(value){
             1 -> ExerciseType.STRENGTH
@@ -415,15 +351,15 @@ class DatabaseOperations(context: Context) {
      * @return Exercise object for the given id value
      */
     fun getExercise(id: Int): Exercise {
-        val cursor = db.rawQuery("Select e.id, e.name, e.type, e.primary_mover, e.secondary_movers, Case When e.type = 1 then m.name When e.type = 2 or e.type = 3 then j.name End From Exercises e inner join Exercise_Types t on e.type=t.id left join Muscles m on e.primary_mover=m.id left join Joints j on e.primary_mover=j.id Where e.id = $id", null)
+        val cursor = db.rawQuery("Select e.exercise_id, e.exercise_name, e.exercise_type, e.primary_mover, e.secondary_movers, Case When e.exercise_type = 1 then m.muscle_name When e.exercise_type = 2 or e.exercise_type = 3 then j.joint_name End From Exercises e inner join Exercise_Types t on e.exercise_type=t.exercise_type_id left join Muscles m on e.primary_mover=m.muscle_id left join Joints j on e.primary_mover=j.joint_id Where e.exercise_id = $id", null)
         val exercise = if (cursor.moveToFirst()) {
-            val exerciseID = cursor.getInt(EXERCISE_ID)
-            val strSecondaryMovers = cursor.getString(EXERCISE_SECONDARY_MOVERS)
-            val exerciseType = getExerciseType(cursor.getInt(EXERCISE_TYPE))
-            val primaryMover = MuscleJoint(cursor.getInt(EXERCISE_PRIMARY_MOVER), cursor.getString(5))
+            val exerciseID = cursor.getInt(cursor.getColumnIndex(DBInfo.ExercisesEntry.ID))
+            val strSecondaryMovers = cursor.getString(cursor.getColumnIndex(DBInfo.ExercisesEntry.SECONDARY_MOVERS))
+            val exerciseType = getExerciseType(cursor.getInt(cursor.getColumnIndex(DBInfo.ExercisesEntry.TYPE)))
+            val primaryMover = MuscleJoint(cursor.getInt(cursor.getColumnIndex(DBInfo.ExercisesEntry.PRIMARY_MOVER)), cursor.getString(5))
             Exercise(
                 exerciseID,
-                cursor.getString(EXERCISE_NAME),
+                cursor.getString(cursor.getColumnIndex(DBInfo.ExercisesEntry.NAME)),
                 exerciseType,
                 primaryMover,
                 getSecondaryMovers(exerciseID,strSecondaryMovers,exerciseType)
@@ -445,18 +381,18 @@ class DatabaseOperations(context: Context) {
      * @return ArrayList of Exercise objects representing the entire Exercise library
      */
     fun getAllExercises(): ArrayList<Exercise>{
-        val cursor = db.rawQuery("Select e.id, e.name, e.type, e.primary_mover, e.secondary_movers, Case When e.type = 1 then m.name When e.type = 2 or e.type = 3 then j.name End From Exercises e inner join Exercise_Types t on e.type=t.id left join Muscles m on e.primary_mover=m.id left join Joints j on e.primary_mover=j.id Order By e.name", null)
+        val cursor = db.rawQuery("Select e.exercise_id, e.exercise_name, e.exercise_type, e.primary_mover, e.secondary_movers, Case When e.exercise_type = 1 then m.muscle_name When e.exercise_type = 2 or e.exercise_type = 3 then j.joint_name End From Exercises e inner join Exercise_Types t on e.exercise_type=t.exercise_type_id left join Muscles m on e.primary_mover=m.muscle_id left join Joints j on e.primary_mover=j.joint_id Order By e.exercise_name", null)
         val exercises = ArrayList<Exercise>()
         if (cursor.moveToFirst()){
             while (!cursor.isAfterLast){
-                val id = cursor.getInt(EXERCISE_ID)
-                val strSecondaryMovers = cursor.getString(EXERCISE_SECONDARY_MOVERS)
-                val exerciseType = getExerciseType(cursor.getInt(EXERCISE_TYPE))
-                val primaryMover = MuscleJoint(cursor.getInt(EXERCISE_PRIMARY_MOVER), cursor.getString(5))
+                val id = cursor.getInt(cursor.getColumnIndex(DBInfo.ExercisesEntry.ID))
+                val strSecondaryMovers = cursor.getString(cursor.getColumnIndex(DBInfo.ExercisesEntry.SECONDARY_MOVERS))
+                val exerciseType = getExerciseType(cursor.getInt(cursor.getColumnIndex(DBInfo.ExercisesEntry.TYPE)))
+                val primaryMover = MuscleJoint(cursor.getInt(cursor.getColumnIndex(DBInfo.ExercisesEntry.PRIMARY_MOVER)), cursor.getString(5))
                 exercises.add(
                     Exercise(
                         id,
-                        cursor.getString(EXERCISE_NAME),
+                        cursor.getString(cursor.getColumnIndex(DBInfo.ExercisesEntry.NAME)),
                         exerciseType,
                         primaryMover,
                         getSecondaryMovers(id,strSecondaryMovers,exerciseType)
@@ -475,7 +411,7 @@ class DatabaseOperations(context: Context) {
      * @return true if a conflict is found
      */
     fun checkExerciseConflict(exercise: Exercise): Boolean{
-        val cursor = db.rawQuery("Select name From Exercises Where name = '${exercise.name}'", null)
+        val cursor = db.rawQuery("Select exercise_name From Exercises Where exercise_name = '${exercise.name}'", null)
         val result = cursor.moveToFirst()
         cursor.close()
         return result
@@ -487,24 +423,22 @@ class DatabaseOperations(context: Context) {
 
     fun removeExercise(exercise: Exercise): Boolean {
         val sessions = ArrayList<Session>()
-        val cursor = db.rawQuery("Select s.client_id, s.dayTime, s.exercise_ids, s.sets, s.reps, s.resistances, s.exercise_order, s.notes, s.duration, c.name From Session_log s Inner Join Clients c On s.client_id=c.id where (exercise_ids Like '${exercise.id},%' Or exercise_ids Like '%,${exercise.id},%' Or exercise_ids Like '%,${exercise.id}' or exercise_ids = '${exercise.id}')", null)
+        val cursor = db.rawQuery("Select s.client_id, s.dayTime, s.exercise_ids, s.sets, s.reps, s.resistances, s.exercise_order, s.notes, s.duration, c.client_name From Session_log s Inner Join Clients c On s.client_id=c.client_id where (exercise_ids Like '${exercise.id},%' Or exercise_ids Like '%,${exercise.id},%' Or exercise_ids Like '%,${exercise.id}' or exercise_ids = '${exercise.id}')", null)
         if (cursor.moveToFirst()){
             while (!cursor.isAfterLast){
                 sessions.add(Session(
-                    cursor.getInt(
-                        SESSION_CLIENT_ID
-                    ),
-                    cursor.getString(9),
-                    cursor.getString(SESSION_DAYTIME),
+                    cursor.getInt(cursor.getColumnIndex(DBInfo.SessionLogEntry.CLIENT_ID)),
+                    cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.NAME)),
+                    cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogEntry.DAYTIME)),
                     getListExerciseSessions(
-                        cursor.getString(SESSION_EXERCISE_IDS),
-                        cursor.getString(SESSION_SETS),
-                        cursor.getString(SESSION_REPS),
-                        cursor.getString(SESSION_RESISTANCES),
-                        cursor.getString(SESSION_EXERCISE_ORDERS)
+                        cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogEntry.EXERCISE_IDS)),
+                        cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogEntry.SETS)),
+                        cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogEntry.REPS)),
+                        cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogEntry.RESISTANCE)),
+                        cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogEntry.EXERCISE_ORDER))
                     ),
-                    cursor.getString(SESSION_NOTES),
-                    cursor.getInt(SESSION_DURATION)
+                    cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogEntry.NOTES)),
+                    cursor.getInt(cursor.getColumnIndex(DBInfo.SessionLogEntry.DURATION))
                 ))
                 val exerciseSession = sessions[sessions.lastIndex].getExercise(exercise)
                 sessions[sessions.lastIndex].removeExercise(exercise)
@@ -523,21 +457,21 @@ class DatabaseOperations(context: Context) {
      * @return Session object corresponding to the given values
      */
     fun getSession(clientID: Int, dayTime: String): Session {
-        val cursor = db.rawQuery("Select s.client_id, s.dayTime, s.exercise_ids, s.sets, s.reps, s.resistances, s.exercise_order, s.notes, s.duration, c.name From Session_log s Inner Join Clients c On s.client_id=c.id Where s.client_id = $clientID And date(dayTime) = date('$dayTime')", null)
+        val cursor = db.rawQuery("Select s.client_id, s.dayTime, s.exercise_ids, s.sets, s.reps, s.resistances, s.exercise_order, s.notes, s.duration, c.client_name From Session_log s Inner Join Clients c On s.client_id=c.client_id Where s.client_id = $clientID And date(dayTime) = date('$dayTime')", null)
         val session: Session = if (cursor.moveToFirst()){
             Session(
-                cursor.getInt(SESSION_CLIENT_ID),
-                cursor.getString(9),
-                cursor.getString(SESSION_DAYTIME),
+                cursor.getInt(cursor.getColumnIndex(DBInfo.SessionLogEntry.CLIENT_ID)),
+                cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.NAME)),
+                cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogEntry.DAYTIME)),
                 getListExerciseSessions(
-                    cursor.getString(SESSION_EXERCISE_IDS),
-                    cursor.getString(SESSION_SETS),
-                    cursor.getString(SESSION_REPS),
-                    cursor.getString(SESSION_RESISTANCES),
-                    cursor.getString(SESSION_EXERCISE_ORDERS)
+                    cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogEntry.EXERCISE_IDS)),
+                    cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogEntry.SETS)),
+                    cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogEntry.REPS)),
+                    cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogEntry.RESISTANCE)),
+                    cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogEntry.EXERCISE_ORDER))
                 ),
-                cursor.getString(SESSION_NOTES),
-                cursor.getInt(SESSION_DURATION)
+                cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogEntry.NOTES)),
+                cursor.getInt(cursor.getColumnIndex(DBInfo.SessionLogEntry.DURATION))
             )
         } else{
             val client = getClient(clientID)
@@ -616,23 +550,23 @@ class DatabaseOperations(context: Context) {
      */
     fun getClientSessions(client: Client): ArrayList<Session>{
         val sessions = ArrayList<Session>()
-        val cursor = db.rawQuery("Select s.client_id, s.dayTime, s.exercise_ids, s.sets, s.reps, s.resistances, s.exercise_order, s.notes, s.duration, c.name From Session_log s Inner Join Clients c On s.client_id=c.id Where s.id = ${client.id}", null)
+        val cursor = db.rawQuery("Select s.client_id, s.dayTime, s.exercise_ids, s.sets, s.reps, s.resistances, s.exercise_order, s.notes, s.duration, c.client_name From Session_log s Inner Join Clients c On s.client_id=c.client_id Where s.client_id = ${client.id}", null)
         if (cursor.moveToFirst()){
             while (!cursor.isAfterLast){
                 sessions.add(
                     Session(
-                        cursor.getInt(SESSION_CLIENT_ID),
-                        cursor.getString(9),
-                        cursor.getString(SESSION_DAYTIME),
+                        cursor.getInt(cursor.getColumnIndex(DBInfo.SessionLogEntry.CLIENT_ID)),
+                        cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.NAME)),
+                        cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogEntry.DAYTIME)),
                         getListExerciseSessions(
-                            cursor.getString(SESSION_EXERCISE_IDS),
-                            cursor.getString(SESSION_SETS),
-                            cursor.getString(SESSION_REPS),
-                            cursor.getString(SESSION_RESISTANCES),
-                            cursor.getString(SESSION_EXERCISE_ORDERS)
+                            cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogEntry.EXERCISE_IDS)),
+                            cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogEntry.SETS)),
+                            cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogEntry.REPS)),
+                            cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogEntry.RESISTANCE)),
+                            cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogEntry.EXERCISE_ORDER))
                         ),
-                        cursor.getString(SESSION_NOTES),
-                        cursor.getInt(SESSION_DURATION)
+                        cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogEntry.NOTES)),
+                        cursor.getInt(cursor.getColumnIndex(DBInfo.SessionLogEntry.DURATION))
                     )
                 )
                 cursor.moveToNext()
@@ -659,18 +593,18 @@ class DatabaseOperations(context: Context) {
         tempCal[Calendar.DAY_OF_MONTH] = tempCal.getActualMaximum(Calendar.DAY_OF_MONTH)
         val endMonth = StaticFunctions.getStrDate(tempCal)
         val clients = ArrayList<Client>()
-        val cursor = db.rawQuery("Select * From Clients c Where c.id Not in (${day.getStrIDs()}) And (c.session_type = 0 Or (c.session_type = 1 And (Select sc.client_id From Session_Changes sc Where sc.client_id = c.id And sc.change_dayTime = '0') > 0) Or (c.session_type = 2 And (Select count(sl.client_id) From Session_log sl Where sl.client_id = c.id And date(sl.dayTime) >= date('${startWeek}') And date(sl.dayTime) <= date('${endWeek}')) < c.days) Or (c.session_type = 3 And (Select count(sl.client_id) From Session_log sl Where sl.client_id = c.id And date(sl.dayTime) >= date('${startMonth}') And date(sl.dayTime) <= date('${endMonth}')) < c.days))", null)
+        val cursor = db.rawQuery("Select * From Clients c Where c.client_id Not in (${day.getStrIDs()}) And (c.schedule_type = 0 Or (c.schedule_type = 1 And (Select sc.client_id From Session_Changes sc Where sc.client_id = c.client_id And sc.change_dayTime = '0') > 0) Or (c.schedule_type = 2 And (Select count(sl.client_id) From Session_log sl Where sl.client_id = c.client_id And date(sl.dayTime) >= date('${startWeek}') And date(sl.dayTime) <= date('${endWeek}')) < c.days) Or (c.schedule_type = 3 And (Select count(sl.client_id) From Session_log sl Where sl.client_id = c.client_id And date(sl.dayTime) >= date('${startMonth}') And date(sl.dayTime) <= date('${endMonth}')) < c.days))", null)
         if (cursor.moveToFirst()){
             while (!cursor.isAfterLast){
                 clients.add(Client(
-                    cursor.getInt(CLIENT_ID),
-                    cursor.getString(CLIENT_NAME),
-                    getScheduleType(cursor.getInt(CLIENT_SESSIONS_TYPE)),
-                    cursor.getString(CLIENT_DAYS),
-                    cursor.getString(CLIENT_TIMES),
-                    cursor.getString(CLIENT_DURATIONS),
-                    cursor.getString(CLIENT_START_DATE),
-                    cursor.getString(CLIENT_END_DATE)
+                    cursor.getInt(cursor.getColumnIndex(DBInfo.ClientsEntry.ID)),
+                    cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.NAME)),
+                    getScheduleType(cursor.getInt(cursor.getColumnIndex(DBInfo.ClientsEntry.SCHEDULE_TYPE))),
+                    cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.DAYS)),
+                    cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.TIMES)),
+                    cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.DURATIONS)),
+                    cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.START_DATE)),
+                    cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.END_DATE))
                 ))
                 cursor.moveToNext()
             }
@@ -697,23 +631,23 @@ class DatabaseOperations(context: Context) {
             StaticFunctions.getStrDateTime(
                 calendarChosen
             )
-        var cursor = db.rawQuery("Select s.client_id, s.dayTime, s.exercise_ids, s.sets, s.reps, s.resistances, s.exercise_order, s.notes, s.duration, c.name From Session_log s Inner Join Clients c On s.client_id=c.id Where date(dayTime) = date('$date')", null)
+        var cursor = db.rawQuery("Select s.client_id, s.dayTime, s.exercise_ids, s.sets, s.reps, s.resistances, s.exercise_order, s.notes, s.duration, c.client_name From Session_log s Inner Join Clients c On s.client_id=c.client_id Where date(dayTime) = date('$date')", null)
         if (cursor.moveToFirst()){
             while(!cursor.isAfterLast){
                 sessions.add(
                     Session(
-                        cursor.getInt(SESSION_CLIENT_ID),
-                        cursor.getString(9),
-                        cursor.getString(SESSION_DAYTIME),
+                        cursor.getInt(cursor.getColumnIndex(DBInfo.SessionLogEntry.CLIENT_ID)),
+                        cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.NAME)),
+                        cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogEntry.DAYTIME)),
                         getListExerciseSessions(
-                            cursor.getString(SESSION_EXERCISE_IDS),
-                            cursor.getString(SESSION_SETS),
-                            cursor.getString(SESSION_REPS),
-                            cursor.getString(SESSION_RESISTANCES),
-                            cursor.getString(SESSION_EXERCISE_ORDERS)
+                            cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogEntry.EXERCISE_IDS)),
+                            cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogEntry.SETS)),
+                            cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogEntry.REPS)),
+                            cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogEntry.RESISTANCE)),
+                            cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogEntry.EXERCISE_ORDER))
                         ),
-                        cursor.getString(SESSION_NOTES),
-                        cursor.getInt(SESSION_DURATION)
+                        cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogEntry.NOTES)),
+                        cursor.getInt(cursor.getColumnIndex(DBInfo.SessionLogEntry.DURATION))
                     )
                 )
                 cursor.moveToNext()
@@ -723,23 +657,21 @@ class DatabaseOperations(context: Context) {
         return if (chosenDate < currentDate) Day(sessions)
         else {
             val dayOfWeek = calendarChosen[Calendar.DAY_OF_WEEK]
-            cursor = db.rawQuery("Select c.id, c.name, c.times, c.days, c.durations From Clients c Where days Like '%$dayOfWeek%' And date(end_date) >= date('${StaticFunctions.getStrDateTime(calendarChosen)}') And date(start_date) <= date('${StaticFunctions.getStrDateTime(calendarChosen)}') And session_type = 1 And Not (c.id in (Select Distinct client_id From Session_Changes Where date(normal_dayTime) = date('$date')) Or c.id in (Select s.client_id From Session_log s Where date(dayTime) = date('$date')))", null)
+            cursor = db.rawQuery("Select c.client_id, c.client_name, c.times, c.days, c.durations From Clients c Where days Like '%$dayOfWeek%' And date(end_date) >= date('${StaticFunctions.getStrDateTime(calendarChosen)}') And date(start_date) <= date('${StaticFunctions.getStrDateTime(calendarChosen)}') And schedule_type = 1 And Not (c.client_id in (Select Distinct client_id From Session_Changes Where date(normal_dayTime) = date('$date')) Or c.client_id in (Select s.client_id From Session_log s Where date(dayTime) = date('$date')))", null)
             if (cursor.moveToFirst()){
                 while(!cursor.isAfterLast){
-                    val index = cursor.getString(3).split(",").indexOf(dayOfWeek.toString())
-                    val time = StaticFunctions.toArrayListInt(cursor.getString(2))[index]
-                    val duration = StaticFunctions.toArrayListInt(cursor.getString(4))[index]
+                    val index = cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.DAYS)).split(",").indexOf(dayOfWeek.toString())
+                    val time = StaticFunctions.toArrayListInt(cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.TIMES)))[index]
+                    val duration = StaticFunctions.toArrayListInt(cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.DURATIONS)))[index]
                     val minutes = time % 60
                     val hour = (time - minutes) / 60
                     calendarChosen[Calendar.HOUR_OF_DAY] = hour
                     calendarChosen[Calendar.MINUTE] = minutes
                     sessions.add(
                         Session(
-                            cursor.getInt(0),
-                            cursor.getString(1),
-                            StaticFunctions.getStrDateTime(
-                                calendarChosen
-                            ),
+                            cursor.getInt(cursor.getColumnIndex(DBInfo.ClientsEntry.ID)),
+                            cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.NAME)),
+                            StaticFunctions.getStrDateTime(calendarChosen),
                             ArrayList(),
                             "",
                             duration
@@ -749,17 +681,17 @@ class DatabaseOperations(context: Context) {
                 }
             }
             cursor.close()
-            cursor = db.rawQuery("Select sc.client_id, c.name, sc.change_dayTime, sc.duration From Session_Changes sc Inner Join Clients c On c.id=sc.client_id where date(sc.change_dayTime) = date('$date')  And Not sc.client_id in (Select s.client_id From Session_log s Where date(dayTime) = date('$date'))", null)
+            cursor = db.rawQuery("Select sc.client_id, c.client_name, sc.change_dayTime, sc.duration From Session_Changes sc Inner Join Clients c On c.client_id=sc.client_id where date(sc.change_dayTime) = date('$date')  And Not sc.client_id in (Select s.client_id From Session_log s Where date(dayTime) = date('$date'))", null)
             if (cursor.moveToFirst()){
                 while(!cursor.isAfterLast){
                     sessions.add(
                         Session(
-                            cursor.getInt(0),
-                            cursor.getString(1),
-                            cursor.getString(2),
+                            cursor.getInt(cursor.getColumnIndex(DBInfo.SessionChangesEntry.CLIENT_ID)),
+                            cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.NAME)),
+                            cursor.getString(cursor.getColumnIndex(DBInfo.SessionChangesEntry.CHANGE_DAYTIME)),
                             ArrayList(),
                             "",
-                            cursor.getInt(3)
+                            cursor.getInt(cursor.getColumnIndex(DBInfo.SessionChangesEntry.DURATION))
                         )
                     )
                     cursor.moveToNext()
@@ -796,13 +728,13 @@ class DatabaseOperations(context: Context) {
     fun getLastOccurrence(exercise: Exercise, clientID: Int): ExerciseSession {
         val cursor = db.rawQuery("Select sets, reps, resistances, exercise_ids, exercise_order From Session_log where client_id = $clientID And (exercise_ids Like '${exercise.id},%' Or exercise_ids Like '%,${exercise.id},%' Or exercise_ids Like '%,${exercise.id}' or exercise_ids = '${exercise.id}') Order By dayTime Desc", null)
         val exerciseSession: ExerciseSession = if (cursor.moveToFirst()){
-            val index = cursor.getString(3).split(",").indexOf(exercise.id.toString())
+            val index = cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogEntry.EXERCISE_IDS)).split(",").indexOf(exercise.id.toString())
             ExerciseSession(
                 exercise,
-                cursor.getString(0).split(",")[index],
-                cursor.getString(1).split(",")[index],
-                cursor.getString(2).split(",")[index],
-                cursor.getString(3).split(",")[index].toInt()
+                cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogEntry.SETS)).split(",")[index],
+                cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogEntry.REPS)).split(",")[index],
+                cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogEntry.RESISTANCE)).split(",")[index],
+                cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogEntry.EXERCISE_ORDER)).split(",")[index].toInt()
             )
         } else
             ExerciseSession(
@@ -827,13 +759,13 @@ class DatabaseOperations(context: Context) {
         val cursor = db.rawQuery("Select sets, reps, resistances, exercise_ids From Session_log where client_id = $clientID And (exercise_ids Like '${exercise.id},%' Or exercise_ids Like '%,${exercise.id},%' Or exercise_ids Like '%,${exercise.id}' or exercise_ids = '${exercise.id}') Order By dayTime", null)
         if (cursor.moveToFirst()){
             while (!cursor.isAfterLast){
-                val index = cursor.getString(3).split(",").indexOf(exercise.id.toString())
+                val index = cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogEntry.EXERCISE_IDS)).split(",").indexOf(exercise.id.toString())
                 exerciseSessions.add(
                     ExerciseSession(
                         exercise,
-                        cursor.getString(0).split(",")[index],
-                        cursor.getString(1).split(",")[index],
-                        cursor.getString(2).split(",")[index],
+                        cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogEntry.SETS)).split(",")[index],
+                        cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogEntry.REPS)).split(",")[index],
+                        cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogEntry.RESISTANCE)).split(",")[index],
                         0
                     )
                 )
