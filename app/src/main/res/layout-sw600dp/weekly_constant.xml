@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glWeeklyConstant1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.1429"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glWeeklyConstant2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.2857"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glWeeklyConstant3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.4286"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glWeeklyConstant4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5714"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glWeeklyConstant5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.7143"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glWeeklyConstant6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.8571"/>
+
+    <Switch
+        android:id="@+id/swWeeklyConstantIsMonday"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/weekly_const_mon"
+        android:textAlignment="center"
+        android:textSize="@dimen/text_size_SW600dp2"
+        android:layout_marginTop="@dimen/base_pad"
+        android:layout_marginBottom="@dimen/base_pad"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant1"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <Switch
+        android:id="@+id/swWeeklyConstantIsTuesday"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/weekly_const_tue"
+        android:textAlignment="center"
+        android:textSize="@dimen/text_size_SW600dp2"
+        android:layout_marginTop="@dimen/base_pad"
+        android:layout_marginBottom="@dimen/base_pad"
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant1"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant2"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <Switch
+        android:id="@+id/swWeeklyConstantIsWednesday"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/weekly_const_wed"
+        android:textAlignment="center"
+        android:textSize="@dimen/text_size_SW600dp2"
+        android:layout_marginTop="@dimen/base_pad"
+        android:layout_marginBottom="@dimen/base_pad"
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant2"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant3"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <Switch
+        android:id="@+id/swWeeklyConstantIsThursday"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/weekly_const_thu"
+        android:textAlignment="center"
+        android:textSize="@dimen/text_size_SW600dp2"
+        android:layout_marginTop="@dimen/base_pad"
+        android:layout_marginBottom="@dimen/base_pad"
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant3"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant4"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <Switch
+        android:id="@+id/swWeeklyConstantIsFriday"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/weekly_const_fri"
+        android:textAlignment="center"
+        android:textSize="@dimen/text_size_SW600dp2"
+        android:layout_marginTop="@dimen/base_pad"
+        android:layout_marginBottom="@dimen/base_pad"
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant4"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant5"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <Switch
+        android:id="@+id/swWeeklyConstantIsSaturday"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/weekly_const_sat"
+        android:textAlignment="center"
+        android:textSize="@dimen/text_size_SW600dp2"
+        android:layout_marginTop="@dimen/base_pad"
+        android:layout_marginBottom="@dimen/base_pad"
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant5"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant6"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <Switch
+        android:id="@+id/swWeeklyConstantIsSunday"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/weekly_const_sun"
+        android:textAlignment="center"
+        android:textSize="@dimen/text_size_SW600dp2"
+        android:layout_marginTop="@dimen/base_pad"
+        android:layout_marginBottom="@dimen/base_pad"
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant6"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+
+    <Button
+        android:id="@+id/btnWeeklyConstantMondayTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/base_pad"
+        android:onClick="onTimeClick"
+        android:text="@string/time_format"
+        android:textSize="@dimen/text_size_SW600dp2"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/swWeeklyConstantIsMonday" />
+
+
+    <Button
+        android:id="@+id/btnWeeklyConstantTuesdayTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/base_pad"
+        android:onClick="onTimeClick"
+        android:text="@string/time_format"
+        android:textSize="@dimen/text_size_SW600dp2"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant2"
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant1"
+        app:layout_constraintTop_toBottomOf="@id/swWeeklyConstantIsMonday" />
+
+
+    <Button
+        android:id="@+id/btnWeeklyConstantWednesdayTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/base_pad"
+        android:onClick="onTimeClick"
+        android:text="@string/time_format"
+        android:textSize="@dimen/text_size_SW600dp2"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant3"
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant2"
+        app:layout_constraintTop_toBottomOf="@id/swWeeklyConstantIsMonday" />
+
+
+    <Button
+        android:id="@+id/btnWeeklyConstantThursdayTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/base_pad"
+        android:onClick="onTimeClick"
+        android:text="@string/time_format"
+        android:textSize="@dimen/text_size_SW600dp2"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant4"
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant3"
+        app:layout_constraintTop_toBottomOf="@id/swWeeklyConstantIsMonday" />
+
+
+    <Button
+        android:id="@+id/btnWeeklyConstantFridayTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/base_pad"
+        android:onClick="onTimeClick"
+        android:text="@string/time_format"
+        android:textSize="@dimen/text_size_SW600dp2"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant5"
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant4"
+        app:layout_constraintTop_toBottomOf="@id/swWeeklyConstantIsMonday" />
+
+
+    <Button
+        android:id="@+id/btnWeeklyConstantSaturdayTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/base_pad"
+        android:onClick="onTimeClick"
+        android:text="@string/time_format"
+        android:textSize="@dimen/text_size_SW600dp2"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant6"
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant5"
+        app:layout_constraintTop_toBottomOf="@id/swWeeklyConstantIsMonday" />
+
+
+    <Button
+        android:id="@+id/btnWeeklyConstantSundayTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/base_pad"
+        android:onClick="onTimeClick"
+        android:text="@string/time_format"
+        android:textSize="@dimen/text_size_SW600dp2"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant6"
+        app:layout_constraintTop_toBottomOf="@id/swWeeklyConstantIsMonday" />
+
+    <TextView
+        android:id="@+id/lblWeeklyConstantMondayDuration"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/weekly_const_duration"
+        android:labelFor="@id/etxtWeeklyConstantMondayDuration"
+        android:layout_marginTop="@dimen/base_pad"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant1"
+        app:layout_constraintTop_toBottomOf="@id/btnWeeklyConstantMondayTime"/>
+
+    <TextView
+        android:id="@+id/lblWeeklyConstantTuesdayDuration"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/weekly_const_duration"
+        android:labelFor="@id/etxtWeeklyConstantTuesdayDuration"
+        android:layout_marginTop="@dimen/base_pad"
+        android:visibility="invisible"
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant1"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant2"
+        app:layout_constraintTop_toBottomOf="@id/btnWeeklyConstantMondayTime"/>
+
+    <TextView
+        android:id="@+id/lblWeeklyConstantWednesdayDuration"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/weekly_const_duration"
+        android:labelFor="@id/etxtWeeklyConstantWednesdayDuration"
+        android:layout_marginTop="@dimen/base_pad"
+        android:visibility="invisible"
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant2"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant3"
+        app:layout_constraintTop_toBottomOf="@id/btnWeeklyConstantMondayTime"/>
+
+    <TextView
+        android:id="@+id/lblWeeklyConstantThursdayDuration"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/weekly_const_duration"
+        android:labelFor="@id/etxtWeeklyConstantThursdayDuration"
+        android:layout_marginTop="@dimen/base_pad"
+        android:visibility="invisible"
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant3"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant4"
+        app:layout_constraintTop_toBottomOf="@id/btnWeeklyConstantMondayTime"/>
+
+    <TextView
+        android:id="@+id/lblWeeklyConstantFridayDuration"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/weekly_const_duration"
+        android:labelFor="@id/etxtWeeklyConstantFridayDuration"
+        android:layout_marginTop="@dimen/base_pad"
+        android:visibility="invisible"
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant4"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant5"
+        app:layout_constraintTop_toBottomOf="@id/btnWeeklyConstantMondayTime"/>
+
+    <TextView
+        android:id="@+id/lblWeeklyConstantSaturdayDuration"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/weekly_const_duration"
+        android:labelFor="@id/etxtWeeklyConstantSaturdayDuration"
+        android:layout_marginTop="@dimen/base_pad"
+        android:visibility="invisible"
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant5"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant6"
+        app:layout_constraintTop_toBottomOf="@id/btnWeeklyConstantMondayTime"/>
+
+    <TextView
+        android:id="@+id/lblWeeklyConstantSundayDuration"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/weekly_const_duration"
+        android:labelFor="@id/etxtWeeklyConstantSundayDuration"
+        android:layout_marginTop="@dimen/base_pad"
+        android:visibility="invisible"
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant6"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnWeeklyConstantMondayTime"/>
+
+    <EditText
+        android:id="@+id/etxtWeeklyConstantMondayDuration"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:importantForAutofill="no"
+        android:inputType="number"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant1"
+        app:layout_constraintTop_toBottomOf="@id/lblWeeklyConstantMondayDuration"/>
+
+    <EditText
+        android:id="@+id/etxtWeeklyConstantTuesdayDuration"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:importantForAutofill="no"
+        android:inputType="number"
+        android:visibility="invisible"
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant1"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant2"
+        app:layout_constraintTop_toBottomOf="@id/lblWeeklyConstantTuesdayDuration"/>
+
+    <EditText
+        android:id="@+id/etxtWeeklyConstantWednesdayDuration"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:importantForAutofill="no"
+        android:inputType="number"
+        android:visibility="invisible"
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant2"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant3"
+        app:layout_constraintTop_toBottomOf="@id/lblWeeklyConstantWednesdayDuration"/>
+
+    <EditText
+        android:id="@+id/etxtWeeklyConstantThursdayDuration"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:importantForAutofill="no"
+        android:inputType="number"
+        android:visibility="invisible"
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant3"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant4"
+        app:layout_constraintTop_toBottomOf="@id/lblWeeklyConstantThursdayDuration"/>
+
+    <EditText
+        android:id="@+id/etxtWeeklyConstantFridayDuration"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:importantForAutofill="no"
+        android:inputType="number"
+        android:visibility="invisible"
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant4"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant5"
+        app:layout_constraintTop_toBottomOf="@id/lblWeeklyConstantFridayDuration"/>
+
+    <EditText
+        android:id="@+id/etxtWeeklyConstantSaturdayDuration"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:importantForAutofill="no"
+        android:inputType="number"
+        android:visibility="invisible"
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant5"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant6"
+        app:layout_constraintTop_toBottomOf="@id/lblWeeklyConstantSaturdayDuration"/>
+
+    <EditText
+        android:id="@+id/etxtWeeklyConstantSundayDuration"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:importantForAutofill="no"
+        android:inputType="number"
+        android:visibility="invisible"
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant6"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lblWeeklyConstantSundayDuration"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

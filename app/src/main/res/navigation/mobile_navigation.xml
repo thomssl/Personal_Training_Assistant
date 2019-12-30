@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_schedule">
+
+    <fragment
+        android:id="@+id/nav_schedule"
+        android:name="com.trainingapp.personaltrainingassistant.ui.schedule.ScheduleFragment"
+        android:label="@string/menu_schedule"
+        tools:layout="@layout/fragment_schedule" />
+
+    <fragment
+        android:id="@+id/nav_clients"
+        android:name="com.trainingapp.personaltrainingassistant.ui.clients.ClientsFragment"
+        android:label="@string/menu_clients"
+        tools:layout="@layout/fragment_clients" />
+
+    <fragment
+        android:id="@+id/nav_exercises"
+        android:name="com.trainingapp.personaltrainingassistant.ui.exercises.ExercisesFragment"
+        android:label="@string/menu_exercises"
+        tools:layout="@layout/fragment_exercises" />
+
+    <fragment
+        android:id="@+id/nav_camera"
+        android:name="com.trainingapp.personaltrainingassistant.ui.camera.CameraFragment"
+        android:label="@string/menu_camera"
+        tools:layout="@layout/fragment_camera" />
+
+    <fragment
+        android:id="@+id/nav_muscles"
+        android:name="com.trainingapp.personaltrainingassistant.ui.muscles.MusclesFragment"
+        android:label="@string/menu_muscles"
+        tools:layout="@layout/fragment_muscles" />
+
+    <fragment
+        android:id="@+id/nav_wiki"
+        android:name="com.trainingapp.personaltrainingassistant.ui.wiki.WikiFragment"
+        android:label="@string/action_wiki"
+        tools:layout="@layout/fragment_wiki"/>
+
+    <fragment
+        android:id="@+id/nav_settings"
+        android:name="com.trainingapp.personaltrainingassistant.ui.settings.SettingsFragment"
+        android:label="@string/action_settings"
+        tools:layout="@layout/fragment_settings"/>
+
+</navigation>

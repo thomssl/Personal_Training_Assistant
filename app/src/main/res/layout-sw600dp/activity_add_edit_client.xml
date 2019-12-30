@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.AddEditClientActivity">
+
+    <!-- Used to draw focus from the editText-->
+    <LinearLayout
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:layout_width="0px"
+        android:layout_height="0px"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <EditText
+        android:id="@+id/etxtAddEditClientName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:hint="@string/add_client_name"
+        android:importantForAutofill="no"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/lblAddEditClientRadGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/add_client_rad_group_lbl"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/etxtAddEditClientName"/>
+
+    <RadioGroup
+        android:id="@+id/radGrpAddEditClient"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lblAddEditClientRadGroup">
+
+        <RadioButton
+            android:id="@+id/radIsWeeklyConst"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/add_client_is_weekly_const"/>
+
+        <RadioButton
+            android:id="@+id/radIsWeeklyVar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_client_is_weekly_var"/>
+
+        <RadioButton
+            android:id="@+id/radIsMonthlyVar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_client_is_monthly_var"/>
+
+        <RadioButton
+            android:id="@+id/radIsNoSchedule"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_client_is_no_schedule"/>
+
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/lblAddEditClientStartDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/add_client_start_date"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/btnAddEditClientStartDate"
+        app:layout_constraintBottom_toBottomOf="@id/btnAddEditClientStartDate"/>
+
+    <Button
+        android:id="@+id/btnAddEditClientStartDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onDateClick"
+        android:text="@string/date_format"
+        app:layout_constraintStart_toEndOf="@id/lblAddEditClientStartDate"
+        app:layout_constraintTop_toBottomOf="@id/radGrpAddEditClient" />
+
+    <TextView
+        android:id="@+id/lblAddEditClientEndDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/add_client_end_date"
+        android:layout_marginStart="@dimen/base_pad"
+        app:layout_constraintStart_toEndOf="@id/btnAddEditClientStartDate"
+        app:layout_constraintTop_toTopOf="@id/btnAddEditClientEndDate"
+        app:layout_constraintBottom_toBottomOf="@id/btnAddEditClientEndDate"/>
+
+    <Button
+        android:id="@+id/btnAddEditClientEndDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onDateClick"
+        android:text="@string/date_format"
+        app:layout_constraintStart_toEndOf="@id/lblAddEditClientEndDate"
+        app:layout_constraintTop_toBottomOf="@id/radGrpAddEditClient" />
+
+    <include
+        android:id="@+id/incAddEditClientWeeklyConstant"
+        layout="@layout/weekly_constant"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btnAddEditClientConfirm"
+        app:layout_constraintTop_toBottomOf="@id/btnAddEditClientStartDate"/>
+
+    <include
+        android:id="@+id/incAddEditClientWeeklyVariable"
+        layout="@layout/weekly_variable"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btnAddEditClientConfirm"
+        app:layout_constraintTop_toBottomOf="@id/btnAddEditClientStartDate"/>
+
+    <include
+        android:id="@+id/incAddEditClientMonthlyVariable"
+        layout="@layout/monthly_variable"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btnAddEditClientConfirm"
+        app:layout_constraintTop_toBottomOf="@id/btnAddEditClientStartDate"/>
+
+    <include
+        android:id="@+id/incAddEditClientNoSchedule"
+        layout="@layout/no_schedule"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btnAddEditClientConfirm"
+        app:layout_constraintTop_toBottomOf="@id/btnAddEditClientStartDate"/>
+
+    <Button
+        android:id="@+id/btnAddEditClientConfirm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/base_pad"
+        android:onClick="onClientConfirm"
+        android:text="@string/confirm"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
