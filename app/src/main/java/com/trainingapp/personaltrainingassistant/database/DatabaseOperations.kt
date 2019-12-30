@@ -18,30 +18,6 @@ class DatabaseOperations(context: Context) {
         private const val INSERT_COMMAND = 1
         private const val UPDATE_COMMAND = 2
         private const val DELETE_COMMAND = 3
-        private const val CLIENT_ID = 0
-        private const val CLIENT_NAME = 1
-        private const val CLIENT_SESSIONS_TYPE = 2
-        private const val CLIENT_DAYS = 3
-        private const val CLIENT_TIMES = 4
-        private const val CLIENT_DURATIONS = 5
-        private const val CLIENT_START_DATE = 6
-        private const val CLIENT_END_DATE = 7
-        private const val EXERCISE_ID = 0
-        private const val EXERCISE_NAME = 1
-        private const val EXERCISE_TYPE = 2
-        private const val EXERCISE_PRIMARY_MOVER = 3
-        private const val EXERCISE_SECONDARY_MOVERS = 4
-        private const val SESSION_CLIENT_ID = 0
-        private const val SESSION_DAYTIME = 1
-        private const val SESSION_EXERCISE_IDS = 2
-        private const val SESSION_SETS = 3
-        private const val SESSION_REPS = 4
-        private const val SESSION_RESISTANCES = 5
-        private const val SESSION_EXERCISE_ORDERS = 6
-        private const val SESSION_NOTES = 7
-        private const val SESSION_DURATION = 8
-        private const val SETTINGS_DEFAULT_DURATIONS = 0
-        private const val SETTINGS_24_CLOCK = 1
     }
 
     private var databaseHelper = DatabaseHelper(context)
