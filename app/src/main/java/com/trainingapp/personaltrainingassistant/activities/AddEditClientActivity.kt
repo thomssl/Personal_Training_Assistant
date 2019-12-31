@@ -21,7 +21,6 @@ import kotlinx.android.synthetic.main.monthly_variable.*
 import kotlinx.android.synthetic.main.no_schedule.*
 import kotlinx.android.synthetic.main.weekly_constant.*
 import kotlinx.android.synthetic.main.weekly_variable.*
-import java.lang.Exception
 import java.lang.StringBuilder
 import java.util.*
 import kotlin.collections.ArrayList
