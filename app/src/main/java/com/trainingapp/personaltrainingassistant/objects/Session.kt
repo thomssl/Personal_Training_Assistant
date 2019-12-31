@@ -7,6 +7,12 @@ import kotlin.collections.ArrayList
 
 class Session(var clientID: Int, var clientName: String, dayTime: String, private var exercises: ArrayList<ExerciseSession>, var notes: String, var duration: Int): Comparable<Session> {
 
+    companion object {
+        const val INSERT_COMMAND = 1
+        const val UPDATE_COMMAND = 2
+        const val DELETE_COMMAND = 3
+    }
+
     var date: Calendar = StaticFunctions.getDate(dayTime)
 
     fun hasExercises(): Boolean = exercises.size > 0
@@ -61,6 +67,17 @@ class Session(var clientID: Int, var clientName: String, dayTime: String, privat
 
     fun getTimeRange(): IntRange = getTime() until (getTime() + duration)
 
+    fun clone(dayTime: String = "", exercises: ArrayList<ExerciseSession> = ArrayList(), notes: String = "", duration: Int = 0): Session{
+        return Session(
+            clientID,
+            clientName,
+            if (dayTime.isEmpty()) StaticFunctions.getStrDateTime(date) else dayTime,
+            if (exercises.size == 0) this.exercises else exercises,
+            if (notes.isEmpty()) this.notes else notes,
+            if (duration == 0) this.duration else duration
+        )
+    }
+
     fun getSQLCommand(type: Int, oldDayTime: String = ""): String{
         if (type == 3)
             return "Delete From Session_log Where client_id = $clientID And datetime(dayTime) = datetime('${StaticFunctions.getStrDateTime(date)})'"
@@ -87,7 +104,12 @@ class Session(var clientID: Int, var clientName: String, dayTime: String, privat
 
         return when(type){
             1 -> "Insert Into Session_log(client_id, dayTime, exercise_ids, sets, reps, resistances, exercise_order, notes, duration) Values($clientID, '${StaticFunctions.getStrDateTime(date)}', '$builderExercises', '$builderSets', '$builderReps', '$builderResistances', '$builderOrders', '$notes', $duration)"
-            2 -> if (oldDayTime != "") "Update Session_log Set dayTime = '${StaticFunctions.getStrDateTime(date)}', exercise_ids = '$builderExercises', sets = '$builderSets', reps = '$builderReps', resistances = '$builderResistances', exercise_order = '$builderOrders', notes = '$notes', duration = $duration Where client_id = $clientID And datetime(dayTime) = datetime('$oldDayTime')" else "error"
+            2 -> {
+                if (oldDayTime != "")
+                    "Update Session_log Set dayTime = '${StaticFunctions.getStrDateTime(date)}', exercise_ids = '$builderExercises', sets = '$builderSets', reps = '$builderReps', resistances = '$builderResistances', exercise_order = '$builderOrders', notes = '$notes', duration = $duration Where client_id = $clientID And datetime(dayTime) = datetime('$oldDayTime')"
+                else
+                    "Update Session_log Set exercise_ids = '$builderExercises', sets = '$builderSets', reps = '$builderReps', resistances = '$builderResistances', exercise_order = '$builderOrders', notes = '$notes', duration = $duration Where client_id = $clientID And datetime(dayTime) = datetime('${StaticFunctions.getStrDateTime(date)}')"
+            }
             else -> "error"
         }
     }

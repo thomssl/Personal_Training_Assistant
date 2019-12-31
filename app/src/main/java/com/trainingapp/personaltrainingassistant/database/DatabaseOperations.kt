@@ -3,22 +3,14 @@ package com.trainingapp.personaltrainingassistant.database
 import android.content.Context
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
-import android.util.Log
 import com.trainingapp.personaltrainingassistant.StaticFunctions
 import com.trainingapp.personaltrainingassistant.enumerators.ExerciseType
 import com.trainingapp.personaltrainingassistant.enumerators.ScheduleType
 import com.trainingapp.personaltrainingassistant.objects.*
-import java.lang.StringBuilder
 import java.util.*
 import kotlin.collections.ArrayList
 
 class DatabaseOperations(context: Context) {
-
-    companion object {
-        private const val INSERT_COMMAND = 1
-        private const val UPDATE_COMMAND = 2
-        private const val DELETE_COMMAND = 3
-    }
 
     private var databaseHelper = DatabaseHelper(context)
     private var db: SQLiteDatabase
@@ -43,7 +35,7 @@ class DatabaseOperations(context: Context) {
     }
 
     /**
-     * Method to convert csv values for exercise_ids, sets, reps, resistances and exercise_orders into an ArrayList of ExerciseSession Objects
+     * Method to convert csv values for exercise_ids, sets, reps, resistances and exercise_orders into an ArrayList of ExerciseSession Objects. Used to fill a Session object
      * @param ids exercise_ids as csv
      * @param sets sets as csv
      * @param reps reps as csv
@@ -52,18 +44,18 @@ class DatabaseOperations(context: Context) {
      */
     private fun getListExerciseSessions(ids: String, sets: String, reps: String, resistances: String, orders: String): ArrayList<ExerciseSession>{
         val exercises = ArrayList<ExerciseSession>()
-        if (ids.isEmpty())
+        if (ids.isEmpty()) //if ids is empty the Session does not contain any exercises. Return a blank ArrayList
             return exercises
-        val lstIDs = StaticFunctions.toArrayListInt(ids)
+        val lstExercises = getManyExercises(ids)//gets all the exercises in one query
         val lstSets = sets.split(",")
         val lstReps = reps.split(",")
         val lstResistances = resistances.split(",")
         val lstOrders = StaticFunctions.toArrayListInt(orders)
 
-        for(i in lstIDs.indices)
+        for(i in lstExercises.indices)//populate blank ArrayList with ExerciseSession objects created using the processed parameters
             exercises.add(
                 ExerciseSession(
-                    getExercise(lstIDs[i]),
+                    lstExercises[i],
                     lstSets[i],
                     lstReps[i],
                     lstResistances[i],
@@ -73,6 +65,11 @@ class DatabaseOperations(context: Context) {
         return exercises
     }
 
+    /**
+     * Private method to get the ScheduleType enum from an int obtained from the database
+     * @param type Int representation of the ScheduleType
+     * @return corresponding ScheduleType of the Int parameter
+     */
     private fun getScheduleType(type: Int): ScheduleType{
         return when (type){
             0 -> ScheduleType.NO_SCHEDULE
@@ -83,19 +80,26 @@ class DatabaseOperations(context: Context) {
         }
     }
 
+    /**
+     * Private method to get the list of secondary movers as an ArrayList of MuscleJoint data objects
+     * @param id id of the exercise obtained from the database query
+     * @param strSecondaryMovers csv String file extracted from the database query
+     * @param exerciseType ExerciseType enum value associated with the exercise found from the database query
+     * @return ArrayList of MuscleJoint data objects corresponding to the movers csv sent as a parameter
+     */
     private fun getSecondaryMovers(id: Int, strSecondaryMovers: String, exerciseType: ExerciseType): ArrayList<MuscleJoint>{
         val secondaryMovers = ArrayList<MuscleJoint>()
-        if (id == 0 || strSecondaryMovers == ""){
+        if (id == 0 || strSecondaryMovers == ""){//if the id = 0 that means no exercise was found. if strSecondaryMovers is empty than no secondary movers are present. Either way, return a blank ArrayList is returned
             return secondaryMovers
         }
-        val tableName = if (exerciseType == ExerciseType.STRENGTH) "Muscles" else "Joints"
-        val prefix = if (exerciseType == ExerciseType.STRENGTH) "muscle_" else "joint_"
+        val tableName = if (exerciseType == ExerciseType.STRENGTH) "Muscles" else "Joints"//set table name based upon ExerciseType of query result
+        val prefix = if (exerciseType == ExerciseType.STRENGTH) "muscle_" else "joint_" //set field name prefix based upon ExerciseType of query result
         val cursor = db.rawQuery("Select ${prefix}id, ${prefix}name From $tableName Where ${prefix}id in (${strSecondaryMovers})", null)
         if (cursor.moveToFirst()){
             while (!cursor.isAfterLast){
                 secondaryMovers.add(MuscleJoint(
-                    if (exerciseType == ExerciseType.STRENGTH) cursor.getInt(cursor.getColumnIndex(DBInfo.MusclesEntry.ID)) else cursor.getInt(cursor.getColumnIndex(DBInfo.JointsEntry.ID)),
-                    if (exerciseType == ExerciseType.STRENGTH) cursor.getString(cursor.getColumnIndex(DBInfo.MusclesEntry.NAME)) else cursor.getString(cursor.getColumnIndex(DBInfo.JointsEntry.NAME))
+                    if (exerciseType == ExerciseType.STRENGTH) cursor.getInt(cursor.getColumnIndex(DBInfo.MusclesEntry.ID)) else cursor.getInt(cursor.getColumnIndex(DBInfo.JointsEntry.ID)),//use appropriate field name base upon ExerciseType of the query result
+                    if (exerciseType == ExerciseType.STRENGTH) cursor.getString(cursor.getColumnIndex(DBInfo.MusclesEntry.NAME)) else cursor.getString(cursor.getColumnIndex(DBInfo.JointsEntry.NAME))//use appropriate field name base upon ExerciseType of the query result
                 ))
                 cursor.moveToNext()
             }
@@ -104,6 +108,10 @@ class DatabaseOperations(context: Context) {
         return secondaryMovers
     }
 
+    /**
+     * Method to get the user settings from the database
+     * @return ArrayList of the user settings as Ints
+     */
     fun getUserSettings(): ArrayList<Int>{
         val cursor = db.rawQuery("Select default_duration, '24_clock' From User_Settings", null)
         val result = if (cursor.moveToFirst()) ArrayList<Int>(arrayOf(
@@ -136,6 +144,10 @@ class DatabaseOperations(context: Context) {
         return result
     }
 
+    /**
+     * Method to get all the joints found in the database
+     * @return ArrayList of MuscleJoint data objects for all the joints defined
+     */
     fun getAllJoints(): ArrayList<MuscleJoint>{
         val joints = ArrayList<MuscleJoint>()
         val cursor = db.rawQuery("Select joint_id, joint_name From Joints", null)
@@ -154,12 +166,17 @@ class DatabaseOperations(context: Context) {
         return joints
     }
 
+    /**
+     * Method to get a single muscle from the Muscles Table based upon a given id
+     * @param id id of the muscle to be found
+     * @return MuscleJoint data object representing the desired muscle
+     */
     fun getMuscle(id: Int): MuscleJoint {
         val cursor = db.rawQuery("Select muscle_id, muscle_name From Muscles Where muscle_id = $id", null)
-        val muscle = if (cursor.moveToFirst()) MuscleJoint(
+        val muscle = if (cursor.moveToFirst()) MuscleJoint(//if muscle found return populated MuscleJoint object
             cursor.getInt(cursor.getColumnIndex(DBInfo.MusclesEntry.ID)),
             cursor.getString(cursor.getColumnIndex(DBInfo.MusclesEntry.NAME))
-        ) else MuscleJoint(
+        ) else MuscleJoint(//if no muscle found with given id, return an empty object
             0,
             ""
         )
@@ -167,6 +184,10 @@ class DatabaseOperations(context: Context) {
         return muscle
     }
 
+    /**
+     * Method to get all the muscles from the Muscles Table
+     * @return ArrayList of MuscleJoint data objects representing all the defined muscles
+     */
     fun getAllMuscles(): ArrayList<MuscleJoint>{
         val muscles = ArrayList<MuscleJoint>()
         val cursor = db.rawQuery("Select muscle_id, muscle_name From Muscles Order By muscle_name", null)
@@ -212,7 +233,7 @@ class DatabaseOperations(context: Context) {
      */
     fun getClient(id: Int): Client {
         val cursor = db.rawQuery("Select * From Clients Where client_id = $id", null)
-        val client: Client = if (cursor.moveToFirst())
+        val client: Client = if (cursor.moveToFirst())//if a record is found, return a populated Client object
             Client(
                 cursor.getInt(cursor.getColumnIndex(DBInfo.ClientsEntry.ID)),
                 cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.NAME)),
@@ -223,16 +244,16 @@ class DatabaseOperations(context: Context) {
                 cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.START_DATE)),
                 cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.END_DATE))
             )
-        else
+        else//if no client found with given id, return an empty object
             Client(
                 0,
                 "",
                 ScheduleType.NO_SCHEDULE,
-                "0",
-                "0",
-                "0",
-                "0",
-                "0"
+                "",
+                "",
+                "",
+                "",
+                ""
             )
         cursor.close()
         return client
@@ -240,7 +261,7 @@ class DatabaseOperations(context: Context) {
 
     /**
      * Method to get all clients currently in the Clients Table
-     * @return ArrayList of Client objects
+     * @return ArrayList of Client objects for all defined clients
      */
     fun getAllClients(): ArrayList<Client>{
         val cursor = db.rawQuery("Select * From Clients Order By client_name", null)
@@ -273,38 +294,38 @@ class DatabaseOperations(context: Context) {
      */
     private fun getClientType(clientID: Int): ScheduleType{
         val cursor = db.rawQuery("Select schedule_type From Clients Where client_id = $clientID", null)
-        val result: ScheduleType = if (cursor.moveToFirst()) getScheduleType(cursor.getInt(cursor.getColumnIndex(DBInfo.ClientsEntry.SCHEDULE_TYPE)))
-        else ScheduleType.NO_SCHEDULE
+        val result: ScheduleType = if (cursor.moveToFirst()) getScheduleType(cursor.getInt(cursor.getColumnIndex(DBInfo.ClientsEntry.SCHEDULE_TYPE)))//if record found with given client id, return corresponding ScheduleType
+        else ScheduleType.BLANK//if no record found, return BLANK or -1
         cursor.close()
         return result
     }
 
     /**
      * Method to check if a client conflicts with the given client list. Only looks at clients with constant schedules (ie session_type = 1)
+     * Should only be called if the client's ScheduleType is Weekly_Constant
      * @param client Client object created from data collected in the CreateOrAlterClientActivity
      * @return empty string if a conflict is found with the current constant schedule. String with conflict client names if any conflicts are found
      */
     fun checkClientConflict(client: Client): String{
         var conflicts = ""
-        for(index in client.days.indices) {
+        for(index in client.days.indices) {//for each day that the client is coming in, check all clients who that already train on that day, who's start and end date are outside of today and who's ScheduleType is Weekly_Constant
             val day = client.days[index]
             val cursor = db.rawQuery("Select times, durations, client_name, days From Clients Where days Like '%$day%' And start_date <= date('now') And end_date >= date('now') And schedule_type = 1", null)
             if (cursor.moveToFirst()) {
                 while(!cursor.isAfterLast) {
-                    val position = cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.DAYS)).split(",").indexOf(day.toString())
-                    val time = cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.TIMES)).split(",")[position].toInt()
-                    val duration = cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.DURATIONS)).split(",")[position].toInt()
-                    val upper = time + duration
-                    if (StaticFunctions.compareTimeRanges(time..upper,client.times[index] until (client.times[index] + client.durations[index])))
-                        conflicts += "${cursor.getString(2)},"
+                    val position = cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.DAYS)).split(",").indexOf(day.toString())//find the index of the pertinent day and use that to get the time and duration for the possibly overlapping session
+                    val time = cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.TIMES)).split(",")[position].toInt()//find the start time of the day in question
+                    val duration = cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.DURATIONS)).split(",")[position].toInt()//find the duration of the day in questions
+                    val upper = time + duration//find the upper limit of the session
+                    if (StaticFunctions.compareTimeRanges(time..upper,client.times[index] until (client.times[index] + client.durations[index])))//compare the time range of the found client with the new/updated client
+                        conflicts += "${cursor.getString(2)},"//if there is overlap, add the existing client's name to the conflicts string
                     cursor.moveToNext()
                 }
             }
             cursor.close()
         }
-        if (conflicts.isNotEmpty())
-            return conflicts.substring(0 until conflicts.lastIndex)
-        return conflicts
+        return if (conflicts.isNotEmpty()) conflicts.substring(0 until conflicts.lastIndex)//if conflicts are found return the conflicts string omitting the trailing ',' character
+        else return conflicts//if no conflicts are found return the empty string to signify no conflicts
     }
 
 
@@ -312,8 +333,13 @@ class DatabaseOperations(context: Context) {
     fun updateClient(client: Client): Boolean = trySQLCommand(client.getUpdateCommand())
     fun deleteClient(client: Client): Boolean = trySQLCommand(client.getDeleteCommand())
 
-    private fun getExerciseType(value: Int): ExerciseType{
-        return when(value){
+    /**
+     * Private method to get the ExerciseType enum from an int obtained from the database
+     * @param type Int representation of the ExerciseType
+     * @return corresponding ExerciseType of the Int parameter
+     */
+    private fun getExerciseType(type: Int): ExerciseType{
+        return when(type){
             1 -> ExerciseType.STRENGTH
             2 -> ExerciseType.MOBILITY
             3 -> ExerciseType.STABILITY
@@ -327,6 +353,7 @@ class DatabaseOperations(context: Context) {
      * @return Exercise object for the given id value
      */
     fun getExercise(id: Int): Exercise {
+        //gets base Exercise class information and fills in the ExerciseType using a join and Case clause to get the appropriate data (ie if strength, muscle_name and if mobility or stability, joint_name)
         val cursor = db.rawQuery("Select e.exercise_id, e.exercise_name, e.exercise_type, e.primary_mover, e.secondary_movers, Case When e.exercise_type = 1 then m.muscle_name When e.exercise_type = 2 or e.exercise_type = 3 then j.joint_name End From Exercises e inner join Exercise_Types t on e.exercise_type=t.exercise_type_id left join Muscles m on e.primary_mover=m.muscle_id left join Joints j on e.primary_mover=j.joint_id Where e.exercise_id = $id", null)
         val exercise = if (cursor.moveToFirst()) {
             val exerciseID = cursor.getInt(cursor.getColumnIndex(DBInfo.ExercisesEntry.ID))
@@ -353,10 +380,42 @@ class DatabaseOperations(context: Context) {
     }
 
     /**
+     * Private method to get many exercises using a csv String as a list. Used to populate a SessionExercise
+     * @param strIDs csv string with the ids of many exercises
+     * @return ArrayList of Exercise objects representing the list of exercise ids
+     */
+    private fun getManyExercises(strIDs: String): ArrayList<Exercise>{
+        val exercises = ArrayList<Exercise>()
+        //gets base Exercise class information and fills in the ExerciseType using a join and Case clause to get the appropriate data (ie if strength, muscle_name and if mobility or stability, joint_name)
+        val cursor = db.rawQuery("Select e.exercise_id, e.exercise_name, e.exercise_type, e.primary_mover, e.secondary_movers, Case When e.exercise_type = 1 then m.muscle_name When e.exercise_type = 2 or e.exercise_type = 3 then j.joint_name End From Exercises e inner join Exercise_Types t on e.exercise_type=t.exercise_type_id left join Muscles m on e.primary_mover=m.muscle_id left join Joints j on e.primary_mover=j.joint_id Where e.exercise_id in ($strIDs)", null)
+        if (cursor.moveToFirst()){
+            while (!cursor.isAfterLast){
+                val id = cursor.getInt(cursor.getColumnIndex(DBInfo.ExercisesEntry.ID))
+                val strSecondaryMovers = cursor.getString(cursor.getColumnIndex(DBInfo.ExercisesEntry.SECONDARY_MOVERS))
+                val exerciseType = getExerciseType(cursor.getInt(cursor.getColumnIndex(DBInfo.ExercisesEntry.TYPE)))
+                val primaryMover = MuscleJoint(cursor.getInt(cursor.getColumnIndex(DBInfo.ExercisesEntry.PRIMARY_MOVER)), cursor.getString(5))
+                exercises.add(
+                    Exercise(
+                        id,
+                        cursor.getString(cursor.getColumnIndex(DBInfo.ExercisesEntry.NAME)),
+                        exerciseType,
+                        primaryMover,
+                        getSecondaryMovers(id,strSecondaryMovers,exerciseType)
+                    )
+                )
+                cursor.moveToNext()
+            }
+        }
+        cursor.close()
+        return exercises
+    }
+
+    /**
      * Method to get all the exercises with in the Exercises Table
      * @return ArrayList of Exercise objects representing the entire Exercise library
      */
     fun getAllExercises(): ArrayList<Exercise>{
+        //gets base Exercise class information and fills in the ExerciseType using a join and Case clause to get the appropriate data (ie if strength, muscle_name and if mobility or stability, joint_name)
         val cursor = db.rawQuery("Select e.exercise_id, e.exercise_name, e.exercise_type, e.primary_mover, e.secondary_movers, Case When e.exercise_type = 1 then m.muscle_name When e.exercise_type = 2 or e.exercise_type = 3 then j.joint_name End From Exercises e inner join Exercise_Types t on e.exercise_type=t.exercise_type_id left join Muscles m on e.primary_mover=m.muscle_id left join Joints j on e.primary_mover=j.joint_id Order By e.exercise_name", null)
         val exercises = ArrayList<Exercise>()
         if (cursor.moveToFirst()){
@@ -397,8 +456,14 @@ class DatabaseOperations(context: Context) {
     fun insertExercise(exercise: Exercise): Boolean = trySQLCommand(exercise.getInsertCommand())
     private fun deleteExercise(exercise: Exercise): Boolean = trySQLCommand(exercise.getDeleteCommand())
 
+    /**
+     * Method used to remove an exercise from the database. Searches through sessions logged to remove references to the exercise. Places a note in the session to "preserve" the session
+     * @param exercise Exercise object used to search through session log and remove exercise from database
+     * @return if the removal was successful, true. if an error occurred, false
+     */
     fun removeExercise(exercise: Exercise): Boolean {
         val sessions = ArrayList<Session>()
+        //gets base Session class information, fills in the client_name with a join and finds only sessions containing the given exercise.id
         val cursor = db.rawQuery("Select s.client_id, s.dayTime, s.exercise_ids, s.sets, s.reps, s.resistances, s.exercise_order, s.notes, s.duration, c.client_name From Session_log s Inner Join Clients c On s.client_id=c.client_id where (exercise_ids Like '${exercise.id},%' Or exercise_ids Like '%,${exercise.id},%' Or exercise_ids Like '%,${exercise.id}' or exercise_ids = '${exercise.id}')", null)
         if (cursor.moveToFirst()){
             while (!cursor.isAfterLast){
@@ -416,13 +481,14 @@ class DatabaseOperations(context: Context) {
                     cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogEntry.NOTES)),
                     cursor.getInt(cursor.getColumnIndex(DBInfo.SessionLogEntry.DURATION))
                 ))
+                //find the ExerciseSession object for the most recently inserted session. Uses that object to remove itself from the session and add a removal note to the notes section
                 val exerciseSession = sessions[sessions.lastIndex].getExercise(exercise)
                 sessions[sessions.lastIndex].removeExercise(exercise)
                 sessions[sessions.lastIndex].notes += "*removed:${exerciseSession.name} sets:${exerciseSession.sets} reps:${exerciseSession.reps} resistance:${exerciseSession.resistance}"
             }
         }
         cursor.close()
-        sessions.forEach { updateSession(it, "") }
+        sessions.forEach { updateSession(it, "") }//updates all the found session with the new values
         return deleteExercise(exercise)
     }
 
@@ -433,8 +499,9 @@ class DatabaseOperations(context: Context) {
      * @return Session object corresponding to the given values
      */
     fun getSession(clientID: Int, dayTime: String): Session {
+        //gets base Session class information, fills in the client_name with a join and finds only sessions for a given client and dayTime
         val cursor = db.rawQuery("Select s.client_id, s.dayTime, s.exercise_ids, s.sets, s.reps, s.resistances, s.exercise_order, s.notes, s.duration, c.client_name From Session_log s Inner Join Clients c On s.client_id=c.client_id Where s.client_id = $clientID And date(dayTime) = date('$dayTime')", null)
-        val session: Session = if (cursor.moveToFirst()){
+        val session: Session = if (cursor.moveToFirst()){//if a record is found, populate the Session object
             Session(
                 cursor.getInt(cursor.getColumnIndex(DBInfo.SessionLogEntry.CLIENT_ID)),
                 cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.NAME)),
@@ -449,7 +516,7 @@ class DatabaseOperations(context: Context) {
                 cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogEntry.NOTES)),
                 cursor.getInt(cursor.getColumnIndex(DBInfo.SessionLogEntry.DURATION))
             )
-        } else{
+        } else{//if a logged session is not found, create a blank session then fill in the duration using the logic below
             val client = getClient(clientID)
             val session =
                 Session(
@@ -460,12 +527,12 @@ class DatabaseOperations(context: Context) {
                     "",
                     0
                 )
-            if (checkChange(session)){
+            if (checkChange(session)){//if a change for the given client and dayTime then use the corresponding duration
                 val cursor1 = db.rawQuery("Select duration From Session_Changes Where client_id = $clientID And datetime(change_dayTime) = datetime('$dayTime')", null)
                 cursor1.moveToFirst()
                 session.duration = cursor1.getInt(0)
                 cursor1.close()
-            } else
+            } else//if no change is found, use the duration found from the client with the given dayTime. If the client is not Weekly_Constant, 0 will be returned
                 session.duration = client.getDuration(dayTime)
             session
         }
@@ -473,14 +540,25 @@ class DatabaseOperations(context: Context) {
         return session
     }
 
-    fun removeCanceledSession(clientID: Int): Boolean = trySQLCommand("Delete Top(1) From Session_Changes Where client_id = $clientID")
+    //removes the first available makeup session (represented with a 0 in change_dayTime)
+    fun removeCanceledSession(clientID: Int): Boolean = trySQLCommand("Delete Top(1) From Session_Changes Where client_id = $clientID And change_dayTime = '0'")
 
+    /**
+     * Method used to check if a session conflicts with another session on a given day. Will overlook a single client with multiple session on a day if isSameDate = true (use isSameDate when changing the time)
+     * @param session Session object to check for conflicts with itself
+     * @param isSameDate true if changing the time, false in all other occasions
+     * @return true if conflict found. false if no conflict found
+     */
     fun checkSessionConflict(session: Session, isSameDate: Boolean): Boolean{
-        Log.d("here", "DayTime: ${StaticFunctions.getStrDateTime(session.date)}")
         val day = getScheduleByDay(session.date)
         return day.checkConflict(session, isSameDate)
     }
 
+    /**
+     * Method to check if a session exists in the Session_log
+     * @param session Session object to be checked
+     * @return true if session found in log, false if not found
+     */
     fun checkSessionLog(session: Session): Boolean{
         val cursor = db.rawQuery("Select client_id From Session_log s Where s.client_id = ${session.clientID} And date(dayTime) = date('${StaticFunctions.getStrDateTime(session.date)}')", null)
         val result = cursor.moveToFirst()
@@ -495,11 +573,11 @@ class DatabaseOperations(context: Context) {
      */
     fun insertSession(session: Session): Boolean {
         deleteChange(session)
-        return trySQLCommand(session.getSQLCommand(INSERT_COMMAND))
+        return trySQLCommand(session.getSQLCommand(Session.INSERT_COMMAND))
     }
 
-    fun updateSession(session: Session, oldDayTime: String): Boolean = trySQLCommand(session.getSQLCommand(UPDATE_COMMAND, oldDayTime))
-    private fun deleteSession(session: Session): Boolean = trySQLCommand(session.getSQLCommand(DELETE_COMMAND))
+    fun updateSession(session: Session, oldDayTime: String): Boolean = trySQLCommand(session.getSQLCommand(Session.UPDATE_COMMAND, oldDayTime))
+    private fun deleteSession(session: Session): Boolean = trySQLCommand(session.getSQLCommand(Session.DELETE_COMMAND))
 
     /**
      * Method to cancel a given session. Course of action is dependent on the client's session_type. See Client Table for more information on session_type
@@ -510,12 +588,13 @@ class DatabaseOperations(context: Context) {
         return when(getClientType(session.clientID)){
             ScheduleType.WEEKLY_CONSTANT ->  {
                 when (true){
-                    checkChange(session) -> updateChange(session, Session(session.clientID, session.clientName, "0", ArrayList(), "", session.duration))
-                    checkSessionLog(session) -> deleteSession(session)
-                    else -> insertChange(session, Session(session.clientID, session.clientName, "0", ArrayList(), "", session.duration))
+                    checkChange(session) -> updateChange(session, Session(session.clientID, session.clientName, "0", ArrayList(), "", session.duration))//if change record exists, update change with makeup session values
+                    checkSessionLog(session) -> deleteSession(session)                                                                                                 //if session found in log, remove session from log
+                    else -> insertChange(session, Session(session.clientID, session.clientName, "0", ArrayList(), "", session.duration))                //if not found anywhere insert a change with makeup session values
                 }
             }
-            ScheduleType.NO_SCHEDULE,ScheduleType.WEEKLY_VARIABLE,ScheduleType.MONTHLY_VARIABLE -> deleteSession(session)
+            ScheduleType.NO_SCHEDULE,ScheduleType.WEEKLY_VARIABLE,ScheduleType.MONTHLY_VARIABLE -> deleteSession(session)//delete session if not Weekly_Constant
+            ScheduleType.BLANK -> false //return false, error occurred. No ScheduleType Set
         }
     }
 
@@ -526,6 +605,7 @@ class DatabaseOperations(context: Context) {
      */
     fun getClientSessions(client: Client): ArrayList<Session>{
         val sessions = ArrayList<Session>()
+        //gets base Session class information, fills in the client_name with a join and finds only sessions for a given client
         val cursor = db.rawQuery("Select s.client_id, s.dayTime, s.exercise_ids, s.sets, s.reps, s.resistances, s.exercise_order, s.notes, s.duration, c.client_name From Session_log s Inner Join Clients c On s.client_id=c.client_id Where s.client_id = ${client.id}", null)
         if (cursor.moveToFirst()){
             while (!cursor.isAfterLast){
@@ -552,6 +632,9 @@ class DatabaseOperations(context: Context) {
         return sessions
     }
 
+    /**
+     *
+     */
     fun getAddSessionsClientsByDay(calendar: Calendar): ArrayList<Client>{
         val day = getScheduleByDay(calendar)
         val tempCal = Calendar.getInstance()

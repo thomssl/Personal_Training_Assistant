@@ -65,8 +65,7 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
         txtSessionClientName.text = session.clientName
         setDate()
         setTime()
-        Log.d("here", session.duration.toString())
-        txtSessionDuration.text = getString(R.string.txtSessionDuration, session.duration)
+        setDuration()
         if (session.notes.isNotEmpty())
             etxtNotes.setText(session.notes)
         setAdapter()
@@ -117,6 +116,7 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
 
     private fun setDate() { txtSessionDate.text = StaticFunctions.getStrDate(session.date) }
     private fun setTime() { txtSessionTime.text = StaticFunctions.getStrTimeAMPM(session.date) }
+    private fun setDuration() { txtSessionDuration.text = getString(R.string.txtSessionDuration, session.duration)}
 
     private fun setAdapter(){
         if (session.getExerciseCount() > 0){
@@ -129,8 +129,7 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
     }
 
     private fun updateSession(): Boolean{
-        val oldSession = Session(session.clientID, session.clientName, StaticFunctions.getStrDateTime(calendar), ArrayList(), "", session.duration)
-        Snackbar.make(btnChangeDate, "Session updated", Snackbar.LENGTH_LONG).show()
+        val oldSession = session.clone(dayTime = StaticFunctions.getStrDateTime(calendar))
         return when (true){
             databaseOperations.checkSessionLog(oldSession) -> databaseOperations.updateSession(session, StaticFunctions.getStrDateTime(calendar))
             databaseOperations.checkChange(oldSession) -> databaseOperations.updateChange(oldSession, session)
@@ -173,8 +172,13 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
                 Snackbar.make(view, "Duration outside of acceptable values. See Wiki for more information", Snackbar.LENGTH_LONG).show()
                 false
             } else {
-                session.duration = duration
-                true
+                setDuration()
+                when (true){
+                    databaseOperations.checkSessionConflict(session.clone(duration = duration), true) -> { Snackbar.make(view, "Error: Session Conflict", Snackbar.LENGTH_LONG).show(); false }
+                    databaseOperations.checkSessionLog(session) -> if (databaseOperations.updateSession(session,"")){ session.duration = duration; true } else { Snackbar.make(view, "SQL Error during session update", Snackbar.LENGTH_LONG).show(); false }
+                    databaseOperations.checkChange(session) -> if (databaseOperations.updateChange(session,session.clone(duration = duration))) { session.duration = duration; true } else { Snackbar.make(view, "SQL Error during session change update", Snackbar.LENGTH_LONG).show(); false }
+                    else -> if (databaseOperations.insertSession(session.clone(duration = duration))) { session.duration = duration; true } else { Snackbar.make(view, "SQL Error during session insert", Snackbar.LENGTH_LONG).show(); false }
+                }
             }
         } catch (e: NumberFormatException){
             e.printStackTrace()

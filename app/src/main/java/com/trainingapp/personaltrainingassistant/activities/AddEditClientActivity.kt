@@ -30,7 +30,7 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
 
     private lateinit var databaseOperations: DatabaseOperations
     private var userSettings = ArrayList<Int>()
-    private var clientID = 0
+    private var isNew = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -133,9 +133,9 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
         }
         val client = databaseOperations.getClient(intent.getIntExtra("id", 0))
         if (client.id == 0){
+            isNew = true
             setTitle(R.string.add_client_title)
         } else {
-            clientID = client.id
             btnAddEditClientStartDate.text = client.startDate
             btnAddEditClientEndDate.text = client.endDate
             etxtAddEditClientName.setText(client.name)
@@ -165,6 +165,7 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
                     etxtMonthlyVariableDuration.setText(client.durations[0].toString())
                     radGrpAddEditClient.check(R.id.radIsMonthlyVar)
                 }
+                ScheduleType.BLANK -> finish()
             }
         }
     }
@@ -369,13 +370,21 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
                 }
             }
             if (client.name != "") {
-                val conflicts = databaseOperations.checkClientConflict(client)
+                val conflicts = if (client.scheduleType == ScheduleType.WEEKLY_CONSTANT) databaseOperations.checkClientConflict(client) else ""
                 if (conflicts.isEmpty()) {
-                    if (databaseOperations.insertClient(client)) {
-                        Snackbar.make(view, "Inserted new client", Snackbar.LENGTH_LONG).show()
-                        finish()
-                    } else
-                        Snackbar.make(view, "SQL Error inserting new client", Snackbar.LENGTH_LONG).show()
+                    if (isNew) {
+                        if (databaseOperations.insertClient(client)) {
+                            Snackbar.make(view, "Inserted new client", Snackbar.LENGTH_LONG).show()
+                            finish()
+                        } else
+                            Snackbar.make(view, "SQL Error inserting new client", Snackbar.LENGTH_LONG).show()
+                    } else {
+                        if (databaseOperations.updateClient(client)) {
+                            Snackbar.make(view, "Updated client", Snackbar.LENGTH_LONG).show()
+                            finish()
+                        } else
+                            Snackbar.make(view, "SQL Error updating client", Snackbar.LENGTH_LONG).show()
+                    }
                 } else
                     Snackbar.make(view, "Error. Conflict with $conflicts", Snackbar.LENGTH_LONG).show()
             } else {

@@ -76,10 +76,12 @@ class StaticFunctions {
         }
 
         /**
-         * checks user input as String for illegal characters
-         * @return true if a bad character is found
+         * checks user input as String for illegal characters or an empty string
+         * @return true if a bad character is found or if an empty string is found
          */
         fun badSQLText(strSQL: String): Boolean{
+            if (strSQL.isBlank())
+                return true
             for (character in strSQL.toCharArray())
                 if (character == ',' || character == ';' || character == '"' || character == '_') return true
             return false

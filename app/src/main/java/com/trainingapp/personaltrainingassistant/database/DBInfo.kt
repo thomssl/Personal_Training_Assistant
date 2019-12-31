@@ -64,7 +64,7 @@ object DBInfo {
             const val EXERCISE_IDS = "exercise_ids"
             const val SETS = "sets"
             const val REPS = "reps"
-            const val RESISTANCE = "resistance"
+            const val RESISTANCE = "resistances"
             const val EXERCISE_ORDER = "exercise_order"
             const val NOTES = "notes"
             const val DURATION = "duration"
@@ -73,8 +73,8 @@ object DBInfo {
 
     class UserSettingsEntry : BaseColumns{
         companion object{
-            val DEFAULT_DURATION = "default_duration"
-            val CLOCK_24 = "24_clock"
+            const val DEFAULT_DURATION = "default_duration"
+            const val CLOCK_24 = "24_clock"
         }
     }
 }

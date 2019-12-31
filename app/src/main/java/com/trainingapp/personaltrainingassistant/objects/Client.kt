@@ -34,6 +34,7 @@ class Client (var id: Int, var name: String, var scheduleType: ScheduleType, day
             }
             ScheduleType.WEEKLY_VARIABLE,ScheduleType.MONTHLY_VARIABLE -> days[0].toString()
             ScheduleType.NO_SCHEDULE -> if (isDatabase) days[0].toString() else ""
+            ScheduleType.BLANK -> "Error"
         }
     }
 
@@ -56,6 +57,7 @@ class Client (var id: Int, var name: String, var scheduleType: ScheduleType, day
                 return builder.toString()
             }
             ScheduleType.NO_SCHEDULE,ScheduleType.MONTHLY_VARIABLE,ScheduleType.WEEKLY_VARIABLE -> if (isDatabase) times[0].toString() else ""
+            ScheduleType.BLANK -> "Error"
         }
     }
 
@@ -72,7 +74,8 @@ class Client (var id: Int, var name: String, var scheduleType: ScheduleType, day
 
     fun getDuration(dateTime: String): Int{
         val calendar = StaticFunctions.getDate(dateTime)
-        return durations[days.indexOf(calendar[Calendar.DAY_OF_WEEK])]
+        val index = days.indexOf(calendar[Calendar.DAY_OF_WEEK])
+        return if (index >= 0) durations[index] else 0
     }
 
     fun getStrSessionType(): String = scheduleType.text
