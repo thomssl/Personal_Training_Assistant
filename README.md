@@ -17,14 +17,14 @@ All fields or boxes that the user inputs information must be checked to make sur
 
 ### Overview
 
-Clients are used to conatin the information pertaining to a single client. They contain:
+Clients are used to contain the information pertaining to a single client. They contain:
 
 - id, unique to the client
 - name, unique to the client
 - schedule type, see schedule types below in classification
 - days, list of days the client is scheduled if their schedule is constant (if not constant, it will be the number of weekly or monthly session allotted to the client)
 - times, list of times the client is scheduled (correlating with their days) if their schedule is constant (if not constant, it will be 0)
-- durations, list of durationss the client is scheduled (correlating with their days) if their schedule is constant (if not constant, it will be a single default session duration)
+- durations, list of durations the client is scheduled (correlating with their days) if their schedule is constant (if not constant, it will be a single default session duration)
 - start date, will be zero if "No Schedule" type is chosen
 - end date, will be zero if "No Schedule" type is chosen
 
@@ -41,7 +41,7 @@ This classification will guide how sessions are created and how the client will 
 
 ### Creation
 
-Enter client name and choose schedule type. Input fields will change depending on the schedule type. Enter all required input fields visible to complete Client creation. See "Input Feilds" to make sure name field input is valid.
+Enter client name and choose schedule type. Input fields will change depending on the schedule type. Enter all required input fields visible to complete Client creation. See "Input Fields" to make sure name field input is valid.
 
 ## Joints
 
@@ -60,14 +60,14 @@ Static list of joints:
 
 ### Overview
 
-Muscles are used to contain the information about a muscle:
+Muscles are used to hold the information about a muscle:
 
-id, unique to the muscle
-name, unique to the muscle
+- id, unique to the muscle
+- name, unique to the muscle
 
 ### Creation
 
-Enter name of muscle.  See "Input Feilds" to make sure name field input is valid. Checks if to make sure name is unique
+Enter name of muscle.  See "Input Fields" to make sure name field input is valid. Checks if to make sure name is unique
 
 ### Deletion
 
@@ -98,11 +98,11 @@ This makes it easier to classify and limit over complication of the data to elim
 - If the exercise is driven by the strength or hypertrophy of a given muscle(s), choose strength
 - If the exercise is driven by the range of motion or strength of a joint(s), choose mobility or stability
 
-When characterizing an exercise, there is a primary focus and secondary focus(es). To simplify the data collection, an exercise can only have 1 primary focus, but it can have as many secondary focuses as needed within the collection of muscles and joints provided. For example, a Hip Thrust would have a primary focus of the glutes and possibly a secondary focus of the hamstrings and spinal erectors. However, be for warned that if you choose “Strength” as the exercise type, the choices for primary and secondary focuses are limited to muscles and the same if true if you choose “Mobility” or “Stability” with respect to joints.
+When characterizing an exercise, there is a primary focus and secondary focus(es). To simplify the data collection, an exercise can only have 1 primary focus, but it can have as many secondary focuses as needed within the collection of muscles and joints provided. For example, a Hip Thrust would have a primary focus of the Gluteus Maxiumus and possibly a secondary focus of the Hamstrings and Spinal Erectors. However, be for warned that if you choose “Strength” as the exercise type, the choices for primary and secondary focuses are limited to muscles and the same if true if you choose “Mobility” or “Stability” with respect to joints.
 
 ### Creation
 
-Enter exercise name and exercise type. Once type is chosen, the primary movers list will be filled with the appropriate data. Once a primary mover is selected, the secondary mover list will be filled will all the possible movers with the primary mover selected omitted (to remove redudant secondary mover information). See "Input Feilds" to make sure name field input is valid. Checks to make sure name is unique.
+Enter exercise name and exercise type. Once type is chosen, the primary movers list will be filled with the appropriate data. Once a primary mover is selected, the secondary mover list will be filled will all the possible movers with the primary mover selected omitted (to remove redundant secondary mover information). See "Input Fields" to make sure name field input is valid. Checks to make sure name is unique.
 
 ### Deletion
 
