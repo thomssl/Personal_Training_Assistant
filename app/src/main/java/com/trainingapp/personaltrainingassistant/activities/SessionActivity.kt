@@ -174,10 +174,39 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
             } else {
                 setDuration()
                 when (true){
-                    databaseOperations.checkSessionConflict(session.clone(duration = duration), true) -> { Snackbar.make(view, "Error: Session Conflict", Snackbar.LENGTH_LONG).show(); false }
-                    databaseOperations.checkSessionLog(session) -> if (databaseOperations.updateSession(session,"")){ session.duration = duration; true } else { Snackbar.make(view, "SQL Error during session update", Snackbar.LENGTH_LONG).show(); false }
-                    databaseOperations.checkChange(session) -> if (databaseOperations.updateChange(session,session.clone(duration = duration))) { session.duration = duration; true } else { Snackbar.make(view, "SQL Error during session change update", Snackbar.LENGTH_LONG).show(); false }
-                    else -> if (databaseOperations.insertSession(session.clone(duration = duration))) { session.duration = duration; true } else { Snackbar.make(view, "SQL Error during session insert", Snackbar.LENGTH_LONG).show(); false }
+                    databaseOperations.checkSessionConflict(session.clone(duration = duration), true) -> {
+                        Snackbar.make(view, "Error: Session Conflict", Snackbar.LENGTH_LONG).show()
+                        false
+                    }
+                    databaseOperations.checkSessionLog(session) -> {
+                        if (databaseOperations.updateSession(session, "")) {
+                            session.duration = duration
+                            setDuration()
+                            true
+                        } else {
+                            Snackbar.make(view, "SQL Error during session update", Snackbar.LENGTH_LONG).show()
+                            false
+                        }
+                    }
+                    databaseOperations.checkChange(session) -> {
+                        if (databaseOperations.updateChange(session, session.clone(duration = duration))) {
+                            session.duration = duration
+                            setDuration()
+                            true
+                        } else {
+                            Snackbar.make(view, "SQL Error during session change update", Snackbar.LENGTH_LONG).show()
+                            false
+                        }
+                    }
+                    else -> {
+                        if (databaseOperations.insertSession(session.clone(duration = duration))) {
+                            session.duration = duration
+                            true
+                        } else {
+                            Snackbar.make(view, "SQL Error during session insert", Snackbar.LENGTH_LONG).show()
+                            false
+                        }
+                    }
                 }
             }
         } catch (e: NumberFormatException){
@@ -213,9 +242,9 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
             -1
         when (true){
             order <= 0 -> Snackbar.make(view, "Order must be a number greater than 0", Snackbar.LENGTH_LONG).show()
-            resistance.isEmpty() -> Snackbar.make(view, "Resistance is empty", Snackbar.LENGTH_LONG).show()
-            sets.isEmpty() -> Snackbar.make(view, "sets is empty", Snackbar.LENGTH_LONG).show()
-            reps.isEmpty() -> Snackbar.make(view, "reps is empty", Snackbar.LENGTH_LONG).show()
+            resistance.isBlank() -> Snackbar.make(view, "Resistance is empty", Snackbar.LENGTH_LONG).show()
+            sets.isBlank() -> Snackbar.make(view, "sets is empty", Snackbar.LENGTH_LONG).show()
+            reps.isBlank() -> Snackbar.make(view, "reps is empty", Snackbar.LENGTH_LONG).show()
             StaticFunctions.badSQLText(resistance) -> Snackbar.make(view, "Resistance contains a bad character. See Wiki for more details", Snackbar.LENGTH_LONG).show()
             StaticFunctions.badSQLText(sets) -> Snackbar.make(view, "Sets contains a bad character. See Wiki for more details", Snackbar.LENGTH_LONG).show()
             StaticFunctions.badSQLText(reps) -> Snackbar.make(view, "Reps contains a bad character. See Wiki for more details", Snackbar.LENGTH_LONG).show()
@@ -242,9 +271,9 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
             -1
         when (true){
             order <= 0 -> Snackbar.make(rvSessionExercises, "Order must be a number greater than 0", Snackbar.LENGTH_LONG).show()
-            resistance.isEmpty() -> Snackbar.make(rvSessionExercises, "Resistance is empty", Snackbar.LENGTH_LONG).show()
-            sets.isEmpty() -> Snackbar.make(rvSessionExercises, "sets is empty", Snackbar.LENGTH_LONG).show()
-            reps.isEmpty() -> Snackbar.make(rvSessionExercises, "reps is empty", Snackbar.LENGTH_LONG).show()
+            resistance.isBlank() -> Snackbar.make(rvSessionExercises, "Resistance is empty", Snackbar.LENGTH_LONG).show()
+            sets.isBlank() -> Snackbar.make(rvSessionExercises, "sets is empty", Snackbar.LENGTH_LONG).show()
+            reps.isBlank() -> Snackbar.make(rvSessionExercises, "reps is empty", Snackbar.LENGTH_LONG).show()
             StaticFunctions.badSQLText(resistance) -> Snackbar.make(rvSessionExercises, "Resistance contains a bad character. See Wiki for more details", Snackbar.LENGTH_LONG).show()
             StaticFunctions.badSQLText(sets) -> Snackbar.make(rvSessionExercises, "Sets contains a bad character. See Wiki for more details", Snackbar.LENGTH_LONG).show()
             StaticFunctions.badSQLText(reps) -> Snackbar.make(rvSessionExercises, "Reps contains a bad character. See Wiki for more details", Snackbar.LENGTH_LONG).show()

@@ -246,7 +246,7 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
 
     fun onClientConfirm(view: View){
         val name = etxtAddEditClientName.text.toString()
-        if (!StaticFunctions.badSQLText(name) && name.isNotEmpty()) {
+        if (!StaticFunctions.badSQLText(name) && name.isNotBlank()) {
             val client: Client = when (radGrpAddEditClient.checkedRadioButtonId) {
                 R.id.radIsWeeklyConst -> {
                     val startDate = btnAddEditClientStartDate.text.toString()
