@@ -212,12 +212,24 @@ class DatabaseOperations(context: Context) {
      * @return if the muscle defines an exercise 2, if the deletion is handled with no error 1, if the deletion has an error 0
      */
     fun removeMuscle(muscleJoint: MuscleJoint): Int{
-        val cursor = db.rawQuery("Select * From Exercises Where primary_mover = ${muscleJoint.id} Or secondary_movers Like '${muscleJoint.id},%' Or secondary_movers Like '%,${muscleJoint.id},%' Or secondary_movers Like '%,${muscleJoint.id}' or secondary_movers = '${muscleJoint.id}'", null)
+        val cursor = db.rawQuery("Select * From Exercises Where exercise_type = 1 And (primary_mover = ${muscleJoint.id} Or secondary_movers Like '${muscleJoint.id},%' Or secondary_movers Like '%,${muscleJoint.id},%' Or secondary_movers Like '%,${muscleJoint.id}' or secondary_movers = '${muscleJoint.id}')", null)
         val result =  if (cursor.moveToFirst())
             2
         else {
             if (deleteMuscle(muscleJoint)) 1 else 0
         }
+        cursor.close()
+        return result
+    }
+
+    /**
+     * Method to check if a new or updated muscle is in conflict with an existing muscle
+     * @param muscle MuscleJoint with the new or updated muscle information
+     * @return true if there is a conflict, false if no conflict found
+     */
+    fun checkMuscleConflict(muscle: MuscleJoint): Boolean {
+        val cursor = db.rawQuery("Select muscle_name From Muscles Where muscle_name = '${muscle.name}'", null)
+        val result = cursor.moveToFirst()
         cursor.close()
         return result
     }

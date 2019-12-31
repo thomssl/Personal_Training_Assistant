@@ -177,6 +177,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, NavController.On
     }
 
     private fun addEditConfirm(muscleJoint: MuscleJoint, isNew: Boolean): Boolean{
+        if (databaseOperations.checkMuscleConflict(muscleJoint))
+            return false
         return if (isNew)
             databaseOperations.addMuscle(muscleJoint)
         else

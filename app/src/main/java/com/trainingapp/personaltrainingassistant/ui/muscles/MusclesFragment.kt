@@ -55,16 +55,11 @@ class MusclesFragment : Fragment(), CoroutineScope {
     }
 
     private fun onItemClick(muscleJoint: MuscleJoint){
-        val dialog = AddEditMuscleDialog(muscleJoint) {muscleJointDialog, b -> addEditConfirm(muscleJointDialog, b) }
+        val dialog = AddEditMuscleDialog(muscleJoint) {muscleJointDialog, _ -> editConfirm(muscleJointDialog) }
         dialog.show(fragmentManager, "Edit Exercise")
     }
 
-    private fun addEditConfirm(muscleJoint: MuscleJoint, isNew: Boolean): Boolean{
-        return if (isNew)
-            databaseOperations.addMuscle(muscleJoint)
-        else
-            databaseOperations.updateMuscle(muscleJoint)
-    }
+    private fun editConfirm(muscleJoint: MuscleJoint): Boolean = if (databaseOperations.checkMuscleConflict(muscleJoint)) databaseOperations.updateMuscle(muscleJoint) else false
 
     private fun onItemLongClick(muscleJoint: MuscleJoint, view: View): Boolean{
         val alertDialog = AlertDialog.Builder(context)
