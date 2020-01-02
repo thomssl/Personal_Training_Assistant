@@ -52,7 +52,7 @@ class StaticFunctions {
 
         fun getExerciseTypeNameArray(): Array<String>{
             val types = ExerciseType.values()
-            return Array(types.size) {i -> types[i].text}
+            return Array(types.size-1) { i -> types[i].text }
         }
 
         fun toArrayListInt(str: String): ArrayList<Int>{

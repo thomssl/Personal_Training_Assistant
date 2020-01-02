@@ -1,6 +1,5 @@
 package com.trainingapp.personaltrainingassistant.objects
 
-import com.trainingapp.personaltrainingassistant.StaticFunctions
 import com.trainingapp.personaltrainingassistant.enumerators.ExerciseType
 import java.lang.StringBuilder
 
@@ -39,7 +38,7 @@ class Exercise(val id: Int, var name: String, var type: ExerciseType, var primar
         secondaryMovers.clear()
     }
 
-    fun getInsertCommand(): String = "Insert Into Exercises(exercise_name, exercise_type, primary_mover, secondary_movers) Values('$name', ${type.value}, ${primaryMover.id}, '${getStrSecondaryMovers()}')"
-    fun getUpdateCommand(): String = "Update Exercises Set exercise_name = '$name', exercise_type = ${type.value}, primary_mover = ${primaryMover.id}, secondary_movers = '${getStrSecondaryMovers()}' Where exercise_id = $id"
+    fun getInsertCommand(): String = "Insert Into Exercises(exercise_name, exercise_type, primary_mover, secondary_movers) Values('$name', ${type.num}, ${primaryMover.id}, '${getStrSecondaryMovers()}')"
+    fun getUpdateCommand(): String = "Update Exercises Set exercise_name = '$name', exercise_type = ${type.num}, primary_mover = ${primaryMover.id}, secondary_movers = '${getStrSecondaryMovers()}' Where exercise_id = $id"
     fun getDeleteCommand(): String = "Delete From Exercises Where exercise_id = $id"
 }
