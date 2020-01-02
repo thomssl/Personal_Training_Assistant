@@ -55,7 +55,7 @@ class MusclesFragment : Fragment(), CoroutineScope {
     }
 
     private fun onItemClick(muscleJoint: MuscleJoint){
-        val dialog = AddEditMuscleDialog(muscleJoint) {muscleJointDialog, _ -> editConfirm(muscleJointDialog) }
+        val dialog = AddEditMuscleDialog(muscleJoint) {muscleJointDialog -> editConfirm(muscleJointDialog) }
         dialog.show(fragmentManager, "Edit Exercise")
     }
 

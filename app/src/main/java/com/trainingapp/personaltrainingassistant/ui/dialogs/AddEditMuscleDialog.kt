@@ -10,7 +10,7 @@ import com.trainingapp.personaltrainingassistant.R
 import com.trainingapp.personaltrainingassistant.objects.MuscleJoint
 import java.lang.IllegalStateException
 
-class AddEditMuscleDialog(private val muscleJoint: MuscleJoint, private val confirmListener: (MuscleJoint, Boolean) -> Boolean): DialogFragment() {
+class AddEditMuscleDialog(private val muscleJoint: MuscleJoint, private val confirmListener: (MuscleJoint) -> Boolean): DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity.let {
@@ -19,7 +19,7 @@ class AddEditMuscleDialog(private val muscleJoint: MuscleJoint, private val conf
             txtName.setText(muscleJoint.name)
             val builder = AlertDialog.Builder(it)
             builder.setView(view)
-                .setPositiveButton(R.string.confirm) {_, _ -> if (confirmListener(MuscleJoint(muscleJoint.id, txtName.text.toString()), muscleJoint.id == 0)) dismiss() }
+                .setPositiveButton(R.string.confirm) {_, _ -> if (confirmListener(MuscleJoint(muscleJoint.id, txtName.text.toString()))) dismiss() }
                 .setNegativeButton(R.string.cancel) {_, _ -> dismiss() }
                 .setTitle(if (muscleJoint.id == 0) R.string.add_muscle_title else R.string.edit_muscle_title)
             builder.create()

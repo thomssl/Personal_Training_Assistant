@@ -2,8 +2,6 @@ package com.trainingapp.personaltrainingassistant.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.view.Menu
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -34,6 +32,10 @@ import java.io.IOException
 import java.io.OutputStream
 import java.util.*
 
+/**
+ * Activity that holds the NavigationDrawer. When the drawer items are selected the appropriate Fragment is loaded and displayed
+ * A common FloatingActionButton is displayed over some Fragments and depending upon the open Fragment, an add process is started
+ */
 class MainActivity : AppCompatActivity(), View.OnClickListener, NavController.OnDestinationChangedListener, SettingsFragment.IFragmentToActivity {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
@@ -92,56 +94,67 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, NavController.On
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
+    /**
+     * Method used to save a prebuilt database to the applications data folder. This includes base information and does nothing if the database file already exists in the data folder
+     */
     private fun loadPreBuiltDatabase() {
         val file = File(getString(R.string.filePath))
         if (!file.exists()) {
             val assetManager = assets
             try {
-                val `in` = assetManager.open("data.db")
-                val out: OutputStream =
-                    FileOutputStream(getString(R.string.filePath))
+                val input = assetManager.open("data.db")
+                val out: OutputStream = FileOutputStream(getString(R.string.filePath))
                 val buffer = ByteArray(1024)
-                var read = `in`.read(buffer)
+                var read = input.read(buffer)
                 while (read != -1) {
                     out.write(buffer, 0, read)
-                    read = `in`.read(buffer)
+                    read = input.read(buffer)
                 }
             } catch (ex: IOException) {
-                Log.d("here", ex.message)
+                ex.printStackTrace()
             }
-        } else {
-            Log.d("here", "File Exists")
         }
     }
 
+    /**
+     * Method to handle the FloatingActionButton's onClick event. Proceeds with the appropriate add process depending upon the current NavigationController destination
+     * @param view FloatingActionButton view used to create Snackbars
+     */
     override fun onClick(view: View) {
         when (navController.currentDestination!!.id){
-            R.id.nav_schedule -> {
+            R.id.nav_schedule -> {//grabs current date from CalendarView and creates an AddSessionDialog to create the new session
                 val calendar = Calendar.getInstance()
                 calendar.timeInMillis = calSchedule.date
                 val dialog = AddSessionDialog(databaseOperations.getAddSessionsClientsByDay(calendar), calendar) { session, scheduleType -> addSessionConfirm(session,scheduleType) }
                 dialog.show(supportFragmentManager, "Add Session")
             }
-            R.id.nav_clients -> {
+            R.id.nav_clients -> {//creates and uses Intent to start an AddEditClientActivity. Sends an invalid id to tell the activity it is a new Client
                 val intent = Intent(this, AddEditClientActivity::class.java)
                 intent.putExtra("id", 0)
                 startActivity(intent)
             }
-            R.id.nav_exercises -> {
+            R.id.nav_exercises -> {//creates and uses Intent to start an AddEditExerciseActivity. Sends an invalid id to tell the activity it is a new Exercise
                 val intent = Intent(this, AddEditExerciseActivity::class.java)
+                intent.putExtra("id", 0)
                 startActivity(intent)
             }
             R.id.nav_camera -> {
                 Snackbar.make(view,"Name: Camera", Snackbar.LENGTH_LONG).show()
             }
-            R.id.nav_muscles -> {
-                val dialog = AddEditMuscleDialog(MuscleJoint(0, "")) {muscleJoint, b -> addEditConfirm(muscleJoint, b) }
+            R.id.nav_muscles -> {//creates an AddEditMuscleDialog and sends a blank MuscleJoint object to denote a new Muscle
+                val dialog = AddEditMuscleDialog(MuscleJoint(0, "")) {muscleJoint -> addEditConfirm(muscleJoint) }
                 dialog.show(supportFragmentManager, "Add Muscle")
             }
             else -> Snackbar.make(view,"None", Snackbar.LENGTH_LONG).show()
         }
     }
 
+    /**
+     * Method to show or hide the FloatingActionButton depending upon the NavigationController destination
+     * @param controller not used
+     * @param destination currently open Drawer Fragment, id tells which Fragment
+     * @param arguments not used
+     */
     override fun onDestinationChanged(controller: NavController, destination: NavDestination, arguments: Bundle?) {
         val id = destination.id
         if (id == R.id.nav_camera || id == R.id.nav_settings || id == R.id.nav_wiki)
@@ -150,38 +163,45 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, NavController.On
             fab.show()
     }
 
+    /**
+     * Method used by the IFragmentToActivity Interface within the SettingsFragment. Sets the NavigationController destination to Schedule to exit the Fragment
+     */
     override fun communicateToActivity() {
         navController.navigate(R.id.nav_schedule)
     }
 
+    /**
+     * Method used to handle the AddSessionDialog output. Checks for conflicts, checks if a makeup session needs to be used and attempts to insert the new session
+     * @param session Session object of the session that the user intends to add to their schedule
+     * @param scheduleType ScheduleType of the session owner. Used to check if a makeup session needs to be used
+     * @return true if no errors occurred, false if something goes wrong
+     */
     private fun addSessionConfirm(session: Session, scheduleType: ScheduleType): Boolean{
-        return if (!databaseOperations.checkSessionConflict(session, false)) {
+        return if (!databaseOperations.checkSessionConflict(session, false)) {//checks if the new session conflicts an existing session
             if (scheduleType == ScheduleType.WEEKLY_CONSTANT) {
-                if (!databaseOperations.removeCanceledSession(session.clientID)){
+                if (!databaseOperations.removeCanceledSession(session.clientID)){//if the client's schedule is constant, attempt to remove a makeup session logged
                     Snackbar.make(fab,"SQL error removing canceled session from Session_Changes", Snackbar.LENGTH_LONG).show()
-                    return false
+                    return false//exit with false if an error occurred. Don't add session
                 }
             }
-            if (databaseOperations.insertSession(session)){
+            if (databaseOperations.insertSession(session)){//if inserting the session is successful, prompt user, navigate to ScheduleFragment and return true
                 Snackbar.make(fab,"Successfully inserted new session", Snackbar.LENGTH_LONG).show()
                 navController.navigate(R.id.nav_schedule)
                 true
             } else {
                 Snackbar.make(fab,"SQL error inserting new session", Snackbar.LENGTH_LONG).show()
-                false
+                false//exit with false if error occurred while inserting
             }
         } else {
             Snackbar.make(fab,"Session conflict found", Snackbar.LENGTH_LONG).show()
-            false
+            false//exit with false if conflict found
         }
     }
 
-    private fun addEditConfirm(muscleJoint: MuscleJoint, isNew: Boolean): Boolean{
-        if (databaseOperations.checkMuscleConflict(muscleJoint))
-            return false
-        return if (isNew)
-            databaseOperations.addMuscle(muscleJoint)
-        else
-            databaseOperations.updateMuscle(muscleJoint)
-    }
+    /**
+     * Method used to handle AddEditMuscleDialog output. Checks for conflicts with existing muscles and attempts to add muscle
+     * @param muscle MuscleJoint object containing the data collected from the user
+     * @return true if no errors or conflicts found
+     */
+    private fun addEditConfirm(muscle: MuscleJoint): Boolean = if (databaseOperations.checkMuscleConflict(muscle)) databaseOperations.addMuscle(muscle) else false
 }
