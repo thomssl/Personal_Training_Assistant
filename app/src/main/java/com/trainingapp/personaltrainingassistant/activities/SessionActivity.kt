@@ -5,7 +5,6 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.core.text.isDigitsOnly
@@ -26,9 +25,17 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.lang.NumberFormatException
 import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.coroutines.CoroutineContext
 
+/**
+ * Activity to edit/insert sessions found in the user's schedule.
+ * Session objects can be fully populated (session found in Session_log) or partially populated (session found in Session_Changes or from the client's constant schedule)
+ * Session's will be updated when 'Change Time', 'Change Duration', 'Change Date' or 'Confirm' Buttons are clicked (if the changes are valid)
+ * Depending upon where the session is found, the session will be updated as follows:
+ *      - in Session_log, entry will be updated
+ *      - in Session_Change, if(an exercise(s) are added to the session) insert record into Session_log, if(date, time or duration changes) update record in Session_Changes
+ *      - in constant schedule, if (
+ */
 class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.OnTimeSetListener, DatePickerDialog.OnDateSetListener {
 
     private val calendar = Calendar.getInstance()
@@ -130,11 +137,9 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
 
     private fun updateSession(): Boolean{
         val oldSession = session.clone(dayTime = StaticFunctions.getStrDateTime(calendar))
-        return when (true){
-            databaseOperations.checkSessionLog(oldSession) -> databaseOperations.updateSession(session, StaticFunctions.getStrDateTime(calendar))
-            databaseOperations.checkChange(oldSession) -> databaseOperations.updateChange(oldSession, session)
-            else -> databaseOperations.insertChange(oldSession, session)
-        }
+        if (databaseOperations.checkSessionLog(oldSession)) if (!databaseOperations.updateSession(session, StaticFunctions.getStrDateTime(calendar))) return false
+        return if (databaseOperations.checkChange(oldSession)) databaseOperations.updateChange(oldSession, session)
+        else databaseOperations.insertChange(oldSession, session)
     }
 
     fun clickBtnConfirmSession(view: View){
@@ -147,11 +152,11 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
         }
     }
 
-    fun clickBtnChangeDate(view: View){
+    fun clickBtnChangeDate() {
         datePickerDialog.show()
     }
 
-    fun clickBtnChangeTime(view: View){
+    fun clickBtnChangeTime() {
         timePickerDialog.show()
     }
 
@@ -172,23 +177,19 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
                 Snackbar.make(view, "Duration outside of acceptable values. See Wiki for more information", Snackbar.LENGTH_LONG).show()
                 false
             } else {
-                setDuration()
-                when (true){
-                    databaseOperations.checkSessionConflict(session.clone(duration = duration), true) -> {
-                        Snackbar.make(view, "Error: Session Conflict", Snackbar.LENGTH_LONG).show()
-                        false
-                    }
-                    databaseOperations.checkSessionLog(session) -> {
-                        if (databaseOperations.updateSession(session, "")) {
+                if (databaseOperations.checkSessionConflict(session.clone(duration = duration), true)) {
+                    Snackbar.make(view, "Error: Session Conflict", Snackbar.LENGTH_LONG).show()
+                    false
+                } else {
+                    if (databaseOperations.checkSessionLog(session)) {
+                        if (databaseOperations.updateSession(session.clone(duration = duration), "")) {
                             session.duration = duration
-                            setDuration()
-                            true
                         } else {
                             Snackbar.make(view, "SQL Error during session update", Snackbar.LENGTH_LONG).show()
-                            false
+                            return false
                         }
                     }
-                    databaseOperations.checkChange(session) -> {
+                    if (databaseOperations.checkChange(session)) {
                         if (databaseOperations.updateChange(session, session.clone(duration = duration))) {
                             session.duration = duration
                             setDuration()
@@ -198,9 +199,10 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
                             false
                         }
                     }
-                    else -> {
+                    else {
                         if (databaseOperations.insertSession(session.clone(duration = duration))) {
                             session.duration = duration
+                            setDuration()
                             true
                         } else {
                             Snackbar.make(view, "SQL Error during session insert", Snackbar.LENGTH_LONG).show()

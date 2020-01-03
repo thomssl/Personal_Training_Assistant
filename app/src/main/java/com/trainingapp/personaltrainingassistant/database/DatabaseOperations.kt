@@ -578,16 +578,7 @@ class DatabaseOperations(context: Context) {
         return result
     }
 
-    /**
-     * Method to insert a session. Will remove any changes to the date or time associated with that session
-     * @param session Session object containing the SQL commands to clear changes and insert into the Session_log
-     * @return true if the SQL command is successful
-     */
-    fun insertSession(session: Session): Boolean {
-        deleteChange(session)
-        return trySQLCommand(session.getSQLCommand(Session.INSERT_COMMAND))
-    }
-
+    fun insertSession(session: Session): Boolean = trySQLCommand(session.getSQLCommand(Session.INSERT_COMMAND))
     fun updateSession(session: Session, oldDayTime: String): Boolean = trySQLCommand(session.getSQLCommand(Session.UPDATE_COMMAND, oldDayTime))
     private fun deleteSession(session: Session): Boolean = trySQLCommand(session.getSQLCommand(Session.DELETE_COMMAND))
 
@@ -698,10 +689,7 @@ class DatabaseOperations(context: Context) {
         val currentDate = (calendarNow[Calendar.YEAR] * 365) + calendarNow[Calendar.DAY_OF_YEAR]
         val chosenDate = (calendarChosen[Calendar.YEAR] * 365) + calendarChosen[Calendar.DAY_OF_YEAR]
 
-        val date =
-            StaticFunctions.getStrDateTime(
-                calendarChosen
-            )
+        val date = StaticFunctions.getStrDateTime(calendarChosen)
         var cursor = db.rawQuery("Select s.client_id, s.dayTime, s.exercise_ids, s.sets, s.reps, s.resistances, s.exercise_order, s.notes, s.duration, c.client_name From Session_log s Inner Join Clients c On s.client_id=c.client_id Where date(dayTime) = date('$date')", null)
         if (cursor.moveToFirst()){
             while(!cursor.isAfterLast){
@@ -728,7 +716,7 @@ class DatabaseOperations(context: Context) {
         return if (chosenDate < currentDate) Day(sessions)
         else {
             val dayOfWeek = calendarChosen[Calendar.DAY_OF_WEEK]
-            cursor = db.rawQuery("Select c.client_id, c.client_name, c.times, c.days, c.durations From Clients c Where days Like '%$dayOfWeek%' And date(end_date) >= date('${StaticFunctions.getStrDateTime(calendarChosen)}') And date(start_date) <= date('${StaticFunctions.getStrDateTime(calendarChosen)}') And schedule_type = 1 And Not (c.client_id in (Select Distinct client_id From Session_Changes Where date(normal_dayTime) = date('$date')) Or c.client_id in (Select s.client_id From Session_log s Where date(dayTime) = date('$date')))", null)
+            cursor = db.rawQuery("Select c.client_id, c.client_name, c.times, c.days, c.durations From Clients c Where days Like '%$dayOfWeek%' And date(end_date) >= date('$date') And date(start_date) <= date('$date') And schedule_type = 1 And Not (c.client_id in (Select Distinct client_id From Session_Changes Where date(normal_dayTime) = date('$date')) Or c.client_id in (Select s.client_id From Session_log s Where date(dayTime) = date('$date')))", null)
             if (cursor.moveToFirst()){
                 while(!cursor.isAfterLast){
                     val index = cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.DAYS)).split(",").indexOf(dayOfWeek.toString())
