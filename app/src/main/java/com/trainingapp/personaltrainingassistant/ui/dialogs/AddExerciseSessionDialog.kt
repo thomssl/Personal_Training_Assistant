@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import android.widget.*
 import androidx.fragment.app.DialogFragment
 import com.trainingapp.personaltrainingassistant.database.DatabaseOperations
@@ -47,5 +48,11 @@ class AddExerciseSessionDialog(private val clientID: Int, private val  confirmLi
         databaseOperations = DatabaseOperations(context)
         exercises = databaseOperations.getAllExercises()
         exercises.forEach{exerciseNames.add(it.name)}
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (resources.configuration.smallestScreenWidthDp > 600)
+         dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
     }
 }
