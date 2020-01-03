@@ -313,7 +313,9 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
                             }
                             val duration = lstDurations[index].text.toString()
                             if (duration.isDigitsOnly()) {//if the duration text is only digit (ie Int). Should always be true due to view's input type
-                                if (duration.toInt() > 120 || duration.toInt() <= 0){//check if duration fits within range of 0 <= duration <= 120. See Wiki
+                                if (duration.toInt() in 1..120){//check if duration fits within range of 0 <= duration <= 120. See Wiki
+                                    builderDurations.append("${duration.toInt()},")
+                                } else {
                                     Snackbar.make(view, "Error. The duration entered is 0 or greater than 120mins. See Wiki for more information", Snackbar.LENGTH_LONG).show()
                                     return//exit function. Do nothing
                                 }

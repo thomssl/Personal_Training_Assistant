@@ -44,9 +44,7 @@ class Day (private var sessions: ArrayList<Session>) {
             sessions.forEach { builder.append("${it.clientID},") }
             builder.deleteCharAt(builder.lastIndex)
             builder.toString()
-        } else {
-            ""
-        }
+        } else ""
     }
 
     fun getSessionCount(): Int = sessions.size
@@ -55,13 +53,8 @@ class Day (private var sessions: ArrayList<Session>) {
         var result = false
         for(daySession in sessions){
             val isSameClient = session.clientID == daySession.clientID
-            if (!isSameClient) {
-                result =
-                    StaticFunctions.compareTimeRanges(
-                        daySession.getTimeRange(),
-                        session.getTimeRange()
-                    )
-            }
+            if (!isSameClient)
+                result = StaticFunctions.compareTimeRanges(daySession.getTimeRange(), session.getTimeRange())
             else if (isSameClient &&  !isSameDate)
                 result = true
 
@@ -69,5 +62,14 @@ class Day (private var sessions: ArrayList<Session>) {
                 break
         }
         return result
+    }
+
+    fun getConflicts(): ArrayList<Int>{
+        val conflicts = ArrayList<Int>()
+        for (i in sessions.indices){
+            if (checkConflict(sessions[i], true))
+                conflicts.add(i)
+        }
+        return conflicts
     }
 }

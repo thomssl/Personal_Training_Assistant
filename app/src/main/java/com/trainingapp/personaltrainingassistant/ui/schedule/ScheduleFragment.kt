@@ -45,7 +45,7 @@ class ScheduleFragment : Fragment(), CalendarView.OnDateChangeListener {
     private fun setAdapter(){
         day = databaseOperations.getScheduleByDay(calendar)
         if (day.getSessionCount() > 0) {
-            rvDailySchedule.adapter = ScheduleRVAdapter(day,{position -> onItemClick(position)},{position -> onLongItemClick(position)})
+            rvDailySchedule.adapter = ScheduleRVAdapter(context, day,{position -> onItemClick(position)},{position -> onLongItemClick(position)})
             lblScheduleEmpty.visibility = View.INVISIBLE
             rvDailySchedule.visibility = View.VISIBLE
         }
