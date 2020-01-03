@@ -23,6 +23,7 @@ import com.trainingapp.personaltrainingassistant.objects.MuscleJoint
 import com.trainingapp.personaltrainingassistant.objects.Session
 import com.trainingapp.personaltrainingassistant.ui.dialogs.AddEditMuscleDialog
 import com.trainingapp.personaltrainingassistant.ui.dialogs.AddSessionDialog
+import com.trainingapp.personaltrainingassistant.ui.schedule.ScheduleFragment
 import com.trainingapp.personaltrainingassistant.ui.settings.SettingsFragment
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.fragment_schedule.*
@@ -36,11 +37,17 @@ import java.util.*
  * Activity that holds the NavigationDrawer. When the drawer items are selected the appropriate Fragment is loaded and displayed
  * A common FloatingActionButton is displayed over some Fragments and depending upon the open Fragment, an add process is started
  */
-class MainActivity : AppCompatActivity(), View.OnClickListener, NavController.OnDestinationChangedListener, SettingsFragment.IFragmentToActivity {
+class MainActivity : AppCompatActivity(),
+                        View.OnClickListener,
+                        NavController.OnDestinationChangedListener,
+                        SettingsFragment.IFragmentToActivity,
+                        ScheduleFragment.IFragmentToActivity {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var navController: NavController
     private lateinit var databaseOperations: DatabaseOperations
+    private val calendar: Calendar = Calendar.getInstance()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         loadPreBuiltDatabase()
@@ -122,9 +129,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, NavController.On
      */
     override fun onClick(view: View) {
         when (navController.currentDestination!!.id){
-            R.id.nav_schedule -> {//grabs current date from CalendarView and creates an AddSessionDialog to create the new session
-                val calendar = Calendar.getInstance()
-                calendar.timeInMillis = calSchedule.date
+            R.id.nav_schedule -> {//uses updated date from CalendarView and creates an AddSessionDialog to insert the new session
                 val dialog = AddSessionDialog(databaseOperations.getAddSessionsClientsByDay(calendar), calendar) { session, scheduleType -> addSessionConfirm(session,scheduleType) }
                 dialog.show(supportFragmentManager, "Add Session")
             }
@@ -164,10 +169,17 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, NavController.On
     }
 
     /**
-     * Method used by the IFragmentToActivity Interface within the SettingsFragment. Sets the NavigationController destination to Schedule to exit the Fragment
+     * Method used by the SettingsFragment.IFragmentToActivity Interface within the SettingsFragment. Sets the NavigationController destination to Schedule to exit the Fragment
      */
     override fun communicateToActivity() {
         navController.navigate(R.id.nav_schedule)
+    }
+
+    /**
+     * Method used by the ScheduleFragment.IFragmentToActivity Interface within the ScheduleFragment. Sets the calendar's date when the CalendarView's date is changed.
+     */
+    override fun setCalendarDate(year: Int, month: Int, day: Int) {
+        calendar.set(year, month, day)
     }
 
     /**

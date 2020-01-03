@@ -27,10 +27,7 @@ class SettingsFragment: Fragment(), View.OnClickListener {
             e.printStackTrace()
             Toast.makeText(context, "Could not cast context as IFragmentToActivity", Toast.LENGTH_LONG).show()
         }
-        databaseOperations =
-            DatabaseOperations(
-                context
-            )
+        databaseOperations = DatabaseOperations(context)
         userSettings = databaseOperations.getUserSettings()
     }
 

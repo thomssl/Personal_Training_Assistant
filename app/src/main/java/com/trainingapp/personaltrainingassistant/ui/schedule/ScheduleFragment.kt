@@ -8,12 +8,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CalendarView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.trainingapp.personaltrainingassistant.*
 import com.trainingapp.personaltrainingassistant.activities.SessionActivity
 import com.trainingapp.personaltrainingassistant.database.DatabaseOperations
 import com.trainingapp.personaltrainingassistant.objects.Day
+import com.trainingapp.personaltrainingassistant.ui.settings.SettingsFragment
 import kotlinx.android.synthetic.main.fragment_schedule.*
+import java.lang.ClassCastException
 import java.util.*
 
 class ScheduleFragment : Fragment(), CalendarView.OnDateChangeListener {
@@ -21,6 +24,7 @@ class ScheduleFragment : Fragment(), CalendarView.OnDateChangeListener {
     private val calendar: Calendar = Calendar.getInstance()
     private lateinit var databaseOperations: DatabaseOperations
     private lateinit var day: Day
+    private lateinit var iFragmentToActivity: IFragmentToActivity
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_schedule, container, false)
@@ -34,6 +38,12 @@ class ScheduleFragment : Fragment(), CalendarView.OnDateChangeListener {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+        try{
+            iFragmentToActivity = context as IFragmentToActivity
+        } catch (e: ClassCastException){
+            e.printStackTrace()
+            Toast.makeText(context, "Could not cast context as IFragmentToActivity", Toast.LENGTH_LONG).show()
+        }
         databaseOperations = DatabaseOperations(context)
     }
 
@@ -57,6 +67,7 @@ class ScheduleFragment : Fragment(), CalendarView.OnDateChangeListener {
 
     override fun onSelectedDayChange(p0: CalendarView, year: Int, month: Int, day: Int) {
         calendar.set(year,month,day)
+        iFragmentToActivity.setCalendarDate(year, month, day)
         setAdapter()
     }
 
@@ -74,5 +85,9 @@ class ScheduleFragment : Fragment(), CalendarView.OnDateChangeListener {
         alertDialog.setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss()}
         alertDialog.show()
         return true
+    }
+
+    interface IFragmentToActivity {
+        fun setCalendarDate(year: Int, month: Int, day: Int)
     }
 }
