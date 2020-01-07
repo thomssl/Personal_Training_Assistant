@@ -77,6 +77,7 @@ class AddEditExerciseActivity : AppCompatActivity(), AdapterView.OnItemSelectedL
         if (StaticFunctions.badSQLText(name))//checks if the name has invalid character or is blank
             Snackbar.make(view, "Invalid input character inside exercise name. See Wiki for more information", Snackbar.LENGTH_LONG).show()
         else {//if name passes the check
+            exercise.name = name
             if (!databaseOperations.checkExerciseConflict(exercise)) {//if no conflict is found with the existing exercises
                 if (isNew) {
                     if (databaseOperations.insertExercise(exercise)) {
