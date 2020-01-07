@@ -8,9 +8,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.trainingapp.personaltrainingassistant.R
 import com.trainingapp.personaltrainingassistant.objects.MuscleJoint
 
+/**
+ * Adapter to display exercise primary movers that the user can select. Only 1 primary mover can be selected. When a primary mover is clicked, it's view changes to selected state and all other items are deselected
+ * @param muscleJoints List of all the possible muscles or joints the user can choose from
+ * @param clickListener Function that handles the onClick event of an item within the AddEditExerciseActivity
+ */
 class AddExercisePrimaryRVAdapter(val muscleJoints: ArrayList<MuscleJoint>, private val clickListener: (MuscleJoint) -> Unit): RecyclerView.Adapter<AddExercisePrimaryRVAdapter.AddExercisePrimaryViewHolder>() {
 
-    var isSelected = Array(muscleJoints.size) {false}
+    var selectedPosition: Int = -1//used to tell which item is selected, init as -1 to say no item is selected
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AddExercisePrimaryViewHolder {
         return AddExercisePrimaryViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.mover_row, parent, false))
@@ -26,16 +31,15 @@ class AddExercisePrimaryRVAdapter(val muscleJoints: ArrayList<MuscleJoint>, priv
 
         fun onBindItems(muscleJoint: MuscleJoint, position: Int){
             itemView.findViewById<TextView>(R.id.txtExerciseMoverName).text = muscleJoint.name
-            itemView.setOnClickListener(this)
-            itemView.isSelected = isSelected[position]
+            itemView.setOnClickListener(this)//used to internally handle the onClick event and use passed function
+            itemView.isSelected = position == selectedPosition
         }
 
         override fun onClick(view: View) {
             val position = adapterPosition
-            isSelected = Array(muscleJoints.size) {false}
-            isSelected[position] = true
+            selectedPosition = position
             clickListener(muscleJoints[position])
-            notifyDataSetChanged()
+            notifyDataSetChanged()//needed to update all items to new selected item
         }
     }
 }
