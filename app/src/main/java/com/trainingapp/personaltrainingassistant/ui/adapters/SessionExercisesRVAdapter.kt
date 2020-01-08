@@ -9,11 +9,16 @@ import com.trainingapp.personaltrainingassistant.objects.ExerciseSession
 import com.trainingapp.personaltrainingassistant.R
 import com.trainingapp.personaltrainingassistant.objects.Session
 
+/**
+ * Adapter to display the ExerciseSessions found within a given Session
+ * @param session Session displayed in SessionActivity
+ * @param clickListener Function from SessionActivity to handle the onClick event of an item
+ * @param longClickListener Function from SessionActivity to handle the onLongClick event of an item
+ */
 class SessionExercisesRVAdapter(var session: Session, private val clickListener: (ExerciseSession, Int) -> Unit, private val longClickListener: (ExerciseSession) -> Boolean) : RecyclerView.Adapter<SessionExercisesRVAdapter.SessionExercisesViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SessionExercisesViewHolder {
-        return SessionExercisesViewHolder(LayoutInflater.from(parent.context).inflate(
-            R.layout.session_exercise_row, parent, false))
+        return SessionExercisesViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.session_exercise_row, parent, false))
     }
 
     override fun getItemCount(): Int = session.getExerciseCount()
