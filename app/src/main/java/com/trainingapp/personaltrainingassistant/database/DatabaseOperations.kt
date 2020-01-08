@@ -316,13 +316,14 @@ class DatabaseOperations(context: Context) {
      * Method to check if a client conflicts with the given client list. Only looks at clients with constant schedules (ie session_type = 1)
      * Should only be called if the client's ScheduleType is Weekly_Constant
      * @param client Client object created from data collected in the CreateOrAlterClientActivity
+     * @param clientID if editing a client, id used to disregard itself while checking. if new client, -1 is passed
      * @return empty string if a conflict is found with the current constant schedule. String with conflict client names if any conflicts are found
      */
-    fun checkClientConflict(client: Client): String{
+    fun checkClientConflict(client: Client, clientID: Int): String{
         var conflicts = ""
         for(index in client.days.indices) {//for each day that the client is coming in, check all clients who that already train on that day, who's start and end date are outside of today and who's ScheduleType is Weekly_Constant
             val day = client.days[index]
-            val cursor = db.rawQuery("Select times, durations, client_name, days From Clients Where days Like '%$day%' And start_date <= date('now') And end_date >= date('now') And schedule_type = 1", null)
+            val cursor = db.rawQuery("Select times, durations, client_name, days From Clients Where days Like '%$day%' And start_date <= date('now') And end_date >= date('now') And schedule_type = 1 And client_id <> $clientID", null)
             if (cursor.moveToFirst()) {
                 while(!cursor.isAfterLast) {
                     val position = cursor.getString(cursor.getColumnIndex(DBInfo.ClientsEntry.DAYS)).split(",").indexOf(day.toString())//find the index of the pertinent day and use that to get the time and duration for the possibly overlapping session

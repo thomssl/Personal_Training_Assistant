@@ -1,4 +1,4 @@
-# Personal_Training_Assistant
+# Personal Training Assistant
 
 ## Introduction
 
@@ -130,3 +130,37 @@ Only 1 session is allowed per day per client. Allowing for more makes checking f
 A exercises can only appear once per session. If the repeat exercise needs to be tracked (I’m not sure why someone would want to repeat and exercise later in a session though) you need to add it to the existing exercise entry and add the volume (If the weight or reps change then sorry, you cannot log that). If you don’t need to track the repeat exercise than add it to the session notes.
 
 Max session duration is 120 minutes. This covers 99% of people and if you’re still with a client after 2 hours that is one long ass session. If you need more time, don’t worry about it just enter your session data as per usual. The overall time constraint is just a number that fits most people and eliminates the chance of a user inputting a ridiculously long session duration.
+
+## Operation
+
+### Daily Schedule
+
+Select a date in the calendar to have the list to the right populated with all sessions found on that date. Any client with a constant schedule will have their scheduled future sessions shown (as long as you have not made a change to that scheduled session) even though nothing has been added to the session yet. All other session present have been added from a variable or non-schedule client and are one time events
+
+The list of session can be interacted with to add, edit or remove sessions from the selected date. Clicking the add button in the bottom right corner opens a prompt to add a session to the list. You will be given a list of clients that are able to add a session on the chosen date and be able to choose a time and duration. The clients available are chosen based upon their schedule type:
+
+- Constant Schedule - If the client has cancelled on a regular session, they are able to add a makeup session
+- Variable Schedule - If the client has available weekly/monthly sessions or they have makeup sessions available
+- No Schedule - All clients are available to add sessions
+
+Click any session in the list to proceed with editing that session in another window. If you need to cancel a session found in the list, hold down the session and a prompt will appear to confirm the action.
+
+### Session Editor
+
+When a session found in your daily schedule is clicked you enter this window and can edit all attributes of the session except for the client information. If the session chosen has data already associated with it, that data will be loaded to the appropriate field and be made accessible for you to edit. The various buttons provide you the ability to change the following attributes (by button name):
+
+- Change Duration - dialog to input a new duration (must be within 1-120 mins)
+- Change Date - dialog to input a new date from a calendar
+- Change Time - dialog to input a new time from a clock
+- Add Exercise - dialog to choose a new Exercise to add. See below for more info
+- Confirm - confirms any changes made to the session
+
+When attempting to add a new exercise to a session, the name input field allows you to search by exercise name, primary mover type and exercise type. When you see the desired exercise in the list click it to make sure you have a valid exercise chosen (the application will reject any name not associated with a logged exercise).
+
+You can also edit or delete an exercise from the session by clicking or holding down on an exercise in the exercise list. Editing will allow you to change all the the attributes except for the exercise name chosen. When attempting to remove an exercise, you will be prompted to confirm before proceeding.
+
+Notes can also be added/edited for the session. These notes cannot be tracked within 'Client Stats' but they can be useful to remember things about the session or client. The notes will also contain a reference to any exercise removed from the library that was once performed during this session.
+
+### Clients
+
+Clients are displayed in list format and each client row shows the important information about the client. To edit the client, you can click the row and a windows will appear and allow with the current client info displayed. 

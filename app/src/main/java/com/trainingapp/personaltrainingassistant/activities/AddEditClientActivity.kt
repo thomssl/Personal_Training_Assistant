@@ -36,6 +36,7 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
     private lateinit var databaseOperations: DatabaseOperations
     private var userSettings = ArrayList<Int>()
     private var isNew = false
+    private lateinit var intentClient: Client
 
     /**
      * Creation method overridden to initialize the DatabaseOperations object and set the rules of how the layout changes with user input
@@ -143,39 +144,39 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
             }
         }
         //get client from passed client id
-        val client = databaseOperations.getClient(intent.getIntExtra("id", 0))
-        if (client.id == 0){//if client is invalid/blank
+        intentClient = databaseOperations.getClient(intent.getIntExtra("id", 0))
+        if (intentClient.id == 0){//if client is invalid/blank
             isNew = true//set flag
             setTitle(R.string.add_client_title)//set title to add client
         } else {//if valid client
-            btnAddEditClientStartDate.text = client.startDate
-            btnAddEditClientEndDate.text = client.endDate
-            etxtAddEditClientName.setText(client.name)
+            btnAddEditClientStartDate.text = intentClient.startDate
+            btnAddEditClientEndDate.text = intentClient.endDate
+            etxtAddEditClientName.setText(intentClient.name)
             //populate layout depending upon client parameters
-            when (client.scheduleType) {
+            when (intentClient.scheduleType) {
                 ScheduleType.NO_SCHEDULE -> {
-                    etxtNoScheduleDuration.setText(client.durations[0].toString())//load default duration to field
+                    etxtNoScheduleDuration.setText(intentClient.durations[0].toString())//load default duration to field
                     radGrpAddEditClient.check(R.id.radIsNoSchedule)
                 }
                 ScheduleType.WEEKLY_CONSTANT -> {//use list of views to set appropriate view properties for client
                     val lstDays = ArrayList<Switch>(listOf(swWeeklyConstantIsSunday, swWeeklyConstantIsMonday, swWeeklyConstantIsTuesday, swWeeklyConstantIsWednesday, swWeeklyConstantIsThursday, swWeeklyConstantIsFriday, swWeeklyConstantIsSaturday))
                     val lstTimes = ArrayList<Button>(listOf(btnWeeklyConstantSundayTime, btnWeeklyConstantMondayTime, btnWeeklyConstantTuesdayTime, btnWeeklyConstantWednesdayTime, btnWeeklyConstantThursdayTime, btnWeeklyConstantFridayTime, btnWeeklyConstantSaturdayTime))
                     val lstDurations = ArrayList<EditText>(listOf(etxtWeeklyConstantSundayDuration, etxtWeeklyConstantMondayDuration, etxtWeeklyConstantTuesdayDuration, etxtWeeklyConstantWednesdayDuration, etxtWeeklyConstantThursdayDuration, etxtWeeklyConstantFridayDuration, etxtWeeklyConstantSaturdayDuration))
-                    client.days.forEach {//use (it - 1) because days are from 1-7 while indices is from 0-6
+                    intentClient.days.forEach {//use (it - 1) because days are from 1-7 while indices is from 0-6
                         lstDays[it - 1].isChecked = true
-                        lstTimes[it - 1].text = client.getStrTime(client.days.indexOf(it))
-                        lstDurations[it - 1].setText(client.durations[client.days.indexOf(it)].toString())
+                        lstTimes[it - 1].text = intentClient.getStrTime(intentClient.days.indexOf(it))
+                        lstDurations[it - 1].setText(intentClient.durations[intentClient.days.indexOf(it)].toString())
                     }
                     radGrpAddEditClient.check(R.id.radIsWeeklyConst)
                 }
                 ScheduleType.WEEKLY_VARIABLE -> {
-                    etxtWeeklyVariableNumSessions.setText(client.days[0].toString())
-                    etxtWeeklyVariableDuration.setText(client.durations[0].toString())
+                    etxtWeeklyVariableNumSessions.setText(intentClient.days[0].toString())
+                    etxtWeeklyVariableDuration.setText(intentClient.durations[0].toString())
                     radGrpAddEditClient.check(R.id.radIsWeeklyVar)
                 }
                 ScheduleType.MONTHLY_VARIABLE -> {
-                    etxtMonthlyVariableNumSessions.setText(client.days[0].toString())
-                    etxtMonthlyVariableDuration.setText(client.durations[0].toString())
+                    etxtMonthlyVariableNumSessions.setText(intentClient.days[0].toString())
+                    etxtMonthlyVariableDuration.setText(intentClient.durations[0].toString())
                     radGrpAddEditClient.check(R.id.radIsMonthlyVar)
                 }
                 ScheduleType.BLANK -> finish()//close activity is ScheduleType is invalid
@@ -333,7 +334,7 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
                     builderDays.deleteCharAt(builderDays.lastIndex)
                     builderTimes.deleteCharAt(builderTimes.lastIndex)
                     builderDurations.deleteCharAt(builderDurations.lastIndex)
-                    Client(0, StaticFunctions.formatForSQL(name), ScheduleType.WEEKLY_CONSTANT, builderDays.toString(), builderTimes.toString(), builderDurations.toString(), startDate, endDate)//construct Client object with collected data
+                    Client(intentClient.id, StaticFunctions.formatForSQL(name), ScheduleType.WEEKLY_CONSTANT, builderDays.toString(), builderTimes.toString(), builderDurations.toString(), startDate, endDate)//construct Client object with collected data
                 }
                 R.id.radIsWeeklyVar -> {
                     val startDate = btnAddEditClientStartDate.text.toString()
@@ -363,7 +364,7 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
                         return//exit function. Do nothing
                     }
                     //construct Client object with collected data. Times is set to "0" as default. if duration is set to 0 the default duration from the user settings is used
-                    Client(0, StaticFunctions.formatForSQL(name), ScheduleType.WEEKLY_VARIABLE, sessions, "0", if (duration.toInt() == 0) userSettings[0].toString() else duration, startDate, endDate)
+                    Client(intentClient.id, StaticFunctions.formatForSQL(name), ScheduleType.WEEKLY_VARIABLE, sessions, "0", if (duration.toInt() == 0) userSettings[0].toString() else duration, startDate, endDate)
                 }
                 R.id.radIsMonthlyVar -> {
                     val startDate = btnAddEditClientStartDate.text.toString()
@@ -393,7 +394,7 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
                         return//exit function. Do nothing
                     }
                     //construct Client object with collected data. Times is set to "0" as default. if duration is set to 0 the default duration from the user settings is used
-                    Client(0, StaticFunctions.formatForSQL(name), ScheduleType.MONTHLY_VARIABLE, sessions, "0", if (duration.toInt() == 0) userSettings[0].toString() else duration, startDate, endDate)
+                    Client(intentClient.id, StaticFunctions.formatForSQL(name), ScheduleType.MONTHLY_VARIABLE, sessions, "0", if (duration.toInt() == 0) userSettings[0].toString() else duration, startDate, endDate)
                 }
                 R.id.radIsNoSchedule -> {
                     val duration = etxtNoScheduleDuration.text.toString()
@@ -411,12 +412,12 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
                 }
                 else -> {
                     //if somehow no radio button is selected a blank client is passed forward
-                    Client(0, "", ScheduleType.NO_SCHEDULE, "", "", "", "", "")
+                    Client(intentClient.id, "", ScheduleType.NO_SCHEDULE, "", "", "", "", "")
                 }
             }
             if (client.name != "") {//if the blank client has moved forward, it will be ignored
                 //get conflicts with other existing clients. String will be empty if no conflicts and filled with conflict names if conflicts are found
-                val conflicts = if (client.scheduleType == ScheduleType.WEEKLY_CONSTANT) databaseOperations.checkClientConflict(client) else ""
+                val conflicts = if (client.scheduleType == ScheduleType.WEEKLY_CONSTANT) databaseOperations.checkClientConflict(client, if (isNew) -1 else client.id) else ""
                 if (conflicts.isEmpty()) {//if no conflicts found
                     if (isNew) {
                         if (databaseOperations.insertClient(client)) {
