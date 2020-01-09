@@ -459,7 +459,7 @@ class DatabaseOperations(context: Context) {
      * @return true if a conflict is found
      */
     fun checkExerciseConflict(exercise: Exercise): Boolean{
-        val cursor = db.rawQuery("Select exercise_name From Exercises Where exercise_name = '${exercise.name}'", null)
+        val cursor = db.rawQuery("Select exercise_name From Exercises Where exercise_name = '${exercise.name}' And exercise_id <> ${exercise.id}", null)
         val result = cursor.moveToFirst()
         cursor.close()
         return result

@@ -149,7 +149,7 @@ Click any session in the list to proceed with editing that session in another wi
 
 When a session found in your daily schedule is clicked you enter this window and can edit all attributes of the session except for the client information. If the session chosen has data already associated with it, that data will be loaded to the appropriate field and be made accessible for you to edit. The various buttons provide you the ability to change the following attributes (by button name):
 
-- Change Duration - dialog to input a new duration (must be within 1-120 mins)
+- Change Duration - dialog to input a new duration (must be within 1-120mins)
 - Change Date - dialog to input a new date from a calendar
 - Change Time - dialog to input a new time from a clock
 - Add Exercise - dialog to choose a new Exercise to add. See below for more info
@@ -163,8 +163,16 @@ Notes can also be added/edited for the session. These notes cannot be tracked wi
 
 ### Clients
 
-Clients are displayed in list format and each client row shows the important information about the client. To edit the client, you can click the row and a windows will appear with the current client info displayed. See 'Add/Edit Client' for more details. To add a new client, click the add button in the bottom right corner. A window will appear with default values selected. Add client information to confirm a new client and follow the rules about client. See 'Add/Edit Clients' and 'Client' for more information. To remove a client, long hold the client's row and a prompt will ask you to confirm deletion of a client.
+Clients are displayed in list format and each client row shows the important information about the client. To edit the client, you can click the row and a windows will appear with the current client info displayed. See 'Add/Edit Client' for more details. To add a new client, click the add button in the bottom right corner. A window will appear with default values selected. Add client information to confirm a new client and follow the rules about Clients. See 'Add/Edit Client' and 'Client' for more information. To remove a client, long hold the client's row and a prompt will ask you to confirm deletion of a client.
 
 ### Add/Edit Client
 
-When you click the add button or click a row within the clients list, you will be sent to window to add or edit a client. The operations are very similar so I figured it would be easier for me if I put them together. When creating or editing a client, your normal schedule (ie clients with normal schedules) will be checked for conflicts. All sessions outside of your normal schedule clients will not be checked, hence you might find conflicts with variable sessions in your schedule. You will have to deal with those but the Schedule section will turn conflicting session red to denote a conflict.
+When you click the add button or click a row within the clients list, you will be sent to window to add or edit a client. The operations are very similar so I figured it would be easier for me if I put them together. When creating or editing a client with a normal schedule, only your normal schedule (ie clients with normal schedules) will be checked for conflicts. All sessions outside of your normal schedule clients will not be checked, hence you might find conflicts with variable sessions in your schedule. You will have to deal with those but the Schedule section will turn conflicting session red to denote a conflict. When creating or editing a non-constant schedule client, no conflicts are checked except for the clients name. However, the client is still checked to make sure the number of variables sessions falls within acceptable values (1-7 for weekly, 1-28 monthly) and/or the default duration is valid (1-120mins).
+
+### Exercises
+
+Exercises are displayed in list format and each exercise row shows the important information about the exercise. To edit the exercise, you can click the row and a windows will appear with the current exercise info displayed. See 'Add/Edit Exercise' for more details. To add a new exercise, click the add button in the bottom right corner. A window will appear with default values selected. Add exercise information to confirm a new exercise and follow the rules about Exercises. See 'Add/Edit Exercise' and 'Exercise' for more information. To remove a exercise, long hold the exercise's row and a prompt will ask you to confirm deletion of a exercise.
+
+### Add/Edit Exercise
+
+When you click the add button or click a row within the exercises list, you will be sent to a window to add or edit an exercise. The operations are very similar so I figured it would be easier for me if I put them together. When creating or editing an exercise, you will be required to input a name (text box), exercise type (dropdown list), primary movers (list, single select) and secondary movers (list, multiple select). For rules regarding exercise creation see 'Exercise Creation'.
