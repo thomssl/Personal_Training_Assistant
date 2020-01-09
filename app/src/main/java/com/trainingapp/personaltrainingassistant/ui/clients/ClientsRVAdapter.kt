@@ -10,7 +10,7 @@ import com.trainingapp.personaltrainingassistant.R
 import com.trainingapp.personaltrainingassistant.enumerators.ScheduleType
 
 /**
- * Adapter to display all the clients found in the database. Displays all pertinent information about a client.]
+ * Adapter to display all the clients found in the database. Displays all pertinent information about a client
  * @param clients List of all the clients as Client objects
  * @param clickListener Function used by ClientsFragment to handle item onClick event (ie edit client)
  * @param longClickListener Function used by ClientsFragment to handle item onLonClick event (ie delete client)

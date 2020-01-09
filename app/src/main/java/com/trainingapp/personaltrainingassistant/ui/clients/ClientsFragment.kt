@@ -64,7 +64,7 @@ class ClientsFragment : Fragment(), CoroutineScope {
     }
 
     /**
-     * Method sent to ClientsRVAdapter to handle item onClick event. Opens a AddEditClientActivity with the id of the client top be edited
+     * Method sent to ClientsRVAdapter to handle item onClick event. Opens a AddEditClientActivity with the id of the client to be edited
      * @param clientID id of the client clicked, from adapter
      */
     private fun onItemClick(clientID: Int){
