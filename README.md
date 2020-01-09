@@ -171,8 +171,19 @@ When you click the add button or click a row within the clients list, you will b
 
 ### Exercises
 
-Exercises are displayed in list format and each exercise row shows the important information about the exercise. To edit the exercise, you can click the row and a windows will appear with the current exercise info displayed. See 'Add/Edit Exercise' for more details. To add a new exercise, click the add button in the bottom right corner. A window will appear with default values selected. Add exercise information to confirm a new exercise and follow the rules about Exercises. See 'Add/Edit Exercise' and 'Exercise' for more information. To remove a exercise, long hold the exercise's row and a prompt will ask you to confirm deletion of a exercise.
+Exercises are displayed in list format and each exercise row shows the important information about the exercise. To edit the exercise, you can click the row and a windows will appear with the current exercise info displayed. See 'Add/Edit Exercise' for more details. To add a new exercise, click the add button in the bottom right corner. A window will appear with default values selected. Add exercise information to confirm a new exercise and follow the rules about Exercises. See 'Add/Edit Exercise' and 'Exercise' for more information. To remove an exercise, long hold the exercise's row and a prompt will ask you to confirm deletion of a exercise. See 'Exercise Deletion' for more information
 
 ### Add/Edit Exercise
 
 When you click the add button or click a row within the exercises list, you will be sent to a window to add or edit an exercise. The operations are very similar so I figured it would be easier for me if I put them together. When creating or editing an exercise, you will be required to input a name (text box), exercise type (dropdown list), primary movers (list, single select) and secondary movers (list, multiple select). For rules regarding exercise creation see 'Exercise Creation'.
+
+### Muscles
+
+Muscles are displayed in list format and each muscle row shows the name of the muscle. To edit the muscle, you can click the row and a dialog will appear with the current muscle name displayed. To add a new exercise, click the add button in the bottom right corner. A dialog will appear with a blank name text box (follow the rules about 'Muscle Creation' and 'Input Fields). To remove a muscle, long hold the muscle's row and a prompt will ask you to confirm deletion of a muscle. See 'Muscle Deletion' for more information.
+
+### Settings
+
+The settings available are:
+
+- 24 Hour Clock (on/off) - allows the user to choose time choices and displays to be in 24 hour clock mode rather than am/pm
+- Default Session Duration - Value automatically inserted into session duration input fields or used if the duration is 0mins
