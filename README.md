@@ -13,7 +13,7 @@ All fields or boxes that the user inputs information must be checked to make sur
 - Semicolons
 - Double Quote Marks
 
-## Clients
+## Client
 
 ### Overview
 
@@ -43,7 +43,7 @@ This classification will guide how sessions are created and how the client will 
 
 Enter client name and choose schedule type. Input fields will change depending on the schedule type. Enter all required input fields visible to complete Client creation. See "Input Fields" to make sure name field input is valid.
 
-## Joints
+## Joint
 
 Static list of joints:
 1. Ankle
@@ -56,7 +56,7 @@ Static list of joints:
 8. Thoracic Spine
 9. Wrist
 
-## Muscles
+## Muscle
 
 ### Overview
 
@@ -73,7 +73,7 @@ Enter name of muscle.  See "Input Fields" to make sure name field input is valid
 
 Application will check if the Muscle is used to describe an exercise. If it is used, the deletion will be stopped and the user will be prompted to remove exercises that contain the muscle.
 
-## Exercises
+## Exercise
 
 ### Overview
 
@@ -108,7 +108,7 @@ Enter exercise name and exercise type. Once type is chosen, the primary movers l
 
 Application will check if the Exercise is used to describe a session. If it is used, the session log entry will have the exercise removed and the information for that exercise added to the notes section
 
-## Sessions
+## Session
 
 ### Overview
 
@@ -137,7 +137,7 @@ Max session duration is 120 minutes. This covers 99% of people and if you’re s
 
 Select a date in the calendar to have the list to the right populated with all sessions found on that date. Any client with a constant schedule will have their scheduled future sessions shown (as long as you have not made a change to that scheduled session) even though nothing has been added to the session yet. All other session present have been added from a variable or non-schedule client and are one time events
 
-The list of session can be interacted with to add, edit or remove sessions from the selected date. Clicking the add button in the bottom right corner opens a prompt to add a session to the list. You will be given a list of clients that are able to add a session on the chosen date and be able to choose a time and duration. The clients available are chosen based upon their schedule type:
+The list of session can be interacted with to add, edit or remove sessions from the selected date. Any sessions that conflict with another session will be red. Clicking the add button in the bottom right corner opens a prompt to add a session to the list. You will be given a list of clients that are able to add a session on the chosen date and be able to choose a time and duration. The clients available are chosen based upon their schedule type:
 
 - Constant Schedule - If the client has cancelled on a regular session, they are able to add a makeup session
 - Variable Schedule - If the client has available weekly/monthly sessions or they have makeup sessions available
@@ -163,4 +163,8 @@ Notes can also be added/edited for the session. These notes cannot be tracked wi
 
 ### Clients
 
-Clients are displayed in list format and each client row shows the important information about the client. To edit the client, you can click the row and a windows will appear and allow with the current client info displayed. 
+Clients are displayed in list format and each client row shows the important information about the client. To edit the client, you can click the row and a windows will appear with the current client info displayed. See 'Add/Edit Client' for more details. To add a new client, click the add button in the bottom right corner. A window will appear with default values selected. Add client information to confirm a new client and follow the rules about client. See 'Add/Edit Clients' and 'Client' for more information. To remove a client, long hold the client's row and a prompt will ask you to confirm deletion of a client.
+
+### Add/Edit Client
+
+When you click the add button or click a row within the clients list, you will be sent to window to add or edit a client. The operations are very similar so I figured it would be easier for me if I put them together. When creating or editing a client, your normal schedule (ie clients with normal schedules) will be checked for conflicts. All sessions outside of your normal schedule clients will not be checked, hence you might find conflicts with variable sessions in your schedule. You will have to deal with those but the Schedule section will turn conflicting session red to denote a conflict.
