@@ -5,10 +5,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.google.android.material.snackbar.Snackbar
 import com.trainingapp.personaltrainingassistant.R
 import kotlinx.android.synthetic.main.fragment_wiki.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlin.coroutines.CoroutineContext
 
-class WikiFragment : Fragment()  {
+/**
+ * Fragment called upon from 'Wiki' action within NavigationDrawer. Used to display wiki or README to user
+ */
+class WikiFragment : Fragment(), CoroutineScope  {
 
     private var introduction = "Error. Did not read Wiki properly. Whoops"
     private var inputFields = "Error. Did not read Wiki properly. Whoops"
@@ -25,6 +34,8 @@ class WikiFragment : Fragment()  {
     private var exercisesDeletion = "Error. Did not read Wiki properly. Whoops"
     private var sessionsOverview = "Error. Did not read Wiki properly. Whoops"
     private var sessionsLimits = "Error. Did not read Wiki properly. Whoops"
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_wiki, container, false)
@@ -32,25 +43,42 @@ class WikiFragment : Fragment()  {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        loadWiki()
-        wikiIntroductionBody.text = introduction
-        wikiInputsFieldsBody.text = inputFields
-        wikiClientsOverviewBody.text = clientsOverview
-        wikiClientsClassificationBody.text = clientsClassification
-        wikiClientsCreationBody.text = clientsCreation
-        wikiJointsBody.text = joints
-        wikiMusclesOverviewBody.text = musclesOverview
-        wikiMusclesCreationBody.text = musclesCreation
-        wikiMusclesDeletionBody.text = musclesDeletion
-        wikiExercisesOverviewBody.text = exercisesOverview
-        wikiExercisesClassificationBody.text = exercisesClassification
-        wikiExercisesCreationBody.text = exercisesCreation
-        wikiExercisesDeletionBody.text = exercisesDeletion
-        wikiSessionsOverviewBody.text = sessionsOverview
-        wikiSessionsLimitsBody.text = sessionsLimits
+        populateView(view)
     }
 
-    private fun loadWiki(){
+    /**
+     * UI coroutine used to fill scroll view fields with the proper text for the wiki
+     */
+    private fun populateView(view: View) = launch {
+        val result = loadWiki()//await loadWiki. true if no IOError, false if error occurred
+        prgWikiData.visibility = View.INVISIBLE
+        if (result){
+            wikiIntroductionBody.text = introduction
+            wikiInputsFieldsBody.text = inputFields
+            wikiClientsOverviewBody.text = clientsOverview
+            wikiClientsClassificationBody.text = clientsClassification
+            wikiClientsCreationBody.text = clientsCreation
+            wikiJointsBody.text = joints
+            wikiMusclesOverviewBody.text = musclesOverview
+            wikiMusclesCreationBody.text = musclesCreation
+            wikiMusclesDeletionBody.text = musclesDeletion
+            wikiExercisesOverviewBody.text = exercisesOverview
+            wikiExercisesClassificationBody.text = exercisesClassification
+            wikiExercisesCreationBody.text = exercisesCreation
+            wikiExercisesDeletionBody.text = exercisesDeletion
+            wikiSessionsOverviewBody.text = sessionsOverview
+            wikiSessionsLimitsBody.text = sessionsLimits
+            svWiki.visibility = View.VISIBLE
+        } else
+            Snackbar.make(view, "Error loading Wiki", Snackbar.LENGTH_LONG).show()
+    }
+
+    /**
+     * Suspendable IO coroutine to load text from Wiki txt file. Finds the index for the line to start each section. Collects the text as needed for each section.
+     * Hard coded for now. Might change to accept any wiki txt file formatted to specific conditions
+     * @return true if no error occurs, false if error occurs
+     */
+    private suspend fun loadWiki(): Boolean = withContext(Dispatchers.IO){
         try {
             val input = context!!.assets.open("PTAPPWiki2.txt")
             val reader = input.bufferedReader()
@@ -70,7 +98,8 @@ class WikiFragment : Fragment()  {
             val indexSessionsOverview = lines.indexOf("Session Overview")
             val indexSessionsLimits = lines.indexOf("Session Limits")
             introduction = lines[1]
-            inputFields = lines.subList(indexInputFields+1, indexInputFields + 6).joinToString("\n").replace("\\t","\t").replace("\\n", "\n")
+            //takes each sublist of lines and joins with new line character. Replaces tab and new line characters that have not been read properly with the proper notation
+            inputFields = lines.subList(indexInputFields+1, indexInputFields+6).joinToString("\n").replace("\\t","\t").replace("\\n", "\n")
             clientsOverview = lines.subList(indexClientsOverview+1, indexClientsOverview + 10).joinToString("\n").replace("\\t","\t").replace("\\n", "\n")
             clientsClassification = lines.subList(indexClientsClassification+1, indexClientsClassification + 7).joinToString("\n").replace("\\t","\t").replace("\\n", "\n")
             clientsCreation = lines[indexClientsCreation+1].replace("\\n","\n")
@@ -84,14 +113,10 @@ class WikiFragment : Fragment()  {
             exercisesDeletion = lines[indexExercisesDeletion+1].replace("\\n","\n")
             sessionsOverview = lines.subList(indexSessionsOverview+1, indexSessionsOverview+9).joinToString("\n").replace("\\t","\t").replace("\\n", "\n")
             sessionsLimits = lines.subList(indexSessionsLimits+1, indexSessionsLimits+4).joinToString("\n").replace("\\t","\t").replace("\\n", "\n")
-            //inputFields = "${lines[indexInputFields+1]}\n\t\t${lines[indexInputFields+2]}\n\t\t${lines[indexInputFields+3]}\n\t\t${lines[indexInputFields+4]}\n\t\t${lines[indexInputFields+5]}"
-            //sessions = lines.subList(indexSessions, indexSessions + 4).joinToString("\n\n")
-            //sessions = "${lines[indexSessions+1]}\n\n${lines[indexSessions+2]}\n\n${lines[indexSessions+3]}"
-            //exercises = lines.subList(indexExercises, lines.lastIndex).joinToString("\n")
-            //exercises = exercises.replace("\\t", "\t").replace("\\n", "\n")
-            //exercises = "${lines[indexExercises+1]}\n\n\t\t${lines[indexExercises+2]}\n\t\t${lines[indexExercises+3]}\n\t\t${lines[indexExercises+4]}\n\n${lines[indexExercises+5]}\n\n\t\t${lines[indexExercises+6]}\n\t\t${lines[indexExercises+7]}\n\n${lines[indexExercises+8]}"
+            true
         } catch (e: Exception){
             e.printStackTrace()
+            false
         }
     }
 }
