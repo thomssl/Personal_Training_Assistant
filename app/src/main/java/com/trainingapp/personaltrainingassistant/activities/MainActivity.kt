@@ -171,7 +171,7 @@ class MainActivity : AppCompatActivity(),
     /**
      * Method used by the SettingsFragment.IFragmentToActivity Interface within the SettingsFragment. Sets the NavigationController destination to Schedule to exit the Fragment
      */
-    override fun communicateToActivity() {
+    override fun returnToSchedule() {
         navController.navigate(R.id.nav_schedule)
     }
 
