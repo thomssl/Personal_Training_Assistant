@@ -19,6 +19,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 
+/**
+ * Fragment called upon from 'Muscles' action within the NavigationDrawer. Used to display, edit and delete muscles
+ */
 class MusclesFragment : Fragment(), CoroutineScope {
 
     private lateinit var databaseOperations: DatabaseOperations
@@ -36,7 +39,7 @@ class MusclesFragment : Fragment(), CoroutineScope {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setAdapter()
+        setAdapter()//calls UI coroutine to get MusclesRVAdapter
     }
 
     override fun onResume() {
@@ -44,23 +47,43 @@ class MusclesFragment : Fragment(), CoroutineScope {
         setAdapter()
     }
 
+    /**
+     * UI coroutine to get and set rvMuscles adapter
+     */
     private fun setAdapter() = launch{
-        val result = getAdapter()
-        rvMuscles.adapter = result
-        prgMusclesData.visibility = View.GONE
+        val result = getAdapter()//awaits IO coroutine to get adapter
+        rvMuscles.adapter = result//displays adapter once coroutine has finished
+        prgMusclesData.visibility = View.GONE//makes progress bar disappear once data received
     }
 
+    /**
+     * Suspendable IO coroutine to get an MusclesRVAdapter for rvMuscles
+     */
     private suspend fun getAdapter(): MusclesRVAdapter = withContext(Dispatchers.IO){
         MusclesRVAdapter(databaseOperations.getAllMuscles(), {muscleJoint -> onItemClick(muscleJoint) }, {muscleJoint, view -> onItemLongClick(muscleJoint, view) })
     }
 
+    /**
+     * Method passed to MusclesRVAdapter to handle item onClick event. Opens AddEditMuscleDialog with the MuscleJoint object of the muscle to be edited
+     * @param muscleJoint MuscleJoint object filled with data for muscle to be updated, from adapter
+     */
     private fun onItemClick(muscleJoint: MuscleJoint){
         val dialog = AddEditMuscleDialog(muscleJoint) {muscleJointDialog -> editConfirm(muscleJointDialog) }
         dialog.show(fragmentManager, "Edit Exercise")
     }
 
+    /**
+     * Method passed to AddEditMuscleDialog to handle confirm button onClick event. Checks for conflict and adds muscle if no conflict found
+     * @param muscleJoint MuscleJoint object filled with data for muscle to be updated, from dialog
+     * @return true if no conflict and update was successful, false if conflict or error updating muscle
+     */
     private fun editConfirm(muscleJoint: MuscleJoint): Boolean = if (databaseOperations.checkMuscleConflict(muscleJoint)) databaseOperations.updateMuscle(muscleJoint) else false
 
+    /**
+     * Method passed to MusclesRVAdapter to handle item onLongClick event. Opens AlertDialog to make user confirm exercise deletion
+     * @param muscleJoint MuscleJoint object to be removed from the database, from adapter
+     * @return always true since the callback consumed the long click (See Android View.onLongClickListener for more info)
+     */
     private fun onItemLongClick(muscleJoint: MuscleJoint, view: View): Boolean{
         val alertDialog = AlertDialog.Builder(context)
         alertDialog.setTitle(getString(R.string.confirm_delete, muscleJoint.name))
