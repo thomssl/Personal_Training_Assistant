@@ -49,7 +49,7 @@ class ExercisesFragment : Fragment(), CoroutineScope {
     }
 
     /**
-     * Suspendable IO coroutine to get an ExerciseRVAdapter for rvExercises
+     * Suspendable IO coroutine to get an ExercisesRVAdapter for rvExercises
      */
     private suspend fun getAdapter() : ExercisesRVAdapter = withContext(Dispatchers.IO){
         ExercisesRVAdapter(databaseOperations.getAllExercises(), {id -> onItemClicked(id)}, {exercise -> onItemLongClicked(exercise) })
@@ -61,7 +61,7 @@ class ExercisesFragment : Fragment(), CoroutineScope {
     }
 
     /**
-     * Method passed to ExerciseRVAdapter to handle item onClick event. Opens AddEditExerciseActivity with the id of the exercise to be edited
+     * Method passed to ExercisesRVAdapter to handle item onClick event. Opens AddEditExerciseActivity with the id of the exercise to be edited
      * @param id id of the exercise clicked, from adapter
      */
     private fun onItemClicked(id: Int){
@@ -71,7 +71,7 @@ class ExercisesFragment : Fragment(), CoroutineScope {
     }
 
     /**
-     * Method passed to ExercisesRVAdapter to handle item onLongClick event. Opens AlterDialog to make user confirm exercise deletion
+     * Method passed to ExercisesRVAdapter to handle item onLongClick event. Opens AlertDialog to make user confirm exercise deletion
      * @param exercise Exercise object to be removed from the database, from adapter
      * @return always true since the callback consumed the long click (See Android View.onLongClickListener for more info)
      */
