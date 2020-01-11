@@ -21,7 +21,7 @@ class AddSessionDialog(private val clients: ArrayList<Client>, private val calen
 
     private val clientNames = ArrayList<String>()
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         clients.forEach { clientNames.add("${it.name}${if (it.scheduleType == ScheduleType.WEEKLY_CONSTANT) " (makeup session)" else ""}") }
     }

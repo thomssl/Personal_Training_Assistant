@@ -53,6 +53,6 @@ class AddExerciseSessionDialog(private val clientID: Int, private val  confirmLi
     override fun onStart() {
         super.onStart()
         if (resources.configuration.smallestScreenWidthDp > 600)
-         dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+         dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
     }
 }

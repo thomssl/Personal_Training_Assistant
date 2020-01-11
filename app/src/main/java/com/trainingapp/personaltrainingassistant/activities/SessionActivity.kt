@@ -185,11 +185,11 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
         }
     }
 
-    fun clickBtnChangeDate(view: View) {
+    fun clickBtnChangeDate(@Suppress("UNUSED_PARAMETER") view: View) {
         datePickerDialog.show()
     }
 
-    fun clickBtnChangeTime(view: View) {
+    fun clickBtnChangeTime(@Suppress("UNUSED_PARAMETER") view: View) {
         timePickerDialog.show()
     }
 
@@ -295,7 +295,7 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
     private fun onAddConfirmClick(sessionDialog: AddExerciseSessionDialog, view: View): Boolean {
         val dialogView = sessionDialog.dialog
         //collect data input from user
-        val exerciseName = dialogView.findViewById<AutoCompleteTextView>(R.id.actxtAddExerciseName).text.toString()
+        val exerciseName = dialogView!!.findViewById<AutoCompleteTextView>(R.id.actxtAddExerciseName).text.toString()
         val resistance = dialogView.findViewById<EditText>(R.id.etxtAddResistance).text.toString()
         val sets = dialogView.findViewById<EditText>(R.id.etxtAddSets).text.toString()
         val reps = dialogView.findViewById<EditText>(R.id.etxtAddReps).text.toString()
@@ -329,7 +329,7 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
     private fun onEditConfirmClick(sessionDialog: EditExerciseSessionDialog, position: Int): Boolean {
         val dialogView = sessionDialog.dialog
         //collect data input from user
-        val resistance = dialogView.findViewById<EditText>(R.id.etxtEditResistance).text.toString()
+        val resistance = dialogView!!.findViewById<EditText>(R.id.etxtEditResistance).text.toString()
         val sets = dialogView.findViewById<EditText>(R.id.etxtEditSets).text.toString()
         val reps = dialogView.findViewById<EditText>(R.id.etxtEditReps).text.toString()
         val order: Int = if(dialogView.findViewById<EditText>(R.id.etxtEditExerciseOrder).text.isDigitsOnly() && dialogView.findViewById<EditText>(R.id.etxtEditExerciseOrder).text.toString().isNotBlank())
