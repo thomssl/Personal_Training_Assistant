@@ -59,7 +59,7 @@ class SettingsFragment: Fragment(), View.OnClickListener, CompoundButton.OnCheck
      */
     override fun onClick(view: View) {
         val strDuration = etxtDefaultSessionDuration.text.toString()
-        if (strDuration.isDigitsOnly()) {
+        if (strDuration.isDigitsOnly() && strDuration.isNotBlank()) {
             try {
                 val duration = strDuration.toInt()
                 if (duration in 1..120) {

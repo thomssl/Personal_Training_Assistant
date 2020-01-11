@@ -38,7 +38,7 @@ class AddSessionDialog(private val clients: ArrayList<Client>, private val calen
                 .setView(view)
                 .setPositiveButton(R.string.confirm) {_,_ ->
                     val duration = txtDuration.text.toString()
-                    if (btnTime.text != getString(R.string.time_format) && duration.isDigitsOnly()) {
+                    if (btnTime.text != getString(R.string.time_format) && duration.isDigitsOnly() && duration.isNotBlank()) {
                         val client = clients[txtNames.selectedItemPosition]
                         if (confirmListener(Session(client.id, client.name, StaticFunctions.getStrDateTime(calendar), ArrayList(), "", duration.toInt()),client.scheduleType))
                             dismiss()

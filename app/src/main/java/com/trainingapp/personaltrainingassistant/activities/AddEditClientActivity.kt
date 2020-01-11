@@ -313,7 +313,7 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
                                 return//exit function. Do Nothing
                             }
                             val duration = lstDurations[index].text.toString()
-                            if (duration.isDigitsOnly()) {//if the duration text is only digit (ie Int). Should always be true due to view's input type
+                            if (duration.isDigitsOnly() && duration.isNotBlank()) {//if the duration text is only digit (ie Int). Should always be true due to view's input type
                                 if (duration.toInt() in 1..120){//check if duration fits within range of 0 <= duration <= 120. See Wiki
                                     builderDurations.append("${duration.toInt()},")
                                 } else {
@@ -345,7 +345,7 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
                         Snackbar.make(view, "Error. Start date and/or end date was no chosen", Snackbar.LENGTH_LONG).show()
                         return//exit function. Do nothing
                     }
-                    if (duration.isDigitsOnly()) {//if the duration text is only digit (ie Int). Should always be true due to view's input type
+                    if (duration.isDigitsOnly() && duration.isNotBlank()) {//if the duration text is only digit (ie Int). Should always be true due to view's input type
                         if (duration.toInt() > 120 || duration.toInt() <= 0){//check if duration fits within range of 0 <= duration <= 120. See Wiki
                             Snackbar.make(view, "Error. The duration entered is 0 or greater than 120mins. See Wiki for more information", Snackbar.LENGTH_LONG).show()
                             return//exit function. Do nothing
@@ -354,7 +354,7 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
                         Snackbar.make(view, "Error. Duration is not an integer", Snackbar.LENGTH_LONG).show()
                         return//exit function. Do nothing
                     }
-                    if(sessions.isDigitsOnly()) {//if the # of sessions/week text is only digit (ie Int). Should always be true due to view's input type
+                    if(sessions.isDigitsOnly() && duration.isNotBlank()) {//if the # of sessions/week text is only digit (ie Int). Should always be true due to view's input type
                         if (sessions.toInt() > 7 || sessions.toInt() <= 0){//check if # of sessions/week fits within range of 0 < # of sessions/week < 8
                             Snackbar.make(view, "Error. Number of sessions is too high or too low for a single week", Snackbar.LENGTH_LONG).show()
                             return//exit function. Do nothing
@@ -375,7 +375,7 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
                         Snackbar.make(view, "Error. Start date and/or end date was no chosen", Snackbar.LENGTH_LONG).show()
                         return//exit function. Do nothing
                     }
-                    if (duration.isDigitsOnly()) {//if the duration text is only digit (ie Int). Should always be true due to view's input type
+                    if (duration.isDigitsOnly() && duration.isNotBlank()) {//if the duration text is only digit (ie Int). Should always be true due to view's input type
                         if (duration.toInt() > 120 || duration.toInt() <= 0){//check if duration fits within range of 0 <= duration <= 120. See Wiki
                             Snackbar.make(view, "Error. The duration entered is 0 or greater than 120mins. See Wiki for more information", Snackbar.LENGTH_LONG).show()
                             return//exit function. Do nothing
@@ -384,7 +384,7 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
                         Snackbar.make(view, "Error. Durations is not an integer", Snackbar.LENGTH_LONG).show()
                         return//exit function. Do nothing
                     }
-                    if (sessions.isDigitsOnly()) {//if the # of sessions/month text is only digit (ie Int). Should always be true due to view's input type
+                    if (sessions.isDigitsOnly() && duration.isNotBlank()) {//if the # of sessions/month text is only digit (ie Int). Should always be true due to view's input type
                         if (sessions.toInt() > 28 || sessions.toInt() <= 0){//check if # of sessions/week fits within range of 0 < # of sessions/week < 30
                             Snackbar.make(view, "Error. Number of sessions is too high or too low for a single month", Snackbar.LENGTH_LONG).show()
                             return//exit function. Do nothing
@@ -398,7 +398,7 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
                 }
                 R.id.radIsNoSchedule -> {
                     val duration = etxtNoScheduleDuration.text.toString()
-                    if (duration.isDigitsOnly()){//if the duration text is only digit (ie Int). Should always be true due to view's input type
+                    if (duration.isDigitsOnly() && duration.isNotBlank()){//if the duration text is only digit (ie Int). Should always be true due to view's input type
                         if (duration.toInt() > 120 || duration.toInt() <= 0){//check if duration fits within range of 0 <= duration <= 120. See Wiki
                             Snackbar.make(view, "Error. The duration entered is 0 or greater than 120mins. See Wiki for more information", Snackbar.LENGTH_LONG).show()
                             return//exit function. Do nothing
