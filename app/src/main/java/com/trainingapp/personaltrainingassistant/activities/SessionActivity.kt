@@ -2,6 +2,7 @@ package com.trainingapp.personaltrainingassistant.activities
 
 import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.app.Dialog
 import android.app.TimePickerDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -193,8 +194,8 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
         timePickerDialog.show()
     }
 
-    fun clickBtnAddExerciseSession(view: View){
-        val addExerciseDialog = AddExerciseSessionDialog(session.clientID) {addExerciseSessionDialog -> onAddConfirmClick(addExerciseSessionDialog, view) }
+    fun clickBtnAddExerciseSession(@Suppress("UNUSED_PARAMETER") view: View){
+        val addExerciseDialog = AddExerciseSessionDialog(session.clientID) {addExerciseSessionDialog -> onAddConfirmClick(addExerciseSessionDialog) }
         addExerciseDialog.show(supportFragmentManager, "Add Exercise")
     }
 
@@ -218,11 +219,11 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
         return try{
             val duration = strDuration.toInt()
             if (duration > 120 || duration <= 0){
-                Snackbar.make(view, "Duration outside of acceptable values. See Wiki for more information", Snackbar.LENGTH_LONG).show()
+                Toast.makeText(this, "Duration outside of acceptable values. See Wiki for more information", Toast.LENGTH_LONG).show()
                 false
             } else {
                 if (databaseOperations.checkSessionConflict(session.clone(duration = duration), true)) {
-                    Snackbar.make(view, "Error: Session Conflict", Snackbar.LENGTH_LONG).show()
+                    Toast.makeText(this, "Error: Session Conflict", Toast.LENGTH_LONG).show()
                     false
                 } else {
                     if (databaseOperations.checkSessionLog(session)) {
@@ -257,7 +258,7 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
             }
         } catch (e: NumberFormatException){
             e.printStackTrace()
-            Snackbar.make(view, "Duration is not an integer. Please enter valid input", Snackbar.LENGTH_LONG).show()
+            Toast.makeText(this, "Duration is not an integer. Please enter valid input", Toast.LENGTH_LONG).show()
             false
         }
     }
@@ -290,13 +291,12 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
     /**
      * Method passed to AddExerciseSessionDialog to handle confirm click or dialog output. Collects data from the dialog (user input) and validates. If input is valid, add exercise to Session
      * @param sessionDialog Dialog seen by user with all data added by the user. Used to collect and validate input
-     * @param view btnAddExerciseSession view used to create Snackbars
      * @return true if input valid and the exercise was added to the session, false if input not valid. True will close the dialog, false will keep it open so the user can fix the problem(s)
      */
-    private fun onAddConfirmClick(sessionDialog: AddExerciseSessionDialog, view: View): Boolean {
-        val dialogView = sessionDialog.dialog
+    private fun onAddConfirmClick(sessionDialog: AddExerciseSessionDialog): Boolean {
+        val dialogView: Dialog = sessionDialog.dialog!!
         //collect data input from user
-        val exerciseName = dialogView!!.findViewById<AutoCompleteTextView>(R.id.actxtAddExerciseName).text.toString()
+        val exerciseName = dialogView.findViewById<AutoCompleteTextView>(R.id.actxtAddExerciseName).text.toString()
         val resistance = dialogView.findViewById<EditText>(R.id.etxtAddResistance).text.toString()
         val sets = dialogView.findViewById<EditText>(R.id.etxtAddSets).text.toString()
         val reps = dialogView.findViewById<EditText>(R.id.etxtAddReps).text.toString()
@@ -305,11 +305,11 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
         else
             -1//if not an Int or Blank assign order to -1 (will not pass validation)
         when (true){
-            order <= 0 -> Snackbar.make(view, "Order must be a number greater than 0", Snackbar.LENGTH_LONG).show()
-            StaticFunctions.badSQLText(resistance) -> Snackbar.make(view, "Resistance contains a bad character or is blank. See Wiki for more details", Snackbar.LENGTH_LONG).show()
-            StaticFunctions.badSQLText(sets) -> Snackbar.make(view, "Sets contains a bad character or is blank. See Wiki for more details", Snackbar.LENGTH_LONG).show()
-            StaticFunctions.badSQLText(reps) -> Snackbar.make(view, "Reps contains a bad character or is blank. See Wiki for more details", Snackbar.LENGTH_LONG).show()
-            !sessionDialog.exerciseNames.contains(exerciseName) -> Snackbar.make(view, "No Exercise selected. Please choose from the list", Snackbar.LENGTH_LONG).show()//make sure name is within those collected from the database
+            order <= 0 -> Toast.makeText(this, "Order must be a number greater than 0", Toast.LENGTH_LONG).show()
+            StaticFunctions.badSQLText(resistance) -> Toast.makeText(this, "Resistance contains a bad character or is blank. See Wiki for more details", Toast.LENGTH_LONG).show()
+            StaticFunctions.badSQLText(sets) -> Toast.makeText(this, "Sets contains a bad character or is blank. See Wiki for more details", Toast.LENGTH_LONG).show()
+            StaticFunctions.badSQLText(reps) -> Toast.makeText(this, "Reps contains a bad character or is blank. See Wiki for more details", Toast.LENGTH_LONG).show()
+            !sessionDialog.exerciseNames.contains(exerciseName) -> Toast.makeText(this, "No Exercise selected. Please choose from the list", Toast.LENGTH_LONG).show()//make sure name is within those collected from the database
             else -> {//if the input passes all tests, get populate a new ExerciseSession object and add that object to the Session
                 val exercise = sessionDialog.exercises[sessionDialog.exerciseNames.indexOf(exerciseName)]
                 val exerciseSession = ExerciseSession(exercise, StaticFunctions.formatForSQL(sets), StaticFunctions.formatForSQL(reps), StaticFunctions.formatForSQL(resistance), order)
@@ -328,9 +328,9 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
      * @return true if input valid and the exercise was updated in the session, false if input not valid. True will close the dialog, false will keep it open so the user can fix the problem(s)
      */
     private fun onEditConfirmClick(sessionDialog: EditExerciseSessionDialog, position: Int): Boolean {
-        val dialogView = sessionDialog.dialog
+        val dialogView: Dialog = sessionDialog.dialog!!
         //collect data input from user
-        val resistance = dialogView!!.findViewById<EditText>(R.id.etxtEditResistance).text.toString()
+        val resistance = dialogView.findViewById<EditText>(R.id.etxtEditResistance).text.toString()
         val sets = dialogView.findViewById<EditText>(R.id.etxtEditSets).text.toString()
         val reps = dialogView.findViewById<EditText>(R.id.etxtEditReps).text.toString()
         val order: Int = if(dialogView.findViewById<EditText>(R.id.etxtEditExerciseOrder).text.isDigitsOnly() && dialogView.findViewById<EditText>(R.id.etxtEditExerciseOrder).text.toString().isNotBlank())
@@ -338,10 +338,10 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
         else
             -1//if not an Int or Blank assign order to -1 (will not pass validation)
         when (true){
-            order <= 0 -> Snackbar.make(rvSessionExercises, "Order must be a number greater than 0", Snackbar.LENGTH_LONG).show()
-            StaticFunctions.badSQLText(resistance) -> Snackbar.make(rvSessionExercises, "Resistance contains a bad character or is blank. See Wiki for more details", Snackbar.LENGTH_LONG).show()
-            StaticFunctions.badSQLText(sets) -> Snackbar.make(rvSessionExercises, "Sets contains a bad character or is blank. See Wiki for more details", Snackbar.LENGTH_LONG).show()
-            StaticFunctions.badSQLText(reps) -> Snackbar.make(rvSessionExercises, "Reps contains a bad character or is blank. See Wiki for more details", Snackbar.LENGTH_LONG).show()
+            order <= 0 -> Toast.makeText(this, "Order must be a number greater than 0", Toast.LENGTH_LONG).show()
+            StaticFunctions.badSQLText(resistance) -> Toast.makeText(this, "Resistance contains a bad character or is blank. See Wiki for more details", Toast.LENGTH_LONG).show()
+            StaticFunctions.badSQLText(sets) -> Toast.makeText(this, "Sets contains a bad character or is blank. See Wiki for more details", Toast.LENGTH_LONG).show()
+            StaticFunctions.badSQLText(reps) -> Toast.makeText(this, "Reps contains a bad character or is blank. See Wiki for more details", Toast.LENGTH_LONG).show()
             else -> {//if the input passes all tests, get populate a new ExerciseSession object and add that object to the Session
                 val exerciseSession = ExerciseSession(sessionDialog.exerciseSession.getExercise(), StaticFunctions.formatForSQL(sets), StaticFunctions.formatForSQL(reps), StaticFunctions.formatForSQL(resistance), order)
                 session.updateExercise(exerciseSession, position)

@@ -36,7 +36,7 @@ class AddExerciseSessionDialog(private val clientID: Int, private val  confirmLi
             }
             val builder = AlertDialog.Builder(it)
             builder.setView(view)
-                .setPositiveButton(R.string.confirm) { _, _ -> if (confirmListener(this)) dismiss()}
+                .setPositiveButton(R.string.confirm) { _, _ -> }
                 .setNegativeButton(R.string.cancel){ _, _ -> dismiss()}
                 .setTitle(R.string.titleAddExerciseDialog)
             builder.create()
@@ -54,5 +54,6 @@ class AddExerciseSessionDialog(private val clientID: Int, private val  confirmLi
         super.onStart()
         if (resources.configuration.smallestScreenWidthDp > 600)
          dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        (dialog as AlertDialog).getButton(Dialog.BUTTON_POSITIVE).setOnClickListener { if (confirmListener(this)) dismiss() }
     }
 }

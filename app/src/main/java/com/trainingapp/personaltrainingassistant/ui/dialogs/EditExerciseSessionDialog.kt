@@ -31,7 +31,7 @@ class EditExerciseSessionDialog(val exerciseSession: ExerciseSession, private va
             view.findViewById<EditText>(R.id.etxtEditExerciseOrder).setText(exerciseSession.order.toString())
             val builder = AlertDialog.Builder(it)
             builder.setView(view)
-                .setPositiveButton(R.string.confirm) { _, _ -> if (confirmListener(this, position)) dismiss()}
+                .setPositiveButton(R.string.confirm) { _, _ -> }
                 .setNegativeButton(R.string.cancel){ _, _ -> dismiss()}
                 .setTitle(R.string.titleEditExerciseDialog)
             builder.create()
@@ -43,5 +43,10 @@ class EditExerciseSessionDialog(val exerciseSession: ExerciseSession, private va
         databaseOperations = DatabaseOperations(context)
         exercises = databaseOperations.getAllExercises()
         exercises.forEach{exerciseNames.add(it.name)}
+    }
+
+    override fun onStart() {
+        super.onStart()
+        (dialog as AlertDialog).getButton(Dialog.BUTTON_POSITIVE).setOnClickListener { if (confirmListener(this, position)) dismiss() }
     }
 }
