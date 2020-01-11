@@ -114,7 +114,8 @@ class ScheduleFragment : Fragment(), CalendarView.OnDateChangeListener, Coroutin
      */
     private fun onLongItemClick(position: Int): Boolean{
         val alertDialog = AlertDialog.Builder(context)
-        alertDialog.setTitle(getString(R.string.confirm_delete_session, day.getSession(position).clientName))
+        alertDialog.setTitle(getString(R.string.alert_dialog_confirm_removal))
+        alertDialog.setMessage(getString(R.string.confirm_delete_session, day.getSession(position).clientName))
         alertDialog.setPositiveButton(R.string.confirm) { _, _ -> databaseOperations.cancelSession(day.getSession(position)); setAdapter()}
         alertDialog.setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss()}
         alertDialog.show()

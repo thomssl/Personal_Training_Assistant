@@ -80,7 +80,8 @@ class ClientsFragment : Fragment(), CoroutineScope {
      */
     private fun onItemLongClick(client: Client): Boolean {
         val alertDialog = AlertDialog.Builder(context)
-        alertDialog.setTitle(getString(R.string.confirm_delete_client, client.name))
+        alertDialog.setTitle(getString(R.string.alert_dialog_confirm_removal))
+        alertDialog.setMessage(getString(R.string.confirm_delete_client, client.name))
         alertDialog.setPositiveButton(R.string.confirm) { _, _ -> databaseOperations.deleteClient(client); setAdapter()}
         alertDialog.setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss()}
         alertDialog.show()

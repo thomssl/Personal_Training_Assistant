@@ -77,7 +77,8 @@ class ExercisesFragment : Fragment(), CoroutineScope {
      */
     private fun onItemLongClicked(exercise: Exercise): Boolean{
         val alertDialog = AlertDialog.Builder(context)
-        alertDialog.setTitle(getString(R.string.confirm_delete, exercise.name))
+        alertDialog.setTitle(getString(R.string.alert_dialog_confirm_removal))
+        alertDialog.setMessage(getString(R.string.confirm_delete, exercise.name))
         alertDialog.setPositiveButton(R.string.confirm) { _, _ -> databaseOperations.removeExercise(exercise); setAdapter()}
         alertDialog.setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss()}
         alertDialog.show()

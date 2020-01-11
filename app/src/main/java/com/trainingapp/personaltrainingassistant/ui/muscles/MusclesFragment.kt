@@ -86,7 +86,8 @@ class MusclesFragment : Fragment(), CoroutineScope {
      */
     private fun onItemLongClick(muscleJoint: MuscleJoint, view: View): Boolean{
         val alertDialog = AlertDialog.Builder(context)
-        alertDialog.setTitle(getString(R.string.confirm_delete, muscleJoint.name))
+        alertDialog.setTitle(getString(R.string.alert_dialog_confirm_removal))
+        alertDialog.setMessage(getString(R.string.confirm_delete, muscleJoint.name))
         alertDialog.setPositiveButton(R.string.confirm) { _, _ ->
             when (databaseOperations.removeMuscle(muscleJoint)){
                 0 -> Snackbar.make(view, "SQL error deleting ${muscleJoint.name}", Snackbar.LENGTH_LONG).show()
