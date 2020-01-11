@@ -111,7 +111,7 @@ class Session(var clientID: Int, var clientName: String, dayTime: String, privat
      */
     fun getSQLCommand(type: Int, oldDayTime: String = ""): String{
         if (type == 3)//if Delete command
-            return "Delete From Session_log Where client_id = $clientID And datetime(dayTime) = datetime('${StaticFunctions.getStrDateTime(date)})'"
+            return "Delete From Session_log Where client_id = $clientID And datetime(dayTime) = datetime('${StaticFunctions.getStrDateTime(date)}')"
         val builderExercises = StringBuilder()
         val builderSets = StringBuilder()
         val builderReps = StringBuilder()

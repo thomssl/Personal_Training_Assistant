@@ -74,27 +74,29 @@ class AddEditExerciseActivity : AppCompatActivity(), AdapterView.OnItemSelectedL
      */
     fun onConfirmClick(view: View){
         val name = etxtAddEditExerciseName.text.toString()
-        if (StaticFunctions.badSQLText(name))//checks if the name has invalid character or is blank
-            Snackbar.make(view, "Invalid input character inside exercise name. See Wiki for more information", Snackbar.LENGTH_LONG).show()
-        else {//if name passes the check
-            exercise.name = name
-            if (!databaseOperations.checkExerciseConflict(exercise)) {//if no conflict is found with the existing exercises
-                if (isNew) {
-                    if (databaseOperations.insertExercise(exercise)) {
-                        Snackbar.make(view, "Inserted new exercise", Snackbar.LENGTH_LONG).show()
-                        finish()
-                    } else
-                        Snackbar.make(view, "SQL Error inserting new exercise", Snackbar.LENGTH_LONG).show()
-                } else {
-                    if(databaseOperations.updateExercise(exercise)) {
-                        Snackbar.make(view, "Updated exercise", Snackbar.LENGTH_LONG).show()
-                        finish()
+        when (true) {
+            //checks if the name has invalid character or is blank
+            StaticFunctions.badSQLText(name) -> Snackbar.make(view, "Invalid input character inside exercise name. See Wiki for more information", Snackbar.LENGTH_LONG).show()
+            exercise.primaryMover.id == 0 -> Snackbar.make(view, "No primary mover selected", Snackbar.LENGTH_LONG).show()
+            else -> {//if passes all tests
+                exercise.name = StaticFunctions.formatForSQL(name)
+                if (!databaseOperations.checkExerciseConflict(exercise)) {//if no conflict is found with the existing exercises
+                    if (isNew) {
+                        if (databaseOperations.insertExercise(exercise)) {
+                            Snackbar.make(view, "Inserted new exercise", Snackbar.LENGTH_LONG).show()
+                            finish()
+                        } else
+                            Snackbar.make(view, "SQL Error inserting new exercise", Snackbar.LENGTH_LONG).show()
+                    } else {
+                        if (databaseOperations.updateExercise(exercise)) {
+                            Snackbar.make(view, "Updated exercise", Snackbar.LENGTH_LONG).show()
+                            finish()
+                        } else
+                            Snackbar.make(view, "SQL Error updating exercise", Snackbar.LENGTH_LONG).show()
                     }
-                    else
-                        Snackbar.make(view, "SQL Error updating exercise", Snackbar.LENGTH_LONG).show()
-                }
-            } else
-                Snackbar.make(view, "Conflict with existing exercise", Snackbar.LENGTH_LONG).show()
+                } else
+                    Snackbar.make(view, "Conflict with existing exercise", Snackbar.LENGTH_LONG).show()
+            }
         }
     }
 

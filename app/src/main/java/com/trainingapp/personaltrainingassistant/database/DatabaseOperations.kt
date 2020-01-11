@@ -89,7 +89,7 @@ class DatabaseOperations(context: Context) {
      */
     private fun getSecondaryMovers(id: Int, strSecondaryMovers: String, exerciseType: ExerciseType): ArrayList<MuscleJoint>{
         val secondaryMovers = ArrayList<MuscleJoint>()
-        if (id == 0 || strSecondaryMovers == ""){//if the id = 0 that means no exercise was found. if strSecondaryMovers is empty than no secondary movers are present. Either way, return a blank ArrayList is returned
+        if (id == 0 || strSecondaryMovers == "0"){//if the id = 0 that means no exercise was found. if strSecondaryMovers is empty than no secondary movers are present. Either way, return a blank ArrayList is returned
             return secondaryMovers
         }
         val tableName = if (exerciseType == ExerciseType.STRENGTH) "Muscles" else "Joints"//set table name based upon ExerciseType of query result

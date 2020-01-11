@@ -33,7 +33,8 @@ class Exercise(val id: Int, var name: String, var type: ExerciseType, var primar
         if (secondaryMovers.size > 0) {
             secondaryMovers.forEach { builder.append(it.id);builder.append(',') }
             builder.deleteCharAt(builder.lastIndex)
-        }
+        } else
+            builder.append("0")
         return builder.toString()
     }
 
