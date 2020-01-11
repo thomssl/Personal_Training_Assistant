@@ -315,7 +315,7 @@ class DatabaseOperations(context: Context) {
     /**
      * Method to check if a client conflicts with the given client list. Only looks at clients with constant schedules (ie session_type = 1)
      * Should only be called if the client's ScheduleType is Weekly_Constant
-     * @param client Client object created from data collected in the CreateOrAlterClientActivity
+     * @param client Client object created from data collected in the AddEditClientActivity
      * @param clientID if editing a client, id used to disregard itself while checking. if new client, -1 is passed
      * @return empty string if a conflict is found with the current constant schedule. String with conflict client names if any conflicts are found
      */
@@ -455,7 +455,7 @@ class DatabaseOperations(context: Context) {
 
     /**
      * Method to check if a current exercise name is already in the Exercises Table
-     * @param exercise Exercise object collected from the user in CreateOrAlterExerciseActivity
+     * @param exercise Exercise object collected from the user in AddEditExerciseActivity
      * @return true if a conflict is found
      */
     fun checkExerciseConflict(exercise: Exercise): Boolean{

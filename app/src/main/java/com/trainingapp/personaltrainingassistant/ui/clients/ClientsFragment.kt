@@ -74,7 +74,7 @@ class ClientsFragment : Fragment(), CoroutineScope {
     }
 
     /**
-     * Method sent to ClientsRVAdapter to handle item onLongClick event. Opens an AlterDialog to make the user confirm client deletion
+     * Method sent to ClientsRVAdapter to handle item onLongClick event. Opens an AlertDialog to make the user confirm client deletion
      * @param client Client object to be removed from rhe database, from adapter
      * @return always true since the callback consumed the long click (See Android View.onLongClickListener for more info)
      */
