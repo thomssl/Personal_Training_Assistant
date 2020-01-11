@@ -37,11 +37,20 @@ class AddSessionDialog(private val clients: ArrayList<Client>, private val calen
             val builder = AlertDialog.Builder(it)
                 .setView(view)
                 .setPositiveButton(R.string.confirm) {_,_ ->
-                    val duration = txtDuration.text.toString()
-                    if (btnTime.text != getString(R.string.time_format) && duration.isDigitsOnly() && duration.isNotBlank()) {
-                        val client = clients[txtNames.selectedItemPosition]
-                        if (confirmListener(Session(client.id, client.name, StaticFunctions.getStrDateTime(calendar), ArrayList(), "", duration.toInt()),client.scheduleType))
-                            dismiss()
+                    val strDuration = txtDuration.text.toString()
+                    if (btnTime.text != getString(R.string.time_format)) {
+                        if (strDuration.isDigitsOnly() && strDuration.isNotBlank()) {
+                            val duration = strDuration.toInt()
+                            val client = clients[txtNames.selectedItemPosition]
+                            if (duration in 1..120) {
+                                if (confirmListener(Session(client.id, client.name, StaticFunctions.getStrDateTime(calendar), ArrayList(), "", strDuration.toInt()), client.scheduleType))
+                                    dismiss()
+                            } else {
+                                Toast.makeText(context, "Duration not valid. See Wiki 'Input Fields'", Toast.LENGTH_LONG).show()
+                            }
+                        } else {
+                            Toast.makeText(context, "Duration is blank or not an integer", Toast.LENGTH_LONG).show()
+                        }
                     } else {
                         Toast.makeText(context, "No Time Selected", Toast.LENGTH_LONG).show()
                     }
