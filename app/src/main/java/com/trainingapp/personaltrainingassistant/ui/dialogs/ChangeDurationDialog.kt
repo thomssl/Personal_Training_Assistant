@@ -7,7 +7,6 @@ import android.view.View
 import android.widget.EditText
 import androidx.fragment.app.DialogFragment
 import com.trainingapp.personaltrainingassistant.R
-import kotlinx.android.synthetic.main.change_duration_dialog.*
 import java.lang.IllegalStateException
 
 class ChangeDurationDialog(private val duration: Int, private val confirmListener: (String) -> Boolean): DialogFragment() {

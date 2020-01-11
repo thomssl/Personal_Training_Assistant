@@ -8,7 +8,6 @@ import android.widget.EditText
 import androidx.fragment.app.DialogFragment
 import com.trainingapp.personaltrainingassistant.R
 import com.trainingapp.personaltrainingassistant.objects.MuscleJoint
-import kotlinx.android.synthetic.main.add_edit_muscle_dialog.*
 import java.lang.IllegalStateException
 
 class AddEditMuscleDialog(private val muscleJoint: MuscleJoint, private val confirmListener: (MuscleJoint) -> Boolean): DialogFragment() {
