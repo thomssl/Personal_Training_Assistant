@@ -354,7 +354,7 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
                         Snackbar.make(view, "Error. Duration is not an integer", Snackbar.LENGTH_LONG).show()
                         return//exit function. Do nothing
                     }
-                    if(sessions.isDigitsOnly() && duration.isNotBlank()) {//if the # of sessions/week text is only digit (ie Int). Should always be true due to view's input type
+                    if(sessions.isDigitsOnly() && sessions.isNotBlank()) {//if the # of sessions/week text is only digit (ie Int). Should always be true due to view's input type
                         if (sessions.toInt() > 7 || sessions.toInt() <= 0){//check if # of sessions/week fits within range of 0 < # of sessions/week < 8
                             Snackbar.make(view, "Error. Number of sessions is too high or too low for a single week", Snackbar.LENGTH_LONG).show()
                             return//exit function. Do nothing
@@ -384,7 +384,7 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
                         Snackbar.make(view, "Error. Durations is not an integer", Snackbar.LENGTH_LONG).show()
                         return//exit function. Do nothing
                     }
-                    if (sessions.isDigitsOnly() && duration.isNotBlank()) {//if the # of sessions/month text is only digit (ie Int). Should always be true due to view's input type
+                    if (sessions.isDigitsOnly() && sessions.isNotBlank()) {//if the # of sessions/month text is only digit (ie Int). Should always be true due to view's input type
                         if (sessions.toInt() > 28 || sessions.toInt() <= 0){//check if # of sessions/week fits within range of 0 < # of sessions/week < 30
                             Snackbar.make(view, "Error. Number of sessions is too high or too low for a single month", Snackbar.LENGTH_LONG).show()
                             return//exit function. Do nothing

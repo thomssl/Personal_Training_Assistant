@@ -216,5 +216,5 @@ class MainActivity : AppCompatActivity(),
      * @param muscle MuscleJoint object containing the data collected from the user
      * @return true if no errors or conflicts found
      */
-    private fun addEditConfirm(muscle: MuscleJoint): Boolean = if (databaseOperations.checkMuscleConflict(muscle)) databaseOperations.addMuscle(muscle) else false
+    private fun addEditConfirm(muscle: MuscleJoint): Boolean = if (!databaseOperations.checkMuscleConflict(muscle)) databaseOperations.addMuscle(muscle) else false
 }
