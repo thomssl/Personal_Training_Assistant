@@ -27,7 +27,6 @@ import com.trainingapp.personaltrainingassistant.ui.dialogs.AddSessionDialog
 import com.trainingapp.personaltrainingassistant.ui.schedule.ScheduleFragment
 import com.trainingapp.personaltrainingassistant.ui.settings.SettingsFragment
 import kotlinx.android.synthetic.main.app_bar_main.*
-import kotlinx.android.synthetic.main.fragment_schedule.*
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -148,7 +147,7 @@ class MainActivity : AppCompatActivity(),
                 Snackbar.make(view,"Name: Camera", Snackbar.LENGTH_LONG).show()
             }
             R.id.nav_muscles -> {//creates an AddEditMuscleDialog and sends a blank MuscleJoint object to denote a new Muscle
-                val dialog = AddEditMuscleDialog(MuscleJoint(0, "")) {muscleJoint -> addEditConfirm(muscleJoint) }
+                val dialog = AddEditMuscleDialog(MuscleJoint(0, "")) {muscleJoint -> addConfirm(muscleJoint) }
                 dialog.show(supportFragmentManager, "Add Muscle")
             }
             else -> Snackbar.make(view,"None", Snackbar.LENGTH_LONG).show()
@@ -216,5 +215,20 @@ class MainActivity : AppCompatActivity(),
      * @param muscle MuscleJoint object containing the data collected from the user
      * @return true if no errors or conflicts found
      */
-    private fun addEditConfirm(muscle: MuscleJoint): Boolean = if (!databaseOperations.checkMuscleConflict(muscle)) databaseOperations.addMuscle(muscle) else false
+    private fun addConfirm(muscle: MuscleJoint): Boolean {
+        return if (!databaseOperations.checkMuscleConflict(muscle) ) {
+            if (databaseOperations.addMuscle(muscle)){
+                navController.navigate(R.id.nav_muscles)
+                Snackbar.make(fab,"Successfully inserted new muscle", Snackbar.LENGTH_LONG).show()
+                true
+            } else {
+                Snackbar.make(fab,"SQL error adding muscle to Muscles", Snackbar.LENGTH_LONG).show()
+                false
+            }
+        }
+        else {
+            Snackbar.make(fab, "Conflict with existing muscle", Snackbar.LENGTH_LONG).show()
+            false
+        }
+    }
 }

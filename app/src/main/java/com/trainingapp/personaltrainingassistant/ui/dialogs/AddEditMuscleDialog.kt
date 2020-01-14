@@ -5,8 +5,10 @@ import android.app.Dialog
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import com.trainingapp.personaltrainingassistant.R
+import com.trainingapp.personaltrainingassistant.StaticFunctions
 import com.trainingapp.personaltrainingassistant.objects.MuscleJoint
 import java.lang.IllegalStateException
 
@@ -30,6 +32,14 @@ class AddEditMuscleDialog(private val muscleJoint: MuscleJoint, private val conf
 
     override fun onStart() {
         super.onStart()
-        (dialog as AlertDialog).getButton(Dialog.BUTTON_POSITIVE).setOnClickListener { if (confirmListener(MuscleJoint(muscleJoint.id, txtName.text.toString()))) dismiss() }
+        (dialog as AlertDialog).getButton(Dialog.BUTTON_POSITIVE).setOnClickListener {
+            val muscle = MuscleJoint(muscleJoint.id, txtName.text.toString())
+            if (StaticFunctions.badSQLText(muscle.name))
+                Toast.makeText(context, "Invalid character in name. See Wiki 'Input Fields'", Toast.LENGTH_LONG).show()
+            else {
+                if (confirmListener(muscle))
+                    dismiss()
+            }
+        }
     }
 }

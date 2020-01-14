@@ -60,7 +60,7 @@ class MusclesFragment : Fragment(), CoroutineScope {
      * Suspendable IO coroutine to get an MusclesRVAdapter for rvMuscles
      */
     private suspend fun getAdapter(): MusclesRVAdapter = withContext(Dispatchers.IO){
-        MusclesRVAdapter(databaseOperations.getAllMuscles(), {muscleJoint -> onItemClick(muscleJoint) }, {muscleJoint, view -> onItemLongClick(muscleJoint, view) })
+        MusclesRVAdapter(databaseOperations.getAllMuscles(), { muscleJoint -> onItemClick(muscleJoint) }, {muscleJoint, view -> onItemLongClick(muscleJoint, view) })
     }
 
     /**
@@ -68,16 +68,30 @@ class MusclesFragment : Fragment(), CoroutineScope {
      * @param muscleJoint MuscleJoint object filled with data for muscle to be updated, from adapter
      */
     private fun onItemClick(muscleJoint: MuscleJoint){
-        val dialog = AddEditMuscleDialog(muscleJoint) {muscleJointDialog -> editConfirm(muscleJointDialog) }
+        val dialog = AddEditMuscleDialog(muscleJoint) { muscleJointDialog -> editConfirm(muscleJointDialog) }
         dialog.show(fragmentManager!!, "Edit Exercise")
     }
 
     /**
      * Method passed to AddEditMuscleDialog to handle confirm button onClick event. Checks for conflict and adds muscle if no conflict found
-     * @param muscleJoint MuscleJoint object filled with data for muscle to be updated, from dialog
+     * @param muscle MuscleJoint object filled with data for muscle to be updated, from dialog
      * @return true if no conflict and update was successful, false if conflict or error updating muscle
      */
-    private fun editConfirm(muscleJoint: MuscleJoint): Boolean = if (databaseOperations.checkMuscleConflict(muscleJoint)) databaseOperations.updateMuscle(muscleJoint) else false
+    private fun editConfirm(muscle: MuscleJoint): Boolean{
+        return if (!databaseOperations.checkMuscleConflict(muscle)) {
+            if (databaseOperations.updateMuscle(muscle)){
+                Snackbar.make(rvMuscles,"Successfully edited muscle", Snackbar.LENGTH_LONG).show()
+                true
+            } else {
+                Snackbar.make(rvMuscles,"SQL error editing muscle in Muscles", Snackbar.LENGTH_LONG).show()
+                false
+            }
+        }
+        else {
+            Snackbar.make(rvMuscles, "Conflict with existing muscle", Snackbar.LENGTH_LONG).show()
+            false
+        }
+    }
 
     /**
      * Method passed to MusclesRVAdapter to handle item onLongClick event. Opens AlertDialog to make user confirm exercise deletion

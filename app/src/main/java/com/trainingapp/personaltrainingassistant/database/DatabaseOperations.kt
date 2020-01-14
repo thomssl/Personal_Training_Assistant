@@ -228,7 +228,7 @@ class DatabaseOperations(context: Context) {
      * @return true if there is a conflict, false if no conflict found
      */
     fun checkMuscleConflict(muscle: MuscleJoint): Boolean {
-        val cursor = db.rawQuery("Select muscle_name From Muscles Where muscle_name = '${muscle.name}'", null)
+        val cursor = db.rawQuery("Select muscle_name From Muscles Where muscle_name = '${muscle.name}' And muscle_id <> ${muscle.id}", null)
         val result = cursor.moveToFirst()
         cursor.close()
         return result
