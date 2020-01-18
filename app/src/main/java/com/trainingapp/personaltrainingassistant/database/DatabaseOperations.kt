@@ -637,7 +637,9 @@ class DatabaseOperations(context: Context) {
     }
 
     /**
-     *
+     * Method to get all clients that can add a session to a given date
+     * @param calendar Calendar object holding a given date to check
+     * @return List of clients as Clients objects representing all clients that can add a session to a date
      */
     fun getAddSessionsClientsByDay(calendar: Calendar): ArrayList<Client>{
         val day = getScheduleByDay(calendar)
@@ -656,7 +658,7 @@ class DatabaseOperations(context: Context) {
         tempCal[Calendar.DAY_OF_MONTH] = tempCal.getActualMaximum(Calendar.DAY_OF_MONTH)
         val endMonth = StaticFunctions.getStrDate(tempCal)
         val clients = ArrayList<Client>()
-        val cursor = db.rawQuery("Select * From Clients c Where c.client_id Not in (${day.getStrIDs()}) And (c.schedule_type = 0 Or (c.schedule_type = 1 And (Select sc.client_id From Session_Changes sc Where sc.client_id = c.client_id And sc.change_dayTime = '0') > 0) Or (c.schedule_type = 2 And (Select count(sl.client_id) From Session_log sl Where sl.client_id = c.client_id And date(sl.dayTime) >= date('${startWeek}') And date(sl.dayTime) <= date('${endWeek}')) < c.days) Or (c.schedule_type = 3 And (Select count(sl.client_id) From Session_log sl Where sl.client_id = c.client_id And date(sl.dayTime) >= date('${startMonth}') And date(sl.dayTime) <= date('${endMonth}')) < c.days))", null)
+        val cursor = db.rawQuery("Select * From Clients c Where c.client_id Not in (${day.getStrIDs()}) And (c.schedule_type = 0 Or (c.schedule_type = 1 And (Select count(sc.client_id) From Session_Changes sc Where sc.client_id = c.client_id And sc.change_dayTime = '0') > 0) Or (c.schedule_type = 2 And (Select count(sl.client_id) From Session_log sl Where sl.client_id = c.client_id And date(sl.dayTime) >= date('${startWeek}') And date(sl.dayTime) <= date('${endWeek}')) < c.days) Or (c.schedule_type = 3 And (Select count(sl.client_id) From Session_log sl Where sl.client_id = c.client_id And date(sl.dayTime) >= date('${startMonth}') And date(sl.dayTime) <= date('${endMonth}')) < c.days))", null)
         if (cursor.moveToFirst()){
             while (!cursor.isAfterLast){
                 clients.add(Client(
