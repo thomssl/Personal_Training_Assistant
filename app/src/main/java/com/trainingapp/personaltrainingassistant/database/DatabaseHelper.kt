@@ -9,6 +9,9 @@ class DatabaseHelper(context: Context): SQLiteOpenHelper(context,
     DATABASE_VERSION
 ) {
 
+    /**
+     * Need to update these table definitions
+     */
     companion object {
         private const val DATABASE_NAME: String = "data.db"
         private const val DATABASE_VERSION: Int = 1
