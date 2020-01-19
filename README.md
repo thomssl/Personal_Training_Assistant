@@ -1,4 +1,4 @@
-# Personal Training Assistant
+# Training Assistant
 
 ## Introduction
 
