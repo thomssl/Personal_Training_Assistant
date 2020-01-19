@@ -6,15 +6,29 @@ import java.lang.StringBuilder
 import java.util.*
 import kotlin.collections.ArrayList
 
+/**
+ * Object to hold information gathered about a client
+ * @param id Unique key given to the client when a new client is inserted. Used to differentiate session data in the database
+ * @param name Unique string of text given as the client's name. User submitted but must be unique to make data more readable. User can use any form of differentiation they desire
+ * @param scheduleType ScheduleType enum value given to client. Used to define how a session is added or tracked for a given client
+ * @param days String as a single non-zero Integer (for variable ScheduleType), a csv that is split into a list (for constant ScheduleType) or zero (for no schedule clients)
+ * @param times String as a single non-zero Integer (for variable ScheduleType), a csv that is split into a list (for constant ScheduleType) or zero (for no schedule clients)
+ * @param durations String as a single Integer (for non-constant ScheduleType) or a csv that is split into a list (for constant ScheduleType)
+ * @param startDate String formatted as yyyy-MM-dd for the start date of the client (for constant or variable scheduled clients) or '0' (for no schedule clients)
+ * @param endDate String formatted as yyyy-MM-dd for the end date of the client (for constant or variable scheduled clients) or '0' (for no schedule clients)
+ */
 class Client (var id: Int, var name: String, var scheduleType: ScheduleType, days: String, times: String, durations: String, var startDate: String, var endDate: String) {
 
-    var days: ArrayList<Int> = StaticFunctions.toArrayListInt(days) //split database csv of days and convert the given list to an ArrayList<Int>
-    var times: ArrayList<Int> = StaticFunctions.toArrayListInt(times) //split database csv of times and convert the given list to an ArrayList<Int>
-    var durations: ArrayList<Int> = StaticFunctions.toArrayListInt(durations) //split database csv of times and convert the given list to an ArrayList<Int>
-    //private var startDate = StaticFunctions.getDate(startDate) //convert database string of startDate into Calendar object
-    //private var endDate = StaticFunctions.getDate(endDate) //convert database string of endDate into Calendar object
+    //split database csv values and convert the given list to an ArrayList<Int>. Size = 1 for non-constant ScheduleTypes
+    var days: ArrayList<Int> = StaticFunctions.toArrayListInt(days)
+    var times: ArrayList<Int> = StaticFunctions.toArrayListInt(times)
+    var durations: ArrayList<Int> = StaticFunctions.toArrayListInt(durations)
 
-    //return clients days as a string depending on if the output is required for a database command
+    /**
+     * Method to get the clients days for UI or database operations. Output accounts for ScheduleType
+     * @param isDatabase value denotes if the output will be used for database operations
+     * @return String value representing the days attribute of the client
+     */
     fun getDaysString(isDatabase: Boolean): String{
         return when (scheduleType){
             ScheduleType.WEEKLY_CONSTANT -> {
@@ -34,10 +48,15 @@ class Client (var id: Int, var name: String, var scheduleType: ScheduleType, day
             }
             ScheduleType.WEEKLY_VARIABLE,ScheduleType.MONTHLY_VARIABLE -> days[0].toString()
             ScheduleType.NO_SCHEDULE -> if (isDatabase) days[0].toString() else ""
+            ScheduleType.BLANK -> "Error"
         }
     }
 
-    //return clients times as a string depending on if the output is required for a database command
+    /**
+     * Method to get the clients times for UI or database operations. Output accounts for ScheduleType
+     * @param isDatabase value denotes if the output will be used for database operations
+     * @return String value representing the times attribute of the client
+     */
     fun getTimesString(isDatabase: Boolean): String{
         return when (scheduleType){
             ScheduleType.WEEKLY_CONSTANT -> {
@@ -48,7 +67,7 @@ class Client (var id: Int, var name: String, var scheduleType: ScheduleType, day
                         builder.append(',')
                     }
                     else {
-                        builder.append("${getTime(times[index])}/${getTime(times[index]+durations[index])}")
+                        builder.append("${getTime(times[index])}/${getTime(times[index]+durations[index])}")//shows the start and end time
                         builder.append("\n")
                     }
                 }
@@ -56,10 +75,14 @@ class Client (var id: Int, var name: String, var scheduleType: ScheduleType, day
                 return builder.toString()
             }
             ScheduleType.NO_SCHEDULE,ScheduleType.MONTHLY_VARIABLE,ScheduleType.WEEKLY_VARIABLE -> if (isDatabase) times[0].toString() else ""
+            ScheduleType.BLANK -> "Error"
         }
     }
 
-    //return clients times as a string depending on if the output is required for a database command
+    /**
+     * Private Method to get the clients times for database operations
+     * @return String value representing the durations attribute of the client
+     */
     private fun getDurationsString(): String{
         val builder = StringBuilder()
         for(duration in durations){
@@ -70,28 +93,46 @@ class Client (var id: Int, var name: String, var scheduleType: ScheduleType, day
         return builder.toString()
     }
 
+    /**
+     * Method to get the duration depending upon the dateTime of a session
+     * If ScheduleType is constant, get the day of the week from the dateTime given
+     * If ScheduleType is non-constant, return the first index of the durations list
+     */
     fun getDuration(dateTime: String): Int{
-        val calendar = StaticFunctions.getDate(dateTime)
-        return durations[days.indexOf(calendar[Calendar.DAY_OF_WEEK])]
+        return if (scheduleType == ScheduleType.WEEKLY_CONSTANT) {
+            val calendar = StaticFunctions.getDate(dateTime)
+            val index = days.indexOf(calendar[Calendar.DAY_OF_WEEK])
+            if (index >= 0) durations[index] else 0
+        } else
+            durations[0]
     }
 
     fun getStrSessionType(): String = scheduleType.text
 
+    /**
+     * Private Method to get the time as a formatted string given the time as an Int representation of the minutes in a day
+     * @param time Time of the day as minutes in a day (Int)
+     * @return String representation of the time sent formatted as am/pm
+     */
     private fun getTime(time: Int): String {
-        val extra = time % 60
-        val hour = (time - extra) / 60
-        return "${if(hour <= 12) hour else hour - 12}:${String.format(Locale.CANADA, "%02d", extra)} ${if(hour < 12) "am" else "pm"}"
+        val extra = time % 60//minute of the hour
+        val hour = (time - extra) / 60//hour in the day (24 format)
+        return "${if(hour <= 12) hour else hour - 12}:${String.format(Locale.CANADA, "%02d", extra)} ${if(hour < 12) "am" else "pm"}"//convert to am/pm String value
     }
 
+    /**
+     * Private Method to get the time as a formatted string given the time as an Int representation of the minutes in a day
+     * @param index position of the time needed within the times list
+     * @return String representation of the time at the index sent formatted as am/pm
+     */
     fun getStrTime(index: Int): String{
-        val extra = times[index] % 60
-        val hour = (times[index] - extra) / 60
-        return "${if(hour <= 12) hour else hour - 12}:${String.format(Locale.CANADA, "%02d", extra)} ${if(hour < 12) "am" else "pm"}"
+        val extra = times[index] % 60//minute of the hour
+        val hour = (times[index] - extra) / 60//hour in the day (24 format)
+        return "${if(hour <= 12) hour else hour - 12}:${String.format(Locale.CANADA, "%02d", extra)} ${if(hour < 12) "am" else "pm"}"//convert to am/pm String value
     }
 
-    //fun getEndDate(): String = endDate
-    //fun getStartDate(): String = startDate
-    fun getInsertCommand(): String = "Insert Into Clients(name, session_type, days, times, durations, start_date, end_date) Values('$name', ${scheduleType.value}, '${getDaysString(true)}', '${getTimesString(true)}', '${getDurationsString()}', '$startDate', '$endDate')"
-    fun getUpdateCommand(): String = "Update Clients Set name = '$name', session_type = ${scheduleType.value}, days = '${getDaysString(true)}', times = '${getTimesString(true)}', durations = '${getDurationsString()}', start_date = '$startDate', end_date = '$endDate' Where id = $id"
-    fun getDeleteCommand():String = "Delete From Clients Where id = $id; Delete From Session_Changes Where id = $id; Delete From Session_log Where id = $id"
+    //Database operations
+    fun getInsertCommand(): String = "Insert Into Clients(client_name, schedule_type, days, times, durations, start_date, end_date) Values('$name', ${scheduleType.value}, '${getDaysString(true)}', '${getTimesString(true)}', '${getDurationsString()}', '$startDate', '$endDate')"
+    fun getUpdateCommand(): String = "Update Clients Set client_name = '$name', schedule_type = ${scheduleType.value}, days = '${getDaysString(true)}', times = '${getTimesString(true)}', durations = '${getDurationsString()}', start_date = '$startDate', end_date = '$endDate' Where client_id = $id"
+    fun getDeleteCommand():String = "Delete From Clients Where client_id = $id; Delete From Session_Changes Where client_id = $id; Delete From Session_log Where client_id = $id"
 }

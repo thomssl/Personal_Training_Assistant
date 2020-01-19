@@ -9,4 +9,9 @@
     <dimen name="text_size_SW600dp">18sp</dimen>
     <dimen name="text_size_SW600dp2">16sp</dimen>
     <dimen name="text_size_small">8sp</dimen>
+    <dimen name="wiki_title_size">24sp</dimen>
+    <dimen name="wiki_main_heading_size">22sp</dimen>
+    <dimen name="wiki_secondary_heading_size">18sp</dimen>
+    <dimen name="wiki_body_size">14sp</dimen>
+    <dimen name="assistant_logo">80dp</dimen>
 </resources>

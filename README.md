@@ -1,4 +1,4 @@
-# Personal_Training_Assistant
+# Personal Training Assistant
 
 ## Introduction
 
@@ -13,7 +13,8 @@ All fields or boxes that the user inputs information must be checked to make sur
 - Semicolons
 - Double Quote Marks
 
-## Clients
+
+## Client
 
 ### Overview
 
@@ -43,7 +44,8 @@ This classification will guide how sessions are created and how the client will 
 
 Enter client name and choose schedule type. Input fields will change depending on the schedule type. Enter all required input fields visible to complete Client creation. See "Input Fields" to make sure name field input is valid.
 
-## Joints
+
+## Joint
 
 Static list of joints:
 1. Ankle
@@ -56,7 +58,8 @@ Static list of joints:
 8. Thoracic Spine
 9. Wrist
 
-## Muscles
+
+## Muscle
 
 ### Overview
 
@@ -73,7 +76,8 @@ Enter name of muscle.  See "Input Fields" to make sure name field input is valid
 
 Application will check if the Muscle is used to describe an exercise. If it is used, the deletion will be stopped and the user will be prompted to remove exercises that contain the muscle.
 
-## Exercises
+
+## Exercise
 
 ### Overview
 
@@ -108,7 +112,8 @@ Enter exercise name and exercise type. Once type is chosen, the primary movers l
 
 Application will check if the Exercise is used to describe a session. If it is used, the session log entry will have the exercise removed and the information for that exercise added to the notes section
 
-## Sessions
+
+## Session
 
 ### Overview
 
@@ -130,3 +135,61 @@ Only 1 session is allowed per day per client. Allowing for more makes checking f
 A exercises can only appear once per session. If the repeat exercise needs to be tracked (I’m not sure why someone would want to repeat and exercise later in a session though) you need to add it to the existing exercise entry and add the volume (If the weight or reps change then sorry, you cannot log that). If you don’t need to track the repeat exercise than add it to the session notes.
 
 Max session duration is 120 minutes. This covers 99% of people and if you’re still with a client after 2 hours that is one long ass session. If you need more time, don’t worry about it just enter your session data as per usual. The overall time constraint is just a number that fits most people and eliminates the chance of a user inputting a ridiculously long session duration.
+
+
+## Operation
+
+### Daily Schedule
+
+Select a date in the calendar to have the list to the right populated with all sessions found on that date. Any client with a constant schedule will have their scheduled future sessions shown (as long as you have not made a change to that scheduled session) even though nothing has been added to the session yet. All other session present have been added from a variable or non-schedule client and are one time events
+
+The list of session can be interacted with to add, edit or remove sessions from the selected date. Any sessions that conflict with another session will be red. Clicking the add button in the bottom right corner opens a prompt to add a session to the list. You will be given a list of clients that are able to add a session on the chosen date and be able to choose a time and duration. The clients available are chosen based upon their schedule type:
+
+- Constant Schedule - If the client has cancelled on a regular session, they are able to add a makeup session
+- Variable Schedule - If the client has available weekly/monthly sessions or they have makeup sessions available
+- No Schedule - All clients are available to add sessions
+
+Click any session in the list to proceed with editing that session in another window. If you need to cancel a session found in the list, hold down the session and a prompt will appear to confirm the action.
+
+### Session Editor
+
+When a session found in your daily schedule is clicked you enter this window and can edit all attributes of the session except for the client information. If the session chosen has data already associated with it, that data will be loaded to the appropriate field and be made accessible for you to edit. The various buttons provide you the ability to change the following attributes (by button name):
+
+- Change Duration - dialog to input a new duration (must be within 1-120mins)
+- Change Date - dialog to input a new date from a calendar
+- Change Time - dialog to input a new time from a clock
+- Add Exercise - dialog to choose a new Exercise to add. See below for more info
+- Confirm - confirms any changes made to the session
+
+When attempting to add a new exercise to a session, the name input field allows you to search by exercise name, primary mover type and exercise type. When you see the desired exercise in the list click it to make sure you have a valid exercise chosen (the application will reject any name not associated with a logged exercise).
+
+You can also edit or delete an exercise from the session by clicking or holding down on an exercise in the exercise list. Editing will allow you to change all the the attributes except for the exercise name chosen. When attempting to remove an exercise, you will be prompted to confirm before proceeding.
+
+Notes can also be added/edited for the session. These notes cannot be tracked within 'Client Stats' but they can be useful to remember things about the session or client. The notes will also contain a reference to any exercise removed from the library that was once performed during this session.
+
+### Clients
+
+Clients are displayed in list format and each client row shows the important information about the client. To edit the client, you can click the row and a windows will appear with the current client info displayed. See 'Add/Edit Client' for more details. To add a new client, click the add button in the bottom right corner. A window will appear with default values selected. Add client information to confirm a new client and follow the rules about Clients. See 'Add/Edit Client' and 'Client' for more information. To remove a client, long hold the client's row and a prompt will ask you to confirm deletion of a client.
+
+### Add/Edit Client
+
+When you click the add button or click a row within the clients list, you will be sent to window to add or edit a client. The operations are very similar so I figured it would be easier for me if I put them together. When creating or editing a client with a normal schedule, only your normal schedule (ie clients with normal schedules) will be checked for conflicts. All sessions outside of your normal schedule clients will not be checked, hence you might find conflicts with variable sessions in your schedule. You will have to deal with those but the Schedule section will turn conflicting session red to denote a conflict. When creating or editing a non-constant schedule client, no conflicts are checked except for the clients name. However, the client is still checked to make sure the number of variables sessions falls within acceptable values (1-7 for weekly, 1-28 monthly) and/or the default duration is valid (1-120mins).
+
+### Exercises
+
+Exercises are displayed in list format and each exercise row shows the important information about the exercise. To edit the exercise, you can click the row and a windows will appear with the current exercise info displayed. See 'Add/Edit Exercise' for more details. To add a new exercise, click the add button in the bottom right corner. A window will appear with default values selected. Add exercise information to confirm a new exercise and follow the rules about Exercises. See 'Add/Edit Exercise' and 'Exercise' for more information. To remove an exercise, long hold the exercise's row and a prompt will ask you to confirm deletion of a exercise. See 'Exercise Deletion' for more information
+
+### Add/Edit Exercise
+
+When you click the add button or click a row within the exercises list, you will be sent to a window to add or edit an exercise. The operations are very similar so I figured it would be easier for me if I put them together. When creating or editing an exercise, you will be required to input a name (text box), exercise type (dropdown list), primary movers (list, single select) and secondary movers (list, multiple select). For rules regarding exercise creation see 'Exercise Creation'.
+
+### Muscles
+
+Muscles are displayed in list format and each muscle row shows the name of the muscle. To edit the muscle, you can click the row and a dialog will appear with the current muscle name displayed. To add a new exercise, click the add button in the bottom right corner. A dialog will appear with a blank name text box (follow the rules about 'Muscle Creation' and 'Input Fields). To remove a muscle, long hold the muscle's row and a prompt will ask you to confirm deletion of a muscle. See 'Muscle Deletion' for more information.
+
+### Settings
+
+The settings available are:
+
+- 24 Hour Clock (on/off) - allows the user to choose time choices and displays to be in 24 hour clock mode rather than am/pm
+- Default Session Duration - Value automatically inserted into session duration input fields or used if the duration is 0mins

@@ -1,5 +1,6 @@
 package com.trainingapp.personaltrainingassistant.ui.schedule
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,9 +11,19 @@ import com.trainingapp.personaltrainingassistant.R
 import com.trainingapp.personaltrainingassistant.objects.Session
 import com.trainingapp.personaltrainingassistant.StaticFunctions
 
-class ScheduleRVAdapter(private val day: Day, private val clickListener: (Int) -> Unit, private val longClickListener: (Int) -> Boolean): RecyclerView.Adapter<ScheduleRVAdapter.ScheduleViewHolder>() {
+/**
+ * Adapter to display all session found for a given day. Displays client name and session time. Highlights conflicts found between sessions
+ * @param context context from the ScheduleFragment. Used to get drawables
+ * @param day Day object that contains the list of sessions to display
+ * @param clickListener Function used by ScheduleFragment to handle item onClick event (ie edit session)
+ * @param longClickListener Function used by ScheduleFragment to handle item onLongClick event (ie cancel session)
+ */
+class ScheduleRVAdapter(private val context: Context?, private val day: Day, private val clickListener: (Int) -> Unit, private val longClickListener: (Int) -> Boolean): RecyclerView.Adapter<ScheduleRVAdapter.ScheduleViewHolder>() {
+
+    private var conflicts = ArrayList<Int>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScheduleViewHolder {
+        conflicts = day.getConflicts()//fills list with sessions indices that have a conflict with another session
         return ScheduleViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.schedule_row, parent, false))
     }
 
@@ -29,6 +40,8 @@ class ScheduleRVAdapter(private val day: Day, private val clickListener: (Int) -
             itemView.findViewById<TextView>(R.id.scheduleRowTime).text = StaticFunctions.getStrTimeAMPM(session.date, session.duration)
             itemView.setOnClickListener{clickListener(position)}
             itemView.setOnLongClickListener { longClickListener(position) }
+            if (conflicts.contains(position))//if this session index was flagged as a conflict set background to be highlighted
+                itemView.background = context?.getDrawable(R.drawable.border_day_conflict)
         }
     }
 }

@@ -5,11 +5,13 @@ import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import android.widget.*
 import androidx.fragment.app.DialogFragment
 import com.trainingapp.personaltrainingassistant.database.DatabaseOperations
 import com.trainingapp.personaltrainingassistant.objects.Exercise
 import com.trainingapp.personaltrainingassistant.R
+import com.trainingapp.personaltrainingassistant.ui.adapters.SearchForExerciseSession
 import java.lang.IllegalStateException
 
 class AddExerciseSessionDialog(private val clientID: Int, private val  confirmListener: (AddExerciseSessionDialog) -> Boolean): DialogFragment() {
@@ -22,7 +24,7 @@ class AddExerciseSessionDialog(private val clientID: Int, private val  confirmLi
         return activity.let {
             val view = View.inflate(context, R.layout.add_exercise_dialog, null)
             val txtNames = view.findViewById<AutoCompleteTextView>(R.id.actxtAddExerciseName)
-            txtNames.setAdapter(ArrayAdapter<String>(context!!, android.R.layout.select_dialog_item, exerciseNames))
+            txtNames.setAdapter(SearchForExerciseSession(context!!, R.layout.simple_autocomplete_item, exercises))
             txtNames.setOnItemClickListener{ _, _, _, _ ->
                 val exerciseSession = databaseOperations.getLastOccurrence(exercises[exerciseNames.indexOf(txtNames.text.toString())], clientID)
                 if (exerciseSession.hasData()) {
@@ -34,7 +36,7 @@ class AddExerciseSessionDialog(private val clientID: Int, private val  confirmLi
             }
             val builder = AlertDialog.Builder(it)
             builder.setView(view)
-                .setPositiveButton(R.string.confirm) { _, _ -> if (confirmListener(this)) dismiss()}
+                .setPositiveButton(R.string.confirm) { _, _ -> }
                 .setNegativeButton(R.string.cancel){ _, _ -> dismiss()}
                 .setTitle(R.string.titleAddExerciseDialog)
             builder.create()
@@ -46,5 +48,12 @@ class AddExerciseSessionDialog(private val clientID: Int, private val  confirmLi
         databaseOperations = DatabaseOperations(context)
         exercises = databaseOperations.getAllExercises()
         exercises.forEach{exerciseNames.add(it.name)}
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (resources.configuration.smallestScreenWidthDp > 600)
+         dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        (dialog as AlertDialog).getButton(Dialog.BUTTON_POSITIVE).setOnClickListener { if (confirmListener(this)) dismiss() }
     }
 }

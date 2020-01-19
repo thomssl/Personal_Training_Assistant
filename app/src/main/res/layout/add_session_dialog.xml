@@ -36,12 +36,13 @@
         android:id="@+id/lblAddSessionDuration"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/add_session_start_time"
         android:labelFor="@id/etxtAddSessionDuration"
-        app:layout_constraintStart_toStartOf="@id/lblAddSessionStartTime"
-        app:layout_constraintTop_toTopOf="@id/etxtAddSessionDuration"
+        android:text="@string/weekly_const_duration"
+        android:gravity="center"
         app:layout_constraintBottom_toBottomOf="@id/etxtAddSessionDuration"
-        app:layout_constraintEnd_toEndOf="@id/lblAddSessionStartTime"/>
+        app:layout_constraintEnd_toEndOf="@id/lblAddSessionStartTime"
+        app:layout_constraintStart_toStartOf="@id/lblAddSessionStartTime"
+        app:layout_constraintTop_toTopOf="@id/etxtAddSessionDuration" />
 
     <EditText
         android:id="@+id/etxtAddSessionDuration"

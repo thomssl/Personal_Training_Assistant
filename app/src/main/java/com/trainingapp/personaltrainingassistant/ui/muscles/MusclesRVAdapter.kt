@@ -8,6 +8,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.trainingapp.personaltrainingassistant.objects.MuscleJoint
 import com.trainingapp.personaltrainingassistant.R
 
+/**
+ * Adapter to display all muscles found in the database. Displays name of the muscle
+ * @param muscles List of all muscles as MuscleJoint objects
+ * @param clickListener Function used by MusclesFragment to handle item onClick event (ie edit muscle)
+ * @param longClickListener Function used by MusclesFragment to handle item onLongClick event (ie delete muscle)
+ */
 class MusclesRVAdapter(private val muscles: ArrayList<MuscleJoint>, private val clickListener: (MuscleJoint) -> Unit, private val longClickListener: (MuscleJoint, View) -> Boolean): RecyclerView.Adapter<MusclesRVAdapter.MuscleViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MuscleViewHolder {

@@ -8,13 +8,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.trainingapp.personaltrainingassistant.R
 import com.trainingapp.personaltrainingassistant.objects.MuscleJoint
 
-class EditExercisePrimaryRVAdapter(val muscleJoints: ArrayList<MuscleJoint>,private val indexSelected: Int, private val clickListener: (MuscleJoint) -> Unit): RecyclerView.Adapter<EditExercisePrimaryRVAdapter.AddExercisePrimaryViewHolder>() {
+/**
+ * Adapter to display the primary mover that an exercise already contains and can be edited
+ * @param muscleJoints List of all the possible muscles or joints the user can choose from
+ * @param indexSelected index of the primary mover contained within the Exercise that need to be set as selected upon init
+ * @param clickListener Function that handles the onClick event of an item within the AddEditExerciseActivity
+ */
+class EditExercisePrimaryRVAdapter(val muscleJoints: ArrayList<MuscleJoint>, indexSelected: Int, private val clickListener: (MuscleJoint) -> Unit): RecyclerView.Adapter<EditExercisePrimaryRVAdapter.AddExercisePrimaryViewHolder>() {
 
-    var isSelected = Array(muscleJoints.size) {false}
+    var selectedPosition: Int = if (indexSelected >= 0) indexSelected else -1//used to tell which item is selected. init as -1 if passed index is invalid, else set as invalid index
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AddExercisePrimaryViewHolder {
-        if (indexSelected >= 0)
-            isSelected[indexSelected] = true
         return AddExercisePrimaryViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.mover_row, parent, false))
     }
 
@@ -28,16 +32,15 @@ class EditExercisePrimaryRVAdapter(val muscleJoints: ArrayList<MuscleJoint>,priv
 
         fun onBindItems(muscleJoint: MuscleJoint, position: Int){
             itemView.findViewById<TextView>(R.id.txtExerciseMoverName).text = muscleJoint.name
-            itemView.setOnClickListener(this)
-            itemView.isSelected = isSelected[position]
+            itemView.setOnClickListener(this)//used to internally handle the onClick event and use passed function
+            itemView.isSelected = selectedPosition == position
         }
 
         override fun onClick(view: View) {
             val position = adapterPosition
-            isSelected = Array(muscleJoints.size) {false}
-            isSelected[position] = true
+            selectedPosition = position
             clickListener(muscleJoints[position])
-            notifyDataSetChanged()
+            notifyDataSetChanged()//needed to update all items to new selected item
         }
     }
 }
