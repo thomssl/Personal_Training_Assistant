@@ -13,6 +13,7 @@ All fields or boxes that the user inputs information must be checked to make sur
 - Semicolons
 - Double Quote Marks
 
+
 ## Client
 
 ### Overview
@@ -43,6 +44,7 @@ This classification will guide how sessions are created and how the client will 
 
 Enter client name and choose schedule type. Input fields will change depending on the schedule type. Enter all required input fields visible to complete Client creation. See "Input Fields" to make sure name field input is valid.
 
+
 ## Joint
 
 Static list of joints:
@@ -55,6 +57,7 @@ Static list of joints:
 7. Shoulder
 8. Thoracic Spine
 9. Wrist
+
 
 ## Muscle
 
@@ -72,6 +75,7 @@ Enter name of muscle.  See "Input Fields" to make sure name field input is valid
 ### Deletion
 
 Application will check if the Muscle is used to describe an exercise. If it is used, the deletion will be stopped and the user will be prompted to remove exercises that contain the muscle.
+
 
 ## Exercise
 
@@ -108,6 +112,7 @@ Enter exercise name and exercise type. Once type is chosen, the primary movers l
 
 Application will check if the Exercise is used to describe a session. If it is used, the session log entry will have the exercise removed and the information for that exercise added to the notes section
 
+
 ## Session
 
 ### Overview
@@ -130,6 +135,7 @@ Only 1 session is allowed per day per client. Allowing for more makes checking f
 A exercises can only appear once per session. If the repeat exercise needs to be tracked (I’m not sure why someone would want to repeat and exercise later in a session though) you need to add it to the existing exercise entry and add the volume (If the weight or reps change then sorry, you cannot log that). If you don’t need to track the repeat exercise than add it to the session notes.
 
 Max session duration is 120 minutes. This covers 99% of people and if you’re still with a client after 2 hours that is one long ass session. If you need more time, don’t worry about it just enter your session data as per usual. The overall time constraint is just a number that fits most people and eliminates the chance of a user inputting a ridiculously long session duration.
+
 
 ## Operation
 
