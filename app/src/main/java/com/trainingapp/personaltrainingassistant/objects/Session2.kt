@@ -35,6 +35,7 @@ class Session2 (var clientID: Int, var clientName: String, dayTime: String, priv
     fun getExercise(exercise: Exercise): ExerciseSession = program.getExercise(exercise)
     fun getExercise(index: Int): ExerciseSession = program.getExercise(index)
     fun getExerciseCount(): Int = program.getExerciseCount()
+    fun getProgramID(): Int = program.id
     fun updateProgramID(id: Int) { program.id = id }
     private fun getTime(): Int = (date[Calendar.HOUR_OF_DAY] * 60) + date[Calendar.MINUTE]//gets time as minutes in the day
     fun getTimeRange(): IntRange = getTime() until (getTime() + duration)//gets an IntRange from the start to end time

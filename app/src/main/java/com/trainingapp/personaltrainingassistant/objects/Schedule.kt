@@ -87,6 +87,12 @@ class Schedule (var scheduleType: ScheduleType, var days: Int, var duration: Int
         return "${if(hour <= 12) hour else hour - 12}:${String.format(Locale.CANADA, "%02d", extra)} ${if(hour < 12) "am" else "pm"}"//convert to am/pm String value
     }
 
+    fun getCheckClientConflictDays(): String {
+        val builder = StringBuilder()
+        daysList.forEachIndexed { index, i -> if (i > 0) builder.append("${StaticFunctions.NumToDay[index]} > 0 And ") }
+        return builder.toString()
+    }
+
     fun getInsertCommand(id: Int): String = "Insert Into Schedules(client_id, schedule_type, days, duration, sun, mon, tue, wed, thu, fri, sat, sun, sun_duration, mon_duration, tue_duration, wed_duration, thu_duration, fri_duration, sat_duration) " +
             "Values($id, $scheduleType, $days, $duration, ${daysList[0]}, ${daysList[1]}, ${daysList[2]}, ${daysList[3]}, ${daysList[4]}, ${daysList[5]}, ${daysList[6]}, ${durationsList[0]}, ${durationsList[1]}, ${durationsList[2]}, " +
             "${durationsList[3]}, ${durationsList[4]}, ${durationsList[5]}, ${durationsList[6]})"

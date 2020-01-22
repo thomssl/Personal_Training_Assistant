@@ -112,4 +112,12 @@ object DBInfo2 {
             const val CLOCK_24 = "'24_clock'"
         }
     }
+
+    class AliasesUsed : BaseColumns{
+        companion object{
+            const val PRIMARY_MOVER_NAME = "primary_mover_name"
+            const val SECONDARY_MOVERS_IDS = "secondary_movers_ids"
+            const val SECONDARY_MOVERS_NAMES = "secondary_movers_names"
+        }
+    }
 }

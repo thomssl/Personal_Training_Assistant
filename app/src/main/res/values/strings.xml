@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Personal Training Assistant</string>
+    <string name="app_name">Training Assistant</string>
     <string name="add_exercise_activity">Add New Exercise</string>
     <string name="edit_exercise_activity">Edit Exercise</string>
     <string name="session_activity">Session Editor</string>
@@ -114,4 +114,500 @@
     <string name="add_client_title">Add Client</string>
     <string name="edit_client_title">Edit Client</string>
     <string name="alert_dialog_confirm_removal">Confirm Removal</string>
+    <string name="getExerciseQuery">
+        Select e.exercise_id,
+               e.exercise_name,
+               e.exercise_type,
+               e.primary_mover_id,
+               (
+                    Case
+                        When e.exercise_type = 1 then m.muscle_name
+                        When e.exercise_type = 2 or e.exercise_type = 3 then j.joint_name
+                    End
+                ) as \'primary_mover_name\',
+               ifnull
+                (
+                    (
+                        Select group_concat(s.secondary_mover_id)
+                        From secondary_movers s
+                        Where s.exercise_id = %1$d
+                        Group By s.exercise_id
+                    ),
+                    \'0\'
+                ) as \'secondary_movers_ids\',
+               ifnull
+                (
+                    (
+                        Select group_concat
+                        (
+                            (
+                                Case
+                                    When e.exercise_type = 1 then m.muscle_name
+                                    When e.exercise_type = 2 or e.exercise_type = 3 then j.joint_name
+                                End
+                            )
+                        )
+                        From secondary_movers s
+                        left join Muscles m on s.secondary_mover_id=m.muscle_id
+                        left join Joints j on s.secondary_mover_id=j.joint_id
+                        Where s.exercise_id = %1$d
+                        Group By s.exercise_id
+                    ),
+                    \'0\'
+                ) as \'secondary_movers_names\'
+        From Exercises e
+        left join Muscles m on e.primary_mover_id=m.muscle_id
+        left join Joints j on e.primary_mover_id=j.joint_id
+        Where e.exercise_id = %1$s;</string>
+    <string name="getAllExercisesQuery">
+        Select e.exercise_id,
+               e.exercise_name,
+               e.exercise_type,
+               e.primary_mover_id,
+               (
+                    Case
+                        When e.exercise_type = 1 then m.muscle_name
+                        When e.exercise_type = 2 or e.exercise_type = 3 then j.joint_name
+                    End
+                ) as \'primary_mover_name\',
+               ifnull
+                (
+                    (
+                        Select group_concat(s.secondary_mover_id)
+                        From secondary_movers s
+                        Where s.exercise_id = e.exercise_id
+                        Group By s.exercise_id
+                    ),
+                    \'0\'
+                ) as \'secondary_movers_ids\',
+               ifnull
+                (
+                    (
+                        Select group_concat
+                        (
+                            (
+                                Case
+                                    When e.exercise_type = 1 then m.muscle_name
+                                    When e.exercise_type = 2 or e.exercise_type = 3 then j.joint_name
+                                End
+                            )
+                        )
+                        From secondary_movers s
+                        left join Muscles m on s.secondary_mover_id=m.muscle_id
+                        left join Joints j on s.secondary_mover_id=j.joint_id
+                        Where s.exercise_id = e.exercise_id
+                        Group By s.exercise_id
+                    ),
+                    \'0\'
+                ) as \'secondary_movers_names\'
+        From Exercises e
+        left join Muscles m on e.primary_mover_id=m.muscle_id
+        left join Joints j on e.primary_mover_id=j.joint_id;</string>
+    <string name="checkClientConflictQuery">
+        Select *
+        From Clients c
+        Inner Join Schedules s on c.client_id=s.client_id
+        Where %1$s
+              c.start_date &lt;= date(\'now\')
+              And c.end_date >= date(\'now\')
+              And s.schedule_type = 1
+              And c.client_id &lt;&gt; %2$d;
+    </string>
+    <string name="removeExerciseQuery">
+        Select *
+        From Sessions_Log sl
+        Where sl.program_id in
+        (
+            Select pe.program_id
+            From Program_Exercises pe
+            Where pe.exercise_id = %1$s
+        );
+    </string>
+    <string name="getSession_SessionQuery">
+        Select s.client_id,
+               c.client_name,
+               s.dayTime,
+               s.program_id,
+               p.program_name,
+               s.duration,
+               s.notes
+        From Session_Log s
+        Inner Join Clients c On s.client_id=c.client_id
+        Inner Join Programs p On s.client_id=p.client_id
+        Where s.client_id = %1$d
+              And date(s.dayTime) = date(\'%2$s\')
+              And date(p.dayTime) = date(\'%2$s\');
+    </string>
+    <string name="getSession_ExerciseSessionQuery">
+        Select dat.exercise_id,
+               dat.exercise_name,
+               dat.exercise_type,
+               dat.primary_mover_id,
+               dat.primary_mover_name,
+               dat.secondary_movers_ids,
+               dat.secondary_movers_names,
+               pe.sets,
+               pe.reps,
+               pe.resistance,
+               pe.exercise_order
+        From Program_Exercises pe
+        Inner Join (
+            Select e.exercise_id,
+                   e.exercise_name,
+                   e.exercise_type,
+                   e.primary_mover_id,
+                   (
+                        Case
+                            When e.exercise_type = 1 then m.muscle_name
+                            When e.exercise_type = 2 or e.exercise_type = 3 then j.joint_name
+                        End
+                    ) as \'primary_mover_name\',
+                   ifnull
+                    (
+                        (
+                            Select group_concat(s.secondary_mover_id)
+                            From secondary_movers s
+                            Where s.exercise_id = e.exercise_id
+                            Group By s.exercise_id
+                        ),
+                        \'0\'
+                    ) as \'secondary_movers_ids\',
+                   ifnull
+                    (
+                        (
+                            Select group_concat(
+                                (
+                                    Case
+                                        When e.exercise_type = 1 then m.muscle_name
+                                        When e.exercise_type = 2 or e.exercise_type = 3 then j.joint_name
+                                    End
+                                )
+                            )
+                            From secondary_movers s
+                            left join Muscles m on s.secondary_mover_id=m.muscle_id
+                            left join Joints j on s.secondary_mover_id=j.joint_id
+                            Where s.exercise_id = e.exercise_id
+                            Group By s.exercise_id
+                        ),
+                        \'0\'
+                    ) as \'secondary_movers_names\'
+            From Exercises e
+            left join Muscles m on e.primary_mover_id=m.muscle_id
+            left join Joints j on e.primary_mover_id=j.joint_id
+        ) dat on dat.exercise_id=pe.exercise_id
+        Where pe.program_id = %1$d;
+    </string>
+    <string name="removeCanceledSessionCommand">
+        Delete
+        From Session_Changes
+        Where ROWID in
+        (
+            select ROWID
+            from Session_Changes
+            where client_id = %1$d
+                  and change_dayTime = \'0\'
+            limit 1
+        );
+    </string>
+    <string name="getClientSessions_SessionQuery">
+        Select s.client_id,
+               c.client_name,
+               s.dayTime,
+               s.program_id,
+               p.program_name,
+               s.duration,
+               s.notes
+        From Session_Log s
+        Inner Join Clients c On s.client_id=c.client_id
+        Inner Join Programs p On s.client_id=p.client_id
+        Where s.client_id = %1$d;
+    </string>
+    <string name="getClientSessions_ExerciseSessionQuery">
+        Select pe.program_id
+               dat.exercise_id,
+               dat.exercise_name,
+               dat.exercise_type,
+               dat.primary_mover_id,
+               dat.primary_mover_name,
+               dat.secondary_movers_ids,
+               dat.secondary_movers_names,
+               pe.sets,
+               pe.reps,
+               pe.resistance,
+               pe.exercise_order
+        From Program_Exercises pe
+        Inner Join (
+            Select e.exercise_id,
+                   e.exercise_name,
+                   e.exercise_type,
+                   e.primary_mover_id,
+                   (
+                        Case
+                            When e.exercise_type = 1 then m.muscle_name
+                            When e.exercise_type = 2 or e.exercise_type = 3 then j.joint_name
+                        End
+                    ) as \'primary_mover_name\',
+                   ifnull
+                    (
+                        (
+                            Select group_concat(s.secondary_mover_id)
+                            From secondary_movers s
+                            Where s.exercise_id = e.exercise_id
+                            Group By s.exercise_id
+                        ),
+                        \'0\'
+                    ) as \'secondary_movers_ids\',
+                   ifnull
+                    (
+                        (
+                            Select group_concat(
+                                (
+                                    Case
+                                        When e.exercise_type = 1 then m.muscle_name
+                                        When e.exercise_type = 2 or e.exercise_type = 3 then j.joint_name
+                                    End
+                                )
+                            )
+                            From secondary_movers s
+                            left join Muscles m on s.secondary_mover_id=m.muscle_id
+                            left join Joints j on s.secondary_mover_id=j.joint_id
+                            Where s.exercise_id = e.exercise_id
+                            Group By s.exercise_id
+                        ),
+                        \'0\'
+                    ) as \'secondary_movers_names\'
+            From Exercises e
+            left join Muscles m on e.primary_mover_id=m.muscle_id
+            left join Joints j on e.primary_mover_id=j.joint_id
+        ) dat on dat.exercise_id=pe.exercise_id
+        Where pe.program_id in (%1$s);
+    </string>
+    <string name="getAddSessionsClientsByDayQuery">
+        Select *
+        From Clients c
+        Inner Join Schedules s on c.client_id=s.client_id
+        Where c.client_id Not in (%1$s)
+              And
+              (
+                s.schedule_type = 0
+                Or
+                (
+                    s.schedule_type = 1
+                    And
+                    (
+                        Select count(sc.client_id)
+                        From Session_Changes sc
+                        Where sc.client_id = c.client_id
+                              And sc.change_dayTime = \'0\'
+                    )
+                    > 0
+                )
+                Or
+                (
+                    s.schedule_type = 2
+                    And
+                    (
+                        Select count(sl.client_id)
+                        From Session_log sl
+                        Where sl.client_id = c.client_id
+                              And date(sl.dayTime) &gt;= date('%2$s')
+                              And date(sl.dayTime) &lt;= date('%3$s')
+                    )
+                    &lt; s.days
+                )
+                Or
+                (
+                    s.schedule_type = 3
+                    And
+                    (
+                        Select count(sl.client_id)
+                        From Session_log sl
+                        Where sl.client_id = c.client_id
+                              And date(sl.dayTime) &gt;= date('%4$s')
+                              And date(sl.dayTime) &lt;= date('%5$s')
+                    )
+                    &lt; s.days
+                )
+              )
+    </string>
+    <string name="getScheduleByDay_SessionLogQuery">
+        Select s.client_id,
+               c.client_name,
+               s.dayTime,
+               s.program_id,
+               s.duration,
+               s.notes
+        From Session_Log s
+        Inner Join Clients c On s.client_id=c.client_id
+        Where date(dayTime) = date(\'%1$s\');
+    </string>
+    <string name="getScheduleByDay_ClientsQuery">
+        Select c.client_id,
+               c.client_name,
+               s.%2$s,
+               s.%2$s_duration
+        From Clients c
+        Inner Join Schedules s on c.client_id=s.client_id
+        Where %2$d &gt; 0
+            And date(end_date) &gt;= date(%1$s)
+            And date(start_date) &lt;= date(%1$s)
+            And schedule_type = 1
+            And Not
+            (
+                c.client_id in
+                (
+                    Select Distinct client_id
+                    From Session_Changes
+                    Where date(normal_dayTime) = date(%1$s)
+                )
+                Or c.client_id in
+                (
+                    Select s.client_id
+                    From Session_log s
+                    Where date(dayTime) = date(%1$s)
+                )
+            );
+    </string>
+    <string name="getScheduleByDay_SessionChangesQuery">
+        Select sc.client_id,
+               c.client_name,
+               sc.change_dayTime,
+               sc.duration
+        From Session_Changes sc
+        Inner Join Clients c on sc.client_id=c.client_id
+        Where date(sc.change_dayTime) = date(\'%1$s\')
+            And Not sc.client_id in
+            (
+                Select s.client_id
+                From Session_log s
+                Where date(dayTime) = date(\'%1$s\')
+            );
+    </string>
+    <string name="checkChangeQuery">
+        Select client_id
+        From Session_Changes
+        Where client_id = %1$d
+            And datetime(change_dayTime) = datetime(\'%2$s\');
+    </string>
+    <string name="insertChangeCommand">
+        Insert Into Session_Changes(client_id,
+                                    normal_dayTime,
+                                    change_dayTime,
+                                    duration
+                                    )
+                             Values(%1$d,
+                                    \'%2$s\',
+                                    \'%3$s\',
+                                    %4$d);
+    </string>
+    <string name="updateChangeCommand">
+        Update Session_Changes
+        Set change_dayTime = \'%1$s\',
+            duration = %2$d
+        Where client_id = %3$d
+            And datetime(change_dayTime) = datetime(\'${StaticFunctions.getStrDateTime(oldSession.date)}\');
+    </string>
+    <string name="deleteChangeCommand">
+        Delete From Session_Changes
+        Where client_id = %1$d
+            And datetime(change_dayTime) = datetime(\'%2$s\');
+    </string>
+    <string name="getLastOccurrenceQuery">
+        Select sets,
+               reps,
+               resistance,
+               exercise_order
+        From Program_Exercises pe
+        Inner Join Session_log s On pe.program_id=s.program_id
+        Where client_id = %1$d
+            And exercise_id = %2$d
+        Order By dayTime Desc
+        Limit 1;
+    </string>
+    <string name="getAllOccurrencesQuery">
+        Select sets,
+               reps,
+               resistance,
+               exercise_order
+        From Program_Exercises pe
+        Inner Join Session_log s On pe.program_id=s.program_id
+        Where client_id = %1$d
+            And exercise_id = %2$d
+        Order By dayTime Desc;
+    </string>
+    <string name="getUserSettingsQuery">
+        Select default_duration,
+               clock24
+        From User_Settings;
+    </string>
+    <string name="setUserSettingsCommand">
+        Update User_Settings
+        Set default_duration = %1$d,
+            clock24 = %2$d;
+    </string>
+    <string name="getJointQuery">
+        Select joint_id,
+               joint_name
+        From Joints
+        Where joint_id = %1$d;
+    </string>
+    <string name="getAllJointsQuery">
+        Select joint_id,
+               joint_name
+        From Joints;
+    </string>
+    <string name="getMuscleQuery">
+        Select muscle_id, muscle_name From Muscles Where muscle_id = %1$d
+    </string>
+    <string name="getAllMusclesQuery">
+        Select muscle_id, muscle_name From Muscles Order By muscle_name
+    </string>
+    <string name="removeMuscleQuery">
+        Select DISTINCT e.exercise_id
+        From Exercises e
+        Inner Join secondary_movers s on s.exercise_id=e.exercise_id
+        Where e.exercise_type = 1
+            And (e.primary_mover_id = %1$d or s.secondary_mover_id = %1$d);
+    </string>
+    <string name="checkMuscleConflictQuery">
+        Select muscle_name
+        From Muscles
+        Where muscle_name = \'%1$s\'
+            And muscle_id &lt;&gt; %2$d
+    </string>
+    <string name="insertMuscleCommand">
+        Insert Into Muscles(muscle_name)
+        Values(\'%1$s\')
+    </string>
+    <string name="updateMuscleCommand">
+        Update Muscles
+        Set muscle_name = \'%1$s\'
+        Where muscle_id = %2$d
+    </string>
+    <string name="deleteMuscleCommand">
+        Delete From Muscles
+        Where muscle_id = %1$d
+    </string>
+    <string name="getClientQuery">
+        Select *
+        From Clients c
+        Inner Join Schedules s on c.client_id=s.client_id
+        Where c.client_id = %1$d
+    </string>
+    <string name="getAllClientsQuery">
+        Select *
+        From Clients c
+        Inner Join Schedules s on c.client_id=s.client_id
+    </string>
+    <string name="getClientTypeQuery">
+        Select schedule_type
+        From Schedules
+        Where client_id = %1$d
+    </string>
+    <string name="checkSessionLogQuery">
+        Select client_id
+        From Session_log s
+        Where s.client_id = %1$d
+            And date(dayTime) = date(\'%2$s\')
+    </string>
 </resources>
