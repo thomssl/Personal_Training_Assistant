@@ -193,3 +193,7 @@ The settings available are:
 
 - 24 Hour Clock (on/off) - allows the user to choose time choices and displays to be in 24 hour clock mode rather than am/pm
 - Default Session Duration - Value automatically inserted into session duration input fields or used if the duration is 0mins
+
+## Database Structure
+
+<img src="https://i.imgur.com/Gp0M9XK.jpg" style="display: block;margin-left: auto;margin-right: auto;width: 50%;">
