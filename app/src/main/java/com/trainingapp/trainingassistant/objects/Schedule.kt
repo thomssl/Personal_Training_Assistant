@@ -2,9 +2,7 @@ package com.trainingapp.trainingassistant.objects
 
 import com.trainingapp.trainingassistant.StaticFunctions
 import com.trainingapp.trainingassistant.enumerators.ScheduleType
-import java.lang.StringBuilder
 import java.util.*
-import kotlin.collections.ArrayList
 
 /**
  * Object to hold schedule details for a client
@@ -29,7 +27,9 @@ class Schedule (var scheduleType: ScheduleType, var days: Int, var duration: Int
                     builder.deleteCharAt(builder.lastIndex)
                 builder.toString()
             }
-            ScheduleType.WEEKLY_VARIABLE ,ScheduleType.MONTHLY_VARIABLE, ScheduleType.NO_SCHEDULE -> days.toString()
+            ScheduleType.WEEKLY_VARIABLE -> "$days/week"
+            ScheduleType.MONTHLY_VARIABLE -> "$days/month"
+            ScheduleType.NO_SCHEDULE -> ""
             ScheduleType.BLANK -> "Error"
         }
     }
@@ -47,7 +47,7 @@ class Schedule (var scheduleType: ScheduleType, var days: Int, var duration: Int
                     builder.deleteCharAt(builder.lastIndex)
                 return builder.toString()
             }
-            ScheduleType.NO_SCHEDULE,ScheduleType.MONTHLY_VARIABLE,ScheduleType.WEEKLY_VARIABLE -> ""
+            ScheduleType.WEEKLY_VARIABLE ,ScheduleType.MONTHLY_VARIABLE,ScheduleType.NO_SCHEDULE -> ""
             ScheduleType.BLANK -> "Error"
         }
     }
