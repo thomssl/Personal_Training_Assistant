@@ -109,7 +109,7 @@ class MainActivity : AppCompatActivity(),
         if (!file.exists()) {
             val assetManager = assets
             try {
-                val input = assetManager.open("data.db")
+                val input = assetManager.open("data.sqlite3")
                 val out: OutputStream = FileOutputStream(getString(R.string.filePath))
                 val buffer = ByteArray(1024)
                 var read = input.read(buffer)

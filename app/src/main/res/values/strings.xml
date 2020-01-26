@@ -18,7 +18,7 @@
     <string name="dateTime_format">yyyy-MM-dd hh:mm a</string>
     <string name="time_format">hh:mm a</string>
     <string name="date_format">yyyy-MM-dd</string>
-    <string name="filePath">/data/data/com.trainingapp.personaltrainingassistant/databases/data.db</string>
+    <string name="filePath">/data/data/com.trainingapp.personaltrainingassistant/databases/data.sqlite3</string>
     <string name="emptyDay">No Sessions Today</string>
     <string name="scheduleDatePlaceholder">Click to choose date</string>
     <string name="lblSessionClientName">Client Name: </string>
