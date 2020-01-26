@@ -85,6 +85,7 @@ class StaticFunctions {
         }
 
         /**
+         * Not Needed
          * Method to format a checked sql to account for any apostrophes
          * @param strSQL String to be used in database operation
          * @return String formatted to be acceptable for database operation
@@ -105,7 +106,7 @@ class StaticFunctions {
             if (strSQL.isBlank())
                 return true
             for (character in strSQL.toCharArray())
-                if (character == ',' || character == ';' || character == '"' || character == '_') return true
+                if (character == ',' || character == ';' || character == '"' || character == '_' || character == '\'') return true
             return false
         }
 

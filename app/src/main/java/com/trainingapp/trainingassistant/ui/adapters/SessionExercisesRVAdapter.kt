@@ -5,9 +5,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.trainingapp.trainingassistant.objects.ExerciseSession
 import com.trainingapp.trainingassistant.R
-import com.trainingapp.trainingassistant.objects.Session
+import com.trainingapp.trainingassistant.objects.ExerciseSession
+import com.trainingapp.trainingassistant.objects.Session2
 
 /**
  * Adapter to display the ExerciseSessions found within a given Session
@@ -15,7 +15,8 @@ import com.trainingapp.trainingassistant.objects.Session
  * @param clickListener Function from SessionActivity to handle the onClick event of an item
  * @param longClickListener Function from SessionActivity to handle the onLongClick event of an item
  */
-class SessionExercisesRVAdapter(var session: Session, private val clickListener: (ExerciseSession, Int) -> Unit, private val longClickListener: (ExerciseSession) -> Boolean) : RecyclerView.Adapter<SessionExercisesRVAdapter.SessionExercisesViewHolder>() {
+class SessionExercisesRVAdapter(var session: Session2, private val clickListener: (ExerciseSession, Int) -> Unit, private val longClickListener: (ExerciseSession) -> Boolean) : RecyclerView.Adapter<SessionExercisesRVAdapter
+.SessionExercisesViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SessionExercisesViewHolder {
         return SessionExercisesViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.session_exercise_row, parent, false))

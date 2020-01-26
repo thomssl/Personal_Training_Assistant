@@ -1,10 +1,10 @@
 package com.trainingapp.trainingassistant.activities
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import com.trainingapp.trainingassistant.R
 import com.trainingapp.trainingassistant.StaticFunctions
@@ -79,7 +79,7 @@ class AddEditExerciseActivity : AppCompatActivity(), AdapterView.OnItemSelectedL
             StaticFunctions.badSQLText(name) -> Snackbar.make(view, "Invalid input character inside exercise name. See Wiki for more information", Snackbar.LENGTH_LONG).show()
             exercise.primaryMover.id == 0 -> Snackbar.make(view, "No primary mover selected", Snackbar.LENGTH_LONG).show()
             else -> {//if passes all tests
-                exercise.name = StaticFunctions.formatForSQL(name)
+                exercise.name = name
                 if (!databaseOperations.checkExerciseConflict(exercise)) {//if no conflict is found with the existing exercises
                     if (isNew) {
                         if (databaseOperations.insertExercise(exercise)) {

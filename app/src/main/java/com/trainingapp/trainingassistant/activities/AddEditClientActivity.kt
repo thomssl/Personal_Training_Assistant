@@ -2,13 +2,13 @@ package com.trainingapp.trainingassistant.activities
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.RadioGroup
 import android.widget.Switch
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.isDigitsOnly
 import com.google.android.material.snackbar.Snackbar
 import com.trainingapp.trainingassistant.R
@@ -325,7 +325,7 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
                             }
                         }
                     }
-                    Client2(intentClient.id, StaticFunctions.formatForSQL(name), Schedule(ScheduleType.WEEKLY_CONSTANT, days.sumBy { if(it > 0) 1 else 0 }, 0, days, durations), startDate, endDate)//construct Client object with data
+                    Client2(intentClient.id, name, Schedule(ScheduleType.WEEKLY_CONSTANT, days.sumBy { if(it > 0) 1 else 0 }, 0, days, durations), startDate, endDate)//construct Client object with data
                 }
                 R.id.radIsWeeklyVar -> {
                     val startDate = btnAddEditClientStartDate.text.toString()
@@ -355,7 +355,7 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
                         return//exit function. Do nothing
                     }
                     //construct Client object with collected data. Times is set to "0" as default. if duration is set to 0 the default duration from the user settings is used
-                    Client2(intentClient.id, StaticFunctions.formatForSQL(name), Schedule(ScheduleType.WEEKLY_VARIABLE, sessions.toInt(), if (duration.toInt() == 0) userSettings[0] else duration.toInt(), ArrayList(), ArrayList()), startDate, endDate)
+                    Client2(intentClient.id, name, Schedule(ScheduleType.WEEKLY_VARIABLE, sessions.toInt(), if (duration.toInt() == 0) userSettings[0] else duration.toInt(), ArrayList(), ArrayList()), startDate, endDate)
                 }
                 R.id.radIsMonthlyVar -> {
                     val startDate = btnAddEditClientStartDate.text.toString()
@@ -385,7 +385,7 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
                         return//exit function. Do nothing
                     }
                     //construct Client object with collected data. Times is set to "0" as default. if duration is set to 0 the default duration from the user settings is used
-                    Client2(intentClient.id, StaticFunctions.formatForSQL(name), Schedule(ScheduleType.MONTHLY_VARIABLE, sessions.toInt(), if (duration.toInt() == 0) userSettings[0] else duration.toInt(), ArrayList(), ArrayList()), startDate, endDate)
+                    Client2(intentClient.id, name, Schedule(ScheduleType.MONTHLY_VARIABLE, sessions.toInt(), if (duration.toInt() == 0) userSettings[0] else duration.toInt(), ArrayList(), ArrayList()), startDate, endDate)
                 }
                 R.id.radIsNoSchedule -> {
                     val duration = etxtNoScheduleDuration.text.toString()
@@ -399,7 +399,7 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
                         return//exit function. Do nothing
                     }
                     //construct Client object with collected data. Days, Times, StartDate and EndDate are set to "0" as default. if duration is set to 0 the default duration from the user settings is used
-                    Client2(intentClient.id, StaticFunctions.formatForSQL(name), Schedule(ScheduleType.NO_SCHEDULE, 0, if (duration.toInt() == 0) userSettings[0] else duration.toInt(), ArrayList(), ArrayList()), "0", "0")
+                    Client2(intentClient.id, name, Schedule(ScheduleType.NO_SCHEDULE, 0, if (duration.toInt() == 0) userSettings[0] else duration.toInt(), ArrayList(), ArrayList()), "0", "0")
                 }
                 else -> {
                     //if somehow no radio button is selected a blank client is passed forward
