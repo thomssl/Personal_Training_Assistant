@@ -39,6 +39,10 @@ import kotlin.coroutines.CoroutineContext
 class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.OnTimeSetListener, DatePickerDialog.OnDateSetListener {
 
     private val calendar = Calendar.getInstance() //used to hold the users intended new date & time when choosing a new date/time
+    private var changeDate = false
+    private var changeTime = false
+    private var changeDuration = false
+    private var changeExercise = false
     private lateinit var databaseOperations: DatabaseOperations2
     private lateinit var datePickerDialog: DatePickerDialog
     private lateinit var timePickerDialog: TimePickerDialog
@@ -65,6 +69,21 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
         val dayTime = intent.getStringExtra("dayTime")
         if (id > 0)//checks to make sure the client id is valid
             setupData(id, dayTime)
+    }
+
+    override fun onBackPressed() {
+        if (changeDate || changeDuration || changeTime || changeExercise){
+            val alertDialog = AlertDialog.Builder(this)
+            alertDialog.setTitle(getString(R.string.alert_dialog_confirm_removal))
+            alertDialog.setMessage(getString(R.string.confirm_unsaved_changes))
+            alertDialog.setPositiveButton(R.string.yes_button) { dialog, _ ->
+                if (!confirmSessionChanges()) Toast.makeText(this, "Session changes could not be successfully saved", Toast.LENGTH_LONG).show()
+                dialog.dismiss()
+            }
+            alertDialog.setNegativeButton(R.string.no_button) { dialog, _ -> dialog.dismiss()}
+            alertDialog.show()
+        }
+        super.onBackPressed()
     }
 
     /**
@@ -101,20 +120,23 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
      */
     override fun onTimeSet(p0: TimePicker?, hour: Int, minute: Int) {
         if (!(calendar[Calendar.HOUR_OF_DAY] == hour && calendar[Calendar.MINUTE] == minute)) {
-            calendar[Calendar.HOUR_OF_DAY] = hour
-            calendar[Calendar.MINUTE] = minute
-            if (!databaseOperations.checkSessionConflict(session.clone(dayTime = StaticFunctions.getStrDateTime(calendar)), true)) {
-                if (updateSession())  {//if the update is successful, update the Session object, update the UI and prompt the user
-                    session.date.time = calendar.time
+            val tempCalendar = Calendar.getInstance()
+            tempCalendar.time = calendar.time
+            tempCalendar[Calendar.HOUR_OF_DAY] = hour
+            tempCalendar[Calendar.MINUTE] = minute
+            if (!databaseOperations.checkSessionConflict(session.clone(dayTime = StaticFunctions.getStrDateTime(tempCalendar)), true)) {
+                //if (updateSession())  {//if the update is successful, update the Session object, update the UI and prompt the user
+                    //session.date.time = calendar.time
+                    calendar.time = tempCalendar.time
                     setTime()
-                    Snackbar.make(btnChangeTime, "Updated Session Time", Snackbar.LENGTH_LONG).show()
-                } else {//if unsuccessful reset the temp calendar and prompt the user
-                    calendar.time = session.date.time
-                    Snackbar.make(btnChangeTime, "Error updating session information", Snackbar.LENGTH_LONG).show()
-                }
+                    //Snackbar.make(btnChangeTime, "Updated Session Time", Snackbar.LENGTH_LONG).show()
+                //} else {//if unsuccessful reset the temp calendar and prompt the user
+                    //calendar.time = session.date.time
+                    //Snackbar.make(btnChangeTime, "Error updating session information", Snackbar.LENGTH_LONG).show()
+                //}
             }
             else {//if a conflict is found, reset the temp calendar and prompt the user
-                calendar.time = session.date.time
+                //calendar.time = session.date.time
                 Snackbar.make(btnChangeTime, "Conflict with new time found. Please choose another time", Snackbar.LENGTH_LONG).show()
             }
         }
@@ -128,21 +150,24 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
      */
     override fun onDateSet(p0: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
         if (!(calendar[Calendar.YEAR] == year && calendar[Calendar.MONTH] == month && calendar[Calendar.DAY_OF_MONTH] == dayOfMonth)) {
-            calendar[Calendar.YEAR] = year
-            calendar[Calendar.MONTH] = month
-            calendar[Calendar.DAY_OF_MONTH] = dayOfMonth
-            if (!databaseOperations.checkSessionConflict(session.clone(dayTime = StaticFunctions.getStrDateTime(calendar)), false)) {
-                if (updateSession())  {//if the update is successful, update the Session object, update the UI and prompt the user
-                    session.date.time = calendar.time
+            val tempCalendar = Calendar.getInstance()
+            tempCalendar.time = calendar.time
+            tempCalendar[Calendar.YEAR] = year
+            tempCalendar[Calendar.MONTH] = month
+            tempCalendar[Calendar.DAY_OF_MONTH] = dayOfMonth
+            if (!databaseOperations.checkSessionConflict(session.clone(dayTime = StaticFunctions.getStrDateTime(tempCalendar)), false)) {
+                //if (updateSession())  {//if the update is successful, update the Session object, update the UI and prompt the user
+                    //session.date.time = calendar.time
+                    calendar.time = tempCalendar.time
                     setDate()
-                    Snackbar.make(btnChangeDate, "Updated Session Date", Snackbar.LENGTH_LONG).show()
-                } else {//if unsuccessful reset the temp calendar and prompt the user
-                    calendar.time = session.date.time
-                    Snackbar.make(btnChangeDate, "Error updating session information", Snackbar.LENGTH_LONG).show()
-                }
+                    //Snackbar.make(btnChangeDate, "Updated Session Date", Snackbar.LENGTH_LONG).show()
+                //} else {//if unsuccessful reset the temp calendar and prompt the user
+                    //calendar.time = session.date.time
+                    //Snackbar.make(btnChangeDate, "Error updating session information", Snackbar.LENGTH_LONG).show()
+                //}
             }
             else {//if a conflict is found, reset the temp calendar and prompt the user
-                calendar.time = session.date.time
+                //calendar.time = session.date.time
                 Snackbar.make(btnChangeDate, "Conflict with new date found. Please choose another date", Snackbar.LENGTH_LONG).show()
             }
         }
@@ -163,6 +188,7 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
     }
 
     /**
+     * Not needed
      * Method used after a conflict check has been successful in a date or time update. Updates Session_log entry if exists and Update/Insert Session_Changes entry
      */
     private fun updateSession(): Boolean{
@@ -176,13 +202,35 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
      * Method to handle btnConfirmSession's onClick event. If the session has exercises attached, Update/Insert Session_log entry
      */
     fun clickBtnConfirmSession(view: View){
-        if (session.hasExercises()){
-            if (databaseOperations.checkSessionLog(session)) databaseOperations.updateSession(session, "")
-            else databaseOperations.insertSession(session)
-            Snackbar.make(view, "Session exercises inserted", Snackbar.LENGTH_LONG).show()
-        } else {
-            Snackbar.make(view, "No Exercises added. Add exercises to confirm session exercise changes", Snackbar.LENGTH_LONG).show()
+        if (confirmSessionChanges()) Snackbar.make(view, "Session exercises inserted", Snackbar.LENGTH_LONG).show()
+        else Snackbar.make(view, "Error confirming changes", Snackbar.LENGTH_LONG).show()
+    }
+
+    private fun confirmSessionChanges(): Boolean{
+        val result = when (true){
+            changeDate || changeDuration || changeTime -> {
+                val newSession = session.clone(dayTime = StaticFunctions.getStrDateTime(calendar))
+                if (databaseOperations.checkSessionLog(session)) if (!databaseOperations.updateSession(newSession, StaticFunctions.getStrDateTime(session.date))) return false
+                if (databaseOperations.checkChange(session)) databaseOperations.updateChange(session, newSession)
+                else databaseOperations.insertChange(session, newSession)
+            }
+            !changeDate && !changeDuration && !changeTime && changeExercise -> {
+                if (databaseOperations.checkSessionLog(session)) databaseOperations.updateSession(session, "")
+                else databaseOperations.insertSession(session)
+            }
+            else -> {
+                false
+            }
         }
+        if (result && (changeDate || changeDuration || changeTime))
+            session.date.time = calendar.time
+        if (result){
+            changeDate = false
+            changeDuration = false
+            changeTime = false
+            changeExercise = false
+        }
+        return result
     }
 
     fun clickBtnChangeDate(@Suppress("UNUSED_PARAMETER") view: View) {

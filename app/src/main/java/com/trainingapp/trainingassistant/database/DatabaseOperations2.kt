@@ -27,13 +27,19 @@ class DatabaseOperations2(val context: Context) {
      * @return true if no exception occurs during the SQL command
      */
     private fun trySQLCommand(sql: String): Boolean {
-        return try {
+        var result = true
+        db.beginTransaction()
+        try {
             db.execSQL(sql)
-            true
+            db.setTransactionSuccessful()
         } catch (e:SQLException){
             e.printStackTrace()
-            false
+            result = false
+        } finally {
+            db.endTransaction()
         }
+
+        return result
     }
 
     /**

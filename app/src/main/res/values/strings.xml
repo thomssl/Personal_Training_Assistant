@@ -64,6 +64,9 @@
     <string name="confirm_delete_exercise">Are you sure you want to remove %1$s?\nThis Action is not reversible and deletes all occurrences of this exercise in logged session</string>
     <string name="confirm_delete_client">Are you sure you want to remove %1$s?\nThis Action is not reversible and deletes all of their logged sessions</string>
     <string name="confirm_delete_session">Are you sure you want to remove the session belonging to %1$s?\nThis Action is not reversible and deletes all session information included\n(If the client has a set schedule this session will be added to the makeup sessions list)</string>
+    <string name="confirm_unsaved_changes">Confirm changes before leaving session?</string>
+    <string name="yes_button">Yes</string>
+    <string name="no_button">No</string>
     <string name="wiki_title"><u>Personal Training Assistant Wiki</u></string>
     <string name="wiki_overview">Overview</string>
     <string name="wiki_classification">Classification</string>

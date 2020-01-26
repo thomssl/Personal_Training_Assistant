@@ -1,7 +1,5 @@
 package com.trainingapp.trainingassistant.objects
 
-import java.lang.StringBuilder
-
 class Program (var id: Int, var name: String, var exercises: ArrayList<ExerciseSession>) {
 
     //used to validate that a program has exercises
@@ -77,4 +75,5 @@ class Program (var id: Int, var name: String, var exercises: ArrayList<ExerciseS
         dayTime)}" else ""
     fun getUpdateProgramsCommand(dayTime: String, oldDayTime: String): String = if (oldDayTime.isNotBlank()) "Update Programs set dayTime = '$dayTime'" else ""
     fun getUpdateProgramExercisesCommand(): String = if (hasExercises()) "Delete From ProgramExercises Where program_id = $id; ${getInsertProgramExercisesCommand(-1, "")}" else "Delete From ProgramExercises Where program_id = $id;"
+    fun getDeleteProgramCommand(clientID: Int, dayTime: String): String = "Delete From Program_Exercises Where program_id = ${id}; Delete From Programs Where client_id = $clientID And dateTime(dayTime) = dateTime('$dayTime')"
 }

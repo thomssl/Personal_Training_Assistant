@@ -65,7 +65,7 @@ class Session2 (var clientID: Int, var clientName: String, dayTime: String, priv
     fun getSQLCommand(type: Int, oldDayTime: String = ""): String{
         val dayTime = StaticFunctions.getStrDateTime(date)
         if (type == 3)//if Delete command
-            return "Delete From Session_log Where client_id = $clientID And datetime(dayTime) = datetime('$dayTime')"
+            return "Delete From Session_log Where client_id = $clientID And datetime(dayTime) = datetime('$dayTime'); ${program.getDeleteProgramCommand(clientID, dayTime)}"
 
         //return appropriate command. 1 = Insert, 2 = Update
         return when(type){
