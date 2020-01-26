@@ -410,8 +410,8 @@
                         Select count(sl.client_id)
                         From Session_log sl
                         Where sl.client_id = c.client_id
-                              And date(sl.dayTime) &gt;= date('%2$s')
-                              And date(sl.dayTime) &lt;= date('%3$s')
+                              And date(sl.dayTime) &gt;= date(\'%2$s\')
+                              And date(sl.dayTime) &lt;= date(\'%3$s\')
                     )
                     &lt; s.days
                 )
@@ -423,8 +423,8 @@
                         Select count(sl.client_id)
                         From Session_log sl
                         Where sl.client_id = c.client_id
-                              And date(sl.dayTime) &gt;= date('%4$s')
-                              And date(sl.dayTime) &lt;= date('%5$s')
+                              And date(sl.dayTime) &gt;= date(\'%4$s\')
+                              And date(sl.dayTime) &lt;= date(\'%5$s\')
                     )
                     &lt; s.days
                 )
