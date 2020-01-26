@@ -622,4 +622,10 @@
         Where client_id = %1$d
             And datetime(change_dayTime) = datetime(\'%2$s\')
     </string>
+    <string name="getProgramIDQuery">
+        Select program_id
+        From Programs
+        Where client_id = %1$d
+            And datetime(dayTime) = datetime(\'%2$s\');
+    </string>
 </resources>

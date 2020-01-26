@@ -8,7 +8,6 @@ import com.trainingapp.trainingassistant.StaticFunctions
 import com.trainingapp.trainingassistant.enumerators.ExerciseType
 import com.trainingapp.trainingassistant.enumerators.ScheduleType
 import com.trainingapp.trainingassistant.objects.*
-import java.lang.StringBuilder
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -1005,5 +1004,12 @@ class DatabaseOperations2(val context: Context) {
         }
         cursor.close()
         return exerciseSessions
+    }
+
+    fun getProgramID(session: Session2): Int{
+        val cursor = db.rawQuery(context.getString(R.string.getProgramIDQuery, session.clientID, StaticFunctions.getStrDateTime(session.date)), null)
+        val id = if (cursor.moveToFirst()) cursor.getInt(cursor.getColumnIndex(DBInfo2.ProgramsTable.PROGRAM_ID)) else 0
+        cursor.close()
+        return id
     }
 }
