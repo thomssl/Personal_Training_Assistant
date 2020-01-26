@@ -39,6 +39,7 @@ import kotlin.coroutines.CoroutineContext
 class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.OnTimeSetListener, DatePickerDialog.OnDateSetListener {
 
     private val calendar = Calendar.getInstance() //used to hold the users intended new date & time when choosing a new date/time
+    private var duration = 0
     private var changeDate = false
     private var changeTime = false
     private var changeDuration = false
@@ -76,14 +77,13 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
             val alertDialog = AlertDialog.Builder(this)
             alertDialog.setTitle(getString(R.string.alert_dialog_confirm_removal))
             alertDialog.setMessage(getString(R.string.confirm_unsaved_changes))
-            alertDialog.setPositiveButton(R.string.yes_button) { dialog, _ ->
+            alertDialog.setPositiveButton(R.string.yes_button) { _, _ ->
                 if (!confirmSessionChanges()) Toast.makeText(this, "Session changes could not be successfully saved", Toast.LENGTH_LONG).show()
-                dialog.dismiss()
+                else super.onBackPressed()
             }
             alertDialog.setNegativeButton(R.string.no_button) { dialog, _ -> dialog.dismiss()}
             alertDialog.show()
-        }
-        super.onBackPressed()
+        } else super.onBackPressed()
     }
 
     /**
@@ -95,6 +95,7 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
         val result = getData(clientID, dayTime)
         session = result
         calendar.time = session.date.time
+        duration = session.duration
         datePickerDialog.updateDate(calendar[Calendar.YEAR], calendar[Calendar.MONTH], calendar[Calendar.DAY_OF_MONTH])
         timePickerDialog.updateTime(calendar[Calendar.HOUR_OF_DAY], calendar[Calendar.MINUTE])
         txtSessionClientName.text = session.clientName
@@ -129,6 +130,7 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
                     //session.date.time = calendar.time
                     calendar.time = tempCalendar.time
                     setTime()
+                    changeTime = true
                     //Snackbar.make(btnChangeTime, "Updated Session Time", Snackbar.LENGTH_LONG).show()
                 //} else {//if unsuccessful reset the temp calendar and prompt the user
                     //calendar.time = session.date.time
@@ -160,6 +162,7 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
                     //session.date.time = calendar.time
                     calendar.time = tempCalendar.time
                     setDate()
+                    changeDate = true
                     //Snackbar.make(btnChangeDate, "Updated Session Date", Snackbar.LENGTH_LONG).show()
                 //} else {//if unsuccessful reset the temp calendar and prompt the user
                     //calendar.time = session.date.time
@@ -174,9 +177,9 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
     }
 
     //UI update functions
-    private fun setDate() { txtSessionDate.text = StaticFunctions.getStrDate(session.date) }
-    private fun setTime() { txtSessionTime.text = StaticFunctions.getStrTimeAMPM(session.date) }
-    private fun setDuration() { txtSessionDuration.text = getString(R.string.txtSessionDuration, session.duration)}
+    private fun setDate() { txtSessionDate.text = StaticFunctions.getStrDate(calendar) }
+    private fun setTime() { txtSessionTime.text = StaticFunctions.getStrTimeAMPM(calendar) }
+    private fun setDuration() { txtSessionDuration.text = getString(R.string.txtSessionDuration, duration)}
     private fun setAdapter(){
         if (session.getExerciseCount() > 0){
             rvSessionExercises.adapter = SessionExercisesRVAdapter(session, { exerciseSession, position -> onItemClick(exerciseSession, position) }, { exerciseSession -> onItemLongClick(exerciseSession) })
@@ -209,8 +212,15 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
     private fun confirmSessionChanges(): Boolean{
         val result = when (true){
             changeDate || changeDuration || changeTime -> {
-                val newSession = session.clone(dayTime = StaticFunctions.getStrDateTime(calendar))
-                if (databaseOperations.checkSessionLog(session)) if (!databaseOperations.updateSession(newSession, StaticFunctions.getStrDateTime(session.date))) return false
+                val newSession = session.clone(dayTime = StaticFunctions.getStrDateTime(calendar), duration = duration)
+                if (databaseOperations.checkSessionLog(session)) {
+                    if (!databaseOperations.updateSession(newSession, StaticFunctions.getStrDateTime(session.date)))
+                        return false
+                }
+                else {
+                    if (!databaseOperations.insertSession(session))
+                        return false
+                }
                 if (databaseOperations.checkChange(session)) databaseOperations.updateChange(session, newSession)
                 else databaseOperations.insertChange(session, newSession)
             }
@@ -222,8 +232,10 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
                 false
             }
         }
-        if (result && (changeDate || changeDuration || changeTime))
+        if (result && (changeDate || changeDuration || changeTime)) {
             session.date.time = calendar.time
+            session.duration = duration
+        }
         if (result){
             changeDate = false
             changeDuration = false
@@ -246,8 +258,8 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
         addExerciseDialog.show(supportFragmentManager, "Add Exercise")
     }
 
-    fun clickBtnChangeDuration(view: View){
-        val changeDurationDialog = ChangeDurationDialog(session.duration) {duration -> onDurationChangeConfirm(duration, view)}
+    fun clickBtnChangeDuration(@Suppress("UNUSED_PARAMETER") view: View){
+        val changeDurationDialog = ChangeDurationDialog(session.duration) {duration -> onDurationChangeConfirm(duration)}
         changeDurationDialog.show(supportFragmentManager, "Change Duration")
     }
 
@@ -259,48 +271,23 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
      *      - The new duration does not create a conflict with an existing session
      * If all tests are passed, the session is updated/inserted (update Session_log if record exists, update/insert if Session_Changes exists)
      * @param strDuration duration as a string from the dialog
-     * @param view btnChangeSessionDuration view to create Snackbars
      * @return true if input is valid and the session is updated without error, false if invalid data or error during update. True will dismiss dialog, false will keep it visible
      */
-    private fun onDurationChangeConfirm(strDuration: String, view: View): Boolean{
+    private fun onDurationChangeConfirm(strDuration: String): Boolean{
         return try{
-            val duration = strDuration.toInt()
-            if (duration > 120 || duration <= 0){
+            val tempDuration = strDuration.toInt()
+            if (tempDuration > 120 || tempDuration <= 0){
                 Toast.makeText(this, "Duration outside of acceptable values. See Wiki for more information", Toast.LENGTH_LONG).show()
                 false
             } else {
-                if (databaseOperations.checkSessionConflict(session.clone(duration = duration), true)) {
+                if (databaseOperations.checkSessionConflict(session.clone(duration = tempDuration), true)) {
                     Toast.makeText(this, "Error: Session Conflict", Toast.LENGTH_LONG).show()
                     false
                 } else {
-                    if (databaseOperations.checkSessionLog(session)) {
-                        if (databaseOperations.updateSession(session.clone(duration = duration), "")) {
-                            session.duration = duration
-                        } else {
-                            Snackbar.make(view, "SQL Error during session update", Snackbar.LENGTH_LONG).show()
-                            return false
-                        }
-                    }
-                    if (databaseOperations.checkChange(session)) {
-                        if (databaseOperations.updateChange(session, session.clone(duration = duration))) {
-                            session.duration = duration
-                            setDuration()
-                            true
-                        } else {
-                            Snackbar.make(view, "SQL Error during session change update", Snackbar.LENGTH_LONG).show()
-                            false
-                        }
-                    }
-                    else {
-                        if (databaseOperations.insertSession(session.clone(duration = duration))) {
-                            session.duration = duration
-                            setDuration()
-                            true
-                        } else {
-                            Snackbar.make(view, "SQL Error during session insert", Snackbar.LENGTH_LONG).show()
-                            false
-                        }
-                    }
+                    changeDuration = true
+                    duration = tempDuration
+                    setDuration()
+                    true
                 }
             }
         } catch (e: NumberFormatException){

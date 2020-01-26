@@ -24,7 +24,7 @@ class DatabaseHelper2(context: Context): SQLiteOpenHelper(context, DATABASE_NAME
     }
 
     override fun onCreate(db: SQLiteDatabase) {
-        db.execSQL(CREATE1)
+        /*db.execSQL(CREATE1)
         db.execSQL(CREATE2)
         db.execSQL(CREATE3)
         db.execSQL(CREATE4)
@@ -32,7 +32,7 @@ class DatabaseHelper2(context: Context): SQLiteOpenHelper(context, DATABASE_NAME
         db.execSQL(CREATE6)
         db.execSQL(CREATE7)
         db.execSQL(CREATE8)
-        db.execSQL(CREATE9)
+        db.execSQL(CREATE9)*/
     }
 
     override fun onUpgrade(db: SQLiteDatabase, p1: Int, p2: Int) {

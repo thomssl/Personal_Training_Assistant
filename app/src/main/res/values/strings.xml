@@ -18,7 +18,7 @@
     <string name="dateTime_format">yyyy-MM-dd hh:mm a</string>
     <string name="time_format">hh:mm a</string>
     <string name="date_format">yyyy-MM-dd</string>
-    <string name="filePath">/data/data/com.trainingapp.personaltrainingassistant/databases/data.sqlite3</string>
+    <string name="filePath">/data/data/com.trainingapp.trainingassistant/databases/data.sqlite3</string>
     <string name="emptyDay">No Sessions Today</string>
     <string name="scheduleDatePlaceholder">Click to choose date</string>
     <string name="lblSessionClientName">Client Name: </string>
@@ -451,9 +451,9 @@
                s.%2$s_duration
         From Clients c
         Inner Join Schedules s on c.client_id=s.client_id
-        Where %2$d &gt; 0
-            And date(end_date) &gt;= date(%1$s)
-            And date(start_date) &lt;= date(%1$s)
+        Where %2$s &gt; 0
+            And date(end_date) &gt;= date(\'%1$s\')
+            And date(start_date) &lt;= date(\'%1$s\')
             And schedule_type = 1
             And Not
             (
@@ -461,13 +461,13 @@
                 (
                     Select Distinct client_id
                     From Session_Changes
-                    Where date(normal_dayTime) = date(%1$s)
+                    Where date(normal_dayTime) = date(\'%1$s\')
                 )
                 Or c.client_id in
                 (
                     Select s.client_id
                     From Session_log s
-                    Where date(dayTime) = date(%1$s)
+                    Where date(dayTime) = date(\'%1$s\')
                 )
             );
     </string>
@@ -560,10 +560,14 @@
         From Joints;
     </string>
     <string name="getMuscleQuery">
-        Select muscle_id, muscle_name From Muscles Where muscle_id = %1$d
+        Select muscle_id, muscle_name
+        From Muscles
+        Where muscle_id = %1$d
     </string>
     <string name="getAllMusclesQuery">
-        Select muscle_id, muscle_name From Muscles Order By muscle_name
+        Select muscle_id, muscle_name
+        From Muscles
+        Order By muscle_name
     </string>
     <string name="removeMuscleQuery">
         Select DISTINCT e.exercise_id

@@ -10,18 +10,16 @@ import android.widget.Toast
 import androidx.core.text.isDigitsOnly
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
-import com.trainingapp.trainingassistant.database.DatabaseOperations
 import com.trainingapp.trainingassistant.R
+import com.trainingapp.trainingassistant.database.DatabaseOperations2
 import kotlinx.android.synthetic.main.fragment_settings.*
-import java.lang.ClassCastException
-import java.lang.NumberFormatException
 
 /**
  * Fragment to display user settings and allow the user to make changes to the settings
  */
 class SettingsFragment: Fragment(), View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
-    private lateinit var databaseOperations: DatabaseOperations
+    private lateinit var databaseOperations: DatabaseOperations2
     private var userSettings = ArrayList<Int>()
     private lateinit var iFragmentToActivity: IFragmentToActivity
 
@@ -33,7 +31,7 @@ class SettingsFragment: Fragment(), View.OnClickListener, CompoundButton.OnCheck
             e.printStackTrace()
             Toast.makeText(context, "Could not cast context as IFragmentToActivity", Toast.LENGTH_LONG).show()
         }
-        databaseOperations = DatabaseOperations(context)
+        databaseOperations = DatabaseOperations2(context)
         userSettings = databaseOperations.getUserSettings()
     }
 

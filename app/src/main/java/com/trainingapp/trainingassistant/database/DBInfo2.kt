@@ -18,7 +18,7 @@ object DBInfo2 {
             const val ID = "exercise_id"
             const val NAME = "exercise_name"
             const val TYPE = "exercise_type"
-            const val PRIMARY_MOVER = "primary_mover"
+            const val PRIMARY_MOVER = "primary_mover_id"
         }
     }
 
@@ -52,7 +52,7 @@ object DBInfo2 {
             const val PROGRAM_ID = "program_id"
             const val CLIENT_ID = "client_id"
             const val DAYTIME = "dayTime"
-            const val NAME = "name"
+            const val NAME = "program_name"
         }
     }
 
@@ -100,7 +100,6 @@ object DBInfo2 {
             const val CLIENT_ID = "client_id"
             const val DAYTIME = "dayTime"
             const val PROGRAM_ID = "program_id"
-            const val EXERCISE_ORDER = "exercise_order"
             const val NOTES = "notes"
             const val DURATION = "duration"
         }

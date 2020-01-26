@@ -70,7 +70,7 @@ class Program (var id: Int, var name: String, var exercises: ArrayList<ExerciseS
         return builder.toString()
     }
 
-    fun getInsertProgramsCommand(clientID: Int, dayTime: String): String = "Insert Into Programs(client_id, dayTime, name) Values($clientID, '$dayTime''$name');"
+    fun getInsertProgramsCommand(clientID: Int, dayTime: String): String = "Insert Into Programs(client_id, dayTime, program_name) Values($clientID, '$dayTime', '$name');"
     fun getInsertProgramExercisesCommand(clientID: Int, dayTime: String): String =  if (hasExercises()) "Insert Into Program_Exercises(program_id, exercise_id, sets, reps, resistance, exercise_order) Values ${getAllExerciseInserts(clientID, 
         dayTime)}" else ""
     fun getUpdateProgramsCommand(dayTime: String, oldDayTime: String): String = if (oldDayTime.isNotBlank()) "Update Programs set dayTime = '$dayTime'" else ""
