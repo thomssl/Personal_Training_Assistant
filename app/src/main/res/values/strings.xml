@@ -610,4 +610,16 @@
         Where s.client_id = %1$d
             And date(dayTime) = date(\'%2$s\')
     </string>
+    <string name="checkExerciseConflictQuery">
+        Select exercise_name
+        From Exercises
+        Where exercise_name = \'%1$s\'
+            And exercise_id &lt;&gt; %2$d
+    </string>
+    <string name="getSession_SessionChangesQuery">
+        Select duration
+        From Session_Changes
+        Where client_id = %1$d
+            And datetime(change_dayTime) = datetime(\'%2$s\')
+    </string>
 </resources>

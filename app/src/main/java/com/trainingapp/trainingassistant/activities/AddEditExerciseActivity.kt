@@ -6,11 +6,11 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import com.google.android.material.snackbar.Snackbar
-import com.trainingapp.trainingassistant.database.DatabaseOperations
 import com.trainingapp.trainingassistant.R
 import com.trainingapp.trainingassistant.StaticFunctions
+import com.trainingapp.trainingassistant.database.DatabaseOperations2
 import com.trainingapp.trainingassistant.enumerators.ExerciseType
-import com.trainingapp.trainingassistant.objects.Exercise
+import com.trainingapp.trainingassistant.objects.Exercise2
 import com.trainingapp.trainingassistant.objects.MuscleJoint
 import com.trainingapp.trainingassistant.ui.adapters.AddExercisePrimaryRVAdapter
 import com.trainingapp.trainingassistant.ui.adapters.AddExerciseSecondaryRVAdapter
@@ -26,10 +26,10 @@ import kotlinx.android.synthetic.main.activity_add_edit_exercise.*
  */
 class AddEditExerciseActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
-    private lateinit var databaseOperations: DatabaseOperations
+    private lateinit var databaseOperations: DatabaseOperations2
     private var muscles = ArrayList<MuscleJoint>()
     private var joints = ArrayList<MuscleJoint>()
-    private lateinit var exercise: Exercise
+    private lateinit var exercise: Exercise2
     private var isNew = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,7 +37,7 @@ class AddEditExerciseActivity : AppCompatActivity(), AdapterView.OnItemSelectedL
         setContentView(R.layout.activity_add_edit_exercise)
         setTitle(R.string.edit_exercise_activity)//default title is "Edit Exercise"
 
-        databaseOperations = DatabaseOperations(this)
+        databaseOperations = DatabaseOperations2(this)
         muscles = databaseOperations.getAllMuscles()
         joints = databaseOperations.getAllJoints()
         exercise = databaseOperations.getExercise(intent.getIntExtra("id", 0))//get Exercise from id. If no exercise is found (ie invalid id) a blank exercise is returned with an id of 0

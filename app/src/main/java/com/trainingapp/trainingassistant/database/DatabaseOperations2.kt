@@ -529,8 +529,8 @@ class DatabaseOperations2(val context: Context) {
      * @param exercise Exercise object collected from the user in AddEditExerciseActivity
      * @return true if a conflict is found
      */
-    fun checkExerciseConflict(exercise: Exercise): Boolean{
-        val cursor = db.rawQuery("Select exercise_name From Exercises Where exercise_name = '${exercise.name}' And exercise_id <> ${exercise.id}", null)
+    fun checkExerciseConflict(exercise: Exercise2): Boolean{
+        val cursor = db.rawQuery(context.getString(R.string.checkExerciseConflictQuery, exercise.name,exercise.id), null)
         val result = cursor.moveToFirst()
         cursor.close()
         return result
@@ -618,7 +618,7 @@ class DatabaseOperations2(val context: Context) {
                     0
                 )
             if (checkChange(session)){//if a change for the given client and dayTime then use the corresponding duration
-                val cursor1 = db.rawQuery("Select duration From Session_Changes Where client_id = $clientID And datetime(change_dayTime) = datetime('$dayTime')", null)
+                val cursor1 = db.rawQuery(context.getString(R.string.getSession_SessionChangesQuery, clientID, dayTime), null)
                 cursor1.moveToFirst()
                 session.duration = cursor1.getInt(0)
                 cursor1.close()
