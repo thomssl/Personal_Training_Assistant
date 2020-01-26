@@ -27,12 +27,12 @@ class Session2 (var clientID: Int, var clientName: String, dayTime: String, priv
     //used to validate that a session has exercises
     // stops the user from removing all exercises from a session than updating or confirming a session that has never had any exercises
     fun hasExercises(): Boolean = program.hasExercises()
-    fun addExercise(exerciseSession: ExerciseSession) = program.addExercise(exerciseSession)
-    fun updateExercise(exerciseSession: ExerciseSession, position: Int) = program.updateExercise(exerciseSession, position)
-    fun removeExercise(exerciseSession: ExerciseSession) = program.removeExercise(exerciseSession)
-    fun removeExercise(exercise: Exercise) = program.removeExercise(exercise)
-    fun getExercise(exercise: Exercise): ExerciseSession = program.getExercise(exercise)
-    fun getExercise(index: Int): ExerciseSession = program.getExercise(index)
+    fun addExercise(exerciseSession: ExerciseSession2) = program.addExercise(exerciseSession)
+    fun updateExercise(exerciseSession: ExerciseSession2, position: Int) = program.updateExercise(exerciseSession, position)
+    fun removeExercise(exerciseSession: ExerciseSession2) = program.removeExercise(exerciseSession)
+    fun removeExercise(exercise: Exercise2) = program.removeExercise(exercise)
+    fun getExercise(exercise: Exercise2): ExerciseSession2 = program.getExercise(exercise)
+    fun getExercise(index: Int): ExerciseSession2 = program.getExercise(index)
     fun getExerciseCount(): Int = program.getExerciseCount()
     fun getProgramID(): Int = program.id
     fun updateProgramID(id: Int) { program.id = id }

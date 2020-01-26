@@ -51,7 +51,7 @@ class DatabaseOperations2(val context: Context) {
      * @param resistances resistances as csv
      * @return ArrayList of ExerciseSession objects populated with the given values
      */
-    private fun getListExerciseSessions(ids: String, sets: String, reps: String, resistances: String, orders: String): ArrayList<ExerciseSession>{
+    /*private fun getListExerciseSessions(ids: String, sets: String, reps: String, resistances: String, orders: String): ArrayList<ExerciseSession>{
         val exercises = ArrayList<ExerciseSession>()
         if (ids.isEmpty()) //if ids is empty the Session does not contain any exercises. Return a blank ArrayList
             return exercises
@@ -72,7 +72,7 @@ class DatabaseOperations2(val context: Context) {
                 )
             )
         return exercises
-    }
+    }*/
 
     /**
      * Checked
@@ -98,7 +98,7 @@ class DatabaseOperations2(val context: Context) {
      * @param exerciseType ExerciseType enum value associated with the exercise found from the database query
      * @return ArrayList of MuscleJoint data objects corresponding to the movers csv sent as a parameter
      */
-    private fun getSecondaryMovers(id: Int, strSecondaryMovers: String, exerciseType: ExerciseType): ArrayList<MuscleJoint>{
+    /*private fun getSecondaryMovers(id: Int, strSecondaryMovers: String, exerciseType: ExerciseType): ArrayList<MuscleJoint>{
         val secondaryMovers = ArrayList<MuscleJoint>()
         if (id == 0 || strSecondaryMovers == "0"){//if the id = 0 that means no exercise was found. if strSecondaryMovers is empty than no secondary movers are present. Either way, return a blank ArrayList is returned
             return secondaryMovers
@@ -117,7 +117,7 @@ class DatabaseOperations2(val context: Context) {
         }
         cursor.close()
         return secondaryMovers
-    }
+    }*/
 
     private fun getSecondaryMoversFromCSV(id: Int, csvSecondaryMoversIDs: String, csvSecondaryMoversNames: String): ArrayList<MuscleJoint>{
         val secondaryMovers = ArrayList<MuscleJoint>()
@@ -470,7 +470,7 @@ class DatabaseOperations2(val context: Context) {
      * @param strIDs csv string with the ids of many exercises
      * @return ArrayList of Exercise objects representing the list of exercise ids
      */
-    private fun getManyExercises(strIDs: String): ArrayList<Exercise>{
+    /*private fun getManyExercises(strIDs: String): ArrayList<Exercise>{
         val exercises = ArrayList<Exercise>()
         //gets base Exercise class information and fills in the ExerciseType using a join and Case clause to get the appropriate data (ie if strength, muscle_name and if mobility or stability, joint_name)
         val cursor = db.rawQuery("Select e.exercise_id, e.exercise_name, e.exercise_type, e.primary_mover, e.secondary_movers, Case When e.exercise_type = 1 then m.muscle_name When e.exercise_type = 2 or e.exercise_type = 3 then j.joint_name End From Exercises e inner join Exercise_Types t on e.exercise_type=t.exercise_type_id left join Muscles m on e.primary_mover=m.muscle_id left join Joints j on e.primary_mover=j.joint_id Where e.exercise_id in ($strIDs)", null)
@@ -494,7 +494,7 @@ class DatabaseOperations2(val context: Context) {
         }
         cursor.close()
         return exercises
-    }
+    }*/
 
     /**
      * Checked
@@ -587,7 +587,7 @@ class DatabaseOperations2(val context: Context) {
                 while(!cursor.isAfterLast){
                     val id = cursor1.getInt(cursor1.getColumnIndex(DBInfo2.ExercisesTable.ID))
                     session.addExercise(
-                        ExerciseSession(
+                        ExerciseSession2(
                             id,
                             cursor1.getString(cursor1.getColumnIndex(DBInfo2.ExercisesTable.NAME)),
                             getExerciseType(cursor1.getInt(cursor.getColumnIndex(DBInfo2.ExercisesTable.TYPE))),
@@ -727,7 +727,7 @@ class DatabaseOperations2(val context: Context) {
             while(!cursor.isAfterLast){
                 val programID = cursor.getInt(cursor.getColumnIndex(DBInfo2.ProgramExercisesTable.PROGRAM_ID))
                 val exerciseID = cursor.getInt(cursor.getColumnIndex(DBInfo2.ExercisesTable.ID))
-                val exerciseSession = ExerciseSession(
+                val exerciseSession = ExerciseSession2(
                     exerciseID,
                     cursor.getString(cursor.getColumnIndex(DBInfo2.ExercisesTable.NAME)),
                     getExerciseType(cursor.getInt(cursor.getColumnIndex(DBInfo2.ExercisesTable.TYPE))),
@@ -858,7 +858,7 @@ class DatabaseOperations2(val context: Context) {
             while(!cursor.isAfterLast){
                 val programID = cursor.getInt(cursor.getColumnIndex(DBInfo2.ProgramExercisesTable.PROGRAM_ID))
                 val exerciseID = cursor.getInt(cursor.getColumnIndex(DBInfo2.ExercisesTable.ID))
-                val exerciseSession = ExerciseSession(
+                val exerciseSession = ExerciseSession2(
                     exerciseID,
                     cursor.getString(cursor.getColumnIndex(DBInfo2.ExercisesTable.NAME)),
                     getExerciseType(cursor.getInt(cursor.getColumnIndex(DBInfo2.ExercisesTable.TYPE))),
@@ -962,10 +962,10 @@ class DatabaseOperations2(val context: Context) {
      * @param clientID id of the given client used to search Session_log table
      * @return ExerciseSession object containing the information about the last occurrence of the given exercise. All non-Exercise object fields are blank if the client has not already performed the exercise
      */
-    fun getLastOccurrence(exercise: Exercise, clientID: Int): ExerciseSession {
+    fun getLastOccurrence(exercise: Exercise2, clientID: Int): ExerciseSession2 {
         val cursor = db.rawQuery(context.getString(R.string.getLastOccurrenceQuery, clientID, exercise.id), null)
-        val exerciseSession: ExerciseSession = if (cursor.moveToFirst()){
-            ExerciseSession(
+        val exerciseSession: ExerciseSession2 = if (cursor.moveToFirst()){
+            ExerciseSession2(
                 exercise,
                 cursor.getString(cursor.getColumnIndex(DBInfo2.ProgramExercisesTable.SETS)),
                 cursor.getString(cursor.getColumnIndex(DBInfo2.ProgramExercisesTable.REPS)),
@@ -973,7 +973,7 @@ class DatabaseOperations2(val context: Context) {
                 cursor.getInt(cursor.getColumnIndex(DBInfo2.ProgramExercisesTable.EXERCISE_ORDER))
             )
         } else
-            ExerciseSession(
+            ExerciseSession2(
                 exercise,
                 "",
                 "",
@@ -991,13 +991,13 @@ class DatabaseOperations2(val context: Context) {
      * @param clientID id of the given client used to search Session_log table
      * @return ExerciseSession object containing the information about the all the occurrences of the given exercise. Empty ArrayList returned if the given exercise has been performed
      */
-    fun getAllOccurrences(exercise: Exercise, clientID: Int): ArrayList<ExerciseSession>{
-        val exerciseSessions = ArrayList<ExerciseSession>()
+    fun getAllOccurrences(exercise: Exercise2, clientID: Int): ArrayList<ExerciseSession2>{
+        val exerciseSessions = ArrayList<ExerciseSession2>()
         val cursor = db.rawQuery(context.getString(R.string.getAllOccurrencesQuery, clientID, exercise.id), null)
         if (cursor.moveToFirst()){
             while (!cursor.isAfterLast){
                 exerciseSessions.add(
-                    ExerciseSession(
+                    ExerciseSession2(
                         exercise,
                         cursor.getString(cursor.getColumnIndex(DBInfo2.ProgramExercisesTable.SETS)),
                         cursor.getString(cursor.getColumnIndex(DBInfo2.ProgramExercisesTable.REPS)),

@@ -13,7 +13,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.trainingapp.trainingassistant.R
 import com.trainingapp.trainingassistant.StaticFunctions
 import com.trainingapp.trainingassistant.database.DatabaseOperations2
-import com.trainingapp.trainingassistant.objects.ExerciseSession
+import com.trainingapp.trainingassistant.objects.ExerciseSession2
 import com.trainingapp.trainingassistant.objects.Session2
 import com.trainingapp.trainingassistant.ui.adapters.SessionExercisesRVAdapter
 import com.trainingapp.trainingassistant.ui.dialogs.AddExerciseSessionDialog
@@ -315,7 +315,7 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
      * @param exerciseSession ExerciseSession object containing the current exercise attributes to be changed
      * @param position Index of the ExerciseSession within the Session object's ExerciseSession list that needs to be updated
      */
-    private fun onItemClick(exerciseSession: ExerciseSession, position: Int){
+    private fun onItemClick(exerciseSession: ExerciseSession2, position: Int){
         val editExerciseDialog = EditExerciseSessionDialog(exerciseSession, position) {editExerciseSessionDialog, i -> onEditConfirmClick(editExerciseSessionDialog,i) }
         editExerciseDialog.show(supportFragmentManager, "Edit Exercise")
     }
@@ -325,7 +325,7 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
      * @param exerciseSession ExerciseSession object containing the current exercise attributes to be removed
      * @return always true since the callback consumed the long click (See Android View.onLongClickListener for more info)
      */
-    private fun onItemLongClick(exerciseSession: ExerciseSession): Boolean{
+    private fun onItemLongClick(exerciseSession: ExerciseSession2): Boolean{
         val alertDialog = AlertDialog.Builder(this)
         alertDialog.setTitle(getString(R.string.alert_dialog_confirm_removal))
         alertDialog.setMessage(getString(R.string.confirm_delete, exerciseSession.name))
@@ -359,7 +359,7 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
             !sessionDialog.exerciseNames.contains(exerciseName) -> Toast.makeText(this, "No Exercise selected. Please choose from the list", Toast.LENGTH_LONG).show()//make sure name is within those collected from the database
             else -> {//if the input passes all tests, get populate a new ExerciseSession object and add that object to the Session
                 val exercise = sessionDialog.exercises[sessionDialog.exerciseNames.indexOf(exerciseName)]
-                val exerciseSession = ExerciseSession(exercise, sets, reps, resistance, order)
+                val exerciseSession = ExerciseSession2(exercise, sets, reps, resistance, order)
                 session.addExercise(exerciseSession)
                 setAdapter()
                 return true
@@ -390,7 +390,7 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
             StaticFunctions.badSQLText(sets) -> Toast.makeText(this, "Sets contains a bad character or is blank. See Wiki for more details", Toast.LENGTH_LONG).show()
             StaticFunctions.badSQLText(reps) -> Toast.makeText(this, "Reps contains a bad character or is blank. See Wiki for more details", Toast.LENGTH_LONG).show()
             else -> {//if the input passes all tests, get populate a new ExerciseSession object and add that object to the Session
-                val exerciseSession = ExerciseSession(sessionDialog.exerciseSession.getExercise(), sets, reps, resistance, order)
+                val exerciseSession = ExerciseSession2(sessionDialog.exerciseSession.getExercise(), sets, reps, resistance, order)
                 session.updateExercise(exerciseSession, position)
                 setAdapter()
                 return true
