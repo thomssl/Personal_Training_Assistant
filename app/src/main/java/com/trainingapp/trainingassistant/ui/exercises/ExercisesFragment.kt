@@ -8,12 +8,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.trainingapp.trainingassistant.database.DatabaseOperations
-import com.trainingapp.trainingassistant.objects.Exercise
 import com.trainingapp.trainingassistant.R
 import com.trainingapp.trainingassistant.activities.AddEditExerciseActivity
+import com.trainingapp.trainingassistant.database.DatabaseOperations2
+import com.trainingapp.trainingassistant.objects.Exercise2
 import kotlinx.android.synthetic.main.fragment_exercises.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -21,7 +24,7 @@ import kotlin.coroutines.CoroutineContext
  */
 class ExercisesFragment : Fragment(), CoroutineScope {
 
-    private lateinit var databaseOperations: DatabaseOperations
+    private lateinit var databaseOperations: DatabaseOperations2
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main
 
@@ -31,7 +34,7 @@ class ExercisesFragment : Fragment(), CoroutineScope {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        databaseOperations = DatabaseOperations(context)
+        databaseOperations = DatabaseOperations2(context)
     }
 
     override fun onResume() {
@@ -75,7 +78,7 @@ class ExercisesFragment : Fragment(), CoroutineScope {
      * @param exercise Exercise object to be removed from the database, from adapter
      * @return always true since the callback consumed the long click (See Android View.onLongClickListener for more info)
      */
-    private fun onItemLongClicked(exercise: Exercise): Boolean{
+    private fun onItemLongClicked(exercise: Exercise2): Boolean{
         val alertDialog = AlertDialog.Builder(context)
         alertDialog.setTitle(getString(R.string.alert_dialog_confirm_removal))
         alertDialog.setMessage(getString(R.string.confirm_delete, exercise.name))
