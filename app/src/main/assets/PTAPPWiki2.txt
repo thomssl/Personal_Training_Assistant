@@ -5,6 +5,7 @@ All fields or boxes that the user inputs information must be checked to make sur
 \t\t•	Commas
 \t\t•	Underscores
 \t\t•	Semicolons
+\t\t•	Apostrophes
 \t\t•	Double Quote Marks\n
 Client
 Client Overview

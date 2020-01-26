@@ -8,9 +8,10 @@ This application was created to help myself organize and program for my clients.
 
 All fields or boxes that the user inputs information must be checked to make sure the input data is valid. This means that the input value must not be blank and some characters are not allowed such as:
 
--	Commas
--	Underscores
+- Commas
+- Underscores
 - Semicolons
+- Apostrophes
 - Double Quote Marks
 
 

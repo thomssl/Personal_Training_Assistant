@@ -99,7 +99,7 @@ class WikiFragment : Fragment(), CoroutineScope  {
             val indexSessionsLimits = lines.indexOf("Session Limits")
             introduction = lines[1]
             //takes each sublist of lines and joins with new line character. Replaces tab and new line characters that have not been read properly with the proper notation
-            inputFields = lines.subList(indexInputFields+1, indexInputFields+6).joinToString("\n").replace("\\t","\t").replace("\\n", "\n")
+            inputFields = lines.subList(indexInputFields+1, indexInputFields+7).joinToString("\n").replace("\\t","\t").replace("\\n", "\n")
             clientsOverview = lines.subList(indexClientsOverview+1, indexClientsOverview + 10).joinToString("\n").replace("\\t","\t").replace("\\n", "\n")
             clientsClassification = lines.subList(indexClientsClassification+1, indexClientsClassification + 7).joinToString("\n").replace("\\t","\t").replace("\\n", "\n")
             clientsCreation = lines[indexClientsCreation+1].replace("\\n","\n")
