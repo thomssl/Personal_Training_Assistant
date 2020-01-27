@@ -19,6 +19,16 @@ class DatabaseOperations2(val context: Context) {
 
     init {
         db = databaseHelper.writableDatabase
+        val calendar = Calendar.getInstance()
+        val date = StaticFunctions.getStrDate(calendar)
+        var sql = context.getString(R.string.cleanSessionChangesCommand, date)
+        if (calendar[Calendar.DAY_OF_WEEK] == 1){
+            sql += context.getString(R.string.weeklyBankCommand, date)
+        }
+        if (calendar[Calendar.DAY_OF_MONTH] == 1){
+            sql += context.getString(R.string.monthlyBankCommand, date)
+        }
+        trySQLCommand(sql)
     }
 
     /**
@@ -368,6 +378,8 @@ class DatabaseOperations2(val context: Context) {
         return clients
     }
 
+    private fun addClientBank(clientID: Int): Boolean = trySQLCommand(context.getString(R.string.addClientBankCommand, clientID))
+
     /**
      * Checked
      * Method to get the client type. 1 = weekly constant schedule, 2 = weekly variable session, 3 = monthly variable schedule
@@ -678,13 +690,23 @@ class DatabaseOperations2(val context: Context) {
     fun cancelSession(session: Session2): Boolean{
         return when(getClientType(session.clientID)){
             ScheduleType.WEEKLY_CONSTANT ->  {
-                when (true){
-                    checkChange(session) -> updateChange(session, Session2(session.clientID, session.clientName, "0", Program(0,"", ArrayList()), "", session.duration))//if change record exists, update change with makeup session values
-                    checkSessionLog(session) -> deleteSession(session)                                                                                                 //if session found in log, remove session from log
-                    else -> insertChange(session, Session2(session.clientID, session.clientName, "0", Program(0,"", ArrayList()), "", session.duration))                //if not found anywhere insert a change with makeup session values
-                }
+                //if any of the transactions fail, return false. if all transactions pass, return true
+                //if change record exists, update change with makeup session values
+                if (checkChange(session)) if (!updateChange(session, Session2(session.clientID, session.clientName, "0", Program(0,"", ArrayList()), "", session.duration))) return false
+                //if session found in log, remove session from log
+                if (checkSessionLog(session)) if (!deleteSession(session)) return false
+                //increment banked_sessions field
+                addClientBank(session.clientID)
             }
-            ScheduleType.NO_SCHEDULE,ScheduleType.WEEKLY_VARIABLE,ScheduleType.MONTHLY_VARIABLE -> deleteSession(session)//delete session if not Weekly_Constant
+            ScheduleType.WEEKLY_VARIABLE -> {
+                deleteSession(session)
+
+            }
+            ScheduleType.MONTHLY_VARIABLE -> {
+                deleteSession(session)
+
+            }
+            ScheduleType.NO_SCHEDULE -> deleteSession(session)//delete session if not Weekly_Constant
             ScheduleType.BLANK -> false //return false, error occurred. No ScheduleType Set
         }
     }

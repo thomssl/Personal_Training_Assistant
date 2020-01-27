@@ -635,4 +635,42 @@
         Where client_id = %1$d
             And datetime(dayTime) = datetime(\'%2$s\');
     </string>
+    <string name="addClientBankCommand">
+        Update Clients
+        Set banked_sessions = banked_sessions + 1
+        Where client_id = %1$d;
+    </string>
+    <string name="weeklyBankCommand">
+        Update Clients as c
+        Set banked_sessions = banked_sessions + (
+                                                    Case
+                                                        When date((Select last_week_bank From User_Settings)) &lt;&gt; date(\'%1$s\') Then ifnull((Select days From Schedules s Where c.client_id=s.client_id And s.schedule_type = 2), 0)
+                                                        Else 0
+                                                    End
+                                                );
+        Update User_Settings
+        Set last_week_bank = date(\'%1$s\');
+    </string>
+    <string name="monthlyBankCommand">
+        Update Clients as c
+        Set banked_sessions = banked_sessions + (
+                                                    Case
+                                                        When date((Select last_month_bank From User_Settings)) &lt;&gt; date(\'%1$s\') Then ifnull((Select days From Schedules s Where c.client_id=s.client_id And s.schedule_type = 3), 0)
+                                                        Else 0
+                                                    End
+                                                );
+        Update User_Settings
+        Set last_month_bank = date(\'%1$s\');
+    </string>
+    <string name="cleanSessionChangesCommand">
+        Delete From Session_Changes
+        Where date(change_dayTime) &lt; date(\'%1$s\')
+            And date(normal_dayTime) &lt; date(\'%1$s\')
+            And date(
+                        (
+                            Select last_clean
+                            From User_Settings
+                        )
+                    ) &lt; date(\'%1$s\');
+    </string>
 </resources>

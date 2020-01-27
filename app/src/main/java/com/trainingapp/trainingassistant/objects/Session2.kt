@@ -50,7 +50,7 @@ class Session2 (var clientID: Int, var clientName: String, dayTime: String, priv
             clientID,
             clientName,
             if (dayTime.isEmpty()) StaticFunctions.getStrDateTime(date) else dayTime,
-            if (program.hasExercises()) this.program else program,
+            if (!program.hasExercises()) this.program else program,
             if (notes.isEmpty()) this.notes else notes,
             if (duration == 0) this.duration else duration
         )
