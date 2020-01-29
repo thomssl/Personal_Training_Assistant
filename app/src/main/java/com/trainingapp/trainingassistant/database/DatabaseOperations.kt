@@ -379,6 +379,7 @@ class DatabaseOperations(val context: Context) {
     }
 
     private fun addClientBank(clientID: Int): Boolean = trySQLCommand(context.getString(R.string.addClientBankCommand, clientID))
+    fun decClientBank(clientID: Int): Boolean = trySQLCommand(context.getString(R.string.decClientBankCommand, clientID))
 
     /**
      * Checked
@@ -691,8 +692,8 @@ class DatabaseOperations(val context: Context) {
         return when(getClientType(session.clientID)){
             ScheduleType.WEEKLY_CONSTANT ->  {
                 //if any of the transactions fail, return false. if all transactions pass, return true
-                //if change record exists, update change with makeup session values
-                if (checkChange(session)) if (!updateChange(session, Session(session.clientID, session.clientName, "0", Program(0,"", ArrayList()), "", session.duration))) return false
+                //if change record exists, remove change from session changes
+                if (checkChange(session)) if (!deleteChange(session)) return false
                 //if session found in log, remove session from log
                 if (checkSessionLog(session)) if (!deleteSession(session)) return false
                 //increment banked_sessions field
@@ -780,22 +781,8 @@ class DatabaseOperations(val context: Context) {
      */
     fun getAddSessionsClientsByDay(calendar: Calendar): ArrayList<Client>{
         val day = getScheduleByDay(calendar)
-        val tempCal = Calendar.getInstance()
-        tempCal.time = calendar.time
-        val month = tempCal[Calendar.MONTH]
-        val year = tempCal[Calendar.YEAR]
-        tempCal[Calendar.DAY_OF_WEEK] = 1
-        val startWeek  = StaticFunctions.getStrDate(tempCal)
-        tempCal[Calendar.DAY_OF_WEEK] = 7
-        val endWeek = StaticFunctions.getStrDate(tempCal)
-        tempCal[Calendar.MONTH] = month
-        tempCal[Calendar.YEAR] = year
-        tempCal[Calendar.DAY_OF_MONTH] = 1
-        val startMonth = StaticFunctions.getStrDate(tempCal)
-        tempCal[Calendar.DAY_OF_MONTH] = tempCal.getActualMaximum(Calendar.DAY_OF_MONTH)
-        val endMonth = StaticFunctions.getStrDate(tempCal)
         val clients = ArrayList<Client>()
-        val cursor = db.rawQuery(context.getString(R.string.getAddSessionsClientsByDayQuery, day.getStrIDs(), startWeek, endWeek, startMonth, endMonth), null)
+        val cursor = db.rawQuery(context.getString(R.string.getAddSessionsClientsByDayQuery, day.getStrIDs()), null)
         if (cursor.moveToFirst()){
             while (!cursor.isAfterLast){
                 clients.add(Client(

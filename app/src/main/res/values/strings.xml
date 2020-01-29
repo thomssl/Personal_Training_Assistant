@@ -385,7 +385,7 @@
         ) dat on dat.exercise_id=pe.exercise_id
         Where pe.program_id in (%1$s);
     </string>
-    <string name="getAddSessionsClientsByDayQuery">
+    <string name="getAddSessionsClientsByDayQueryOld">
         Select *
         From Clients c
         Inner Join Schedules s on c.client_id=s.client_id
@@ -432,6 +432,16 @@
                     &lt; s.days
                 )
               )
+    </string>
+    <string name="getAddSessionsClientsByDayQuery">
+        Select *
+        From Clients c
+        Inner Join Schedules s on c.client_id=s.client_id
+        Where c.client_id Not in (%1$s)
+              And (
+                    c.banked_sessions > 0
+                        Or s.schedule_type = 0
+                   )
     </string>
     <string name="getScheduleByDay_SessionLogQuery">
         Select s.client_id,
@@ -638,6 +648,11 @@
     <string name="addClientBankCommand">
         Update Clients
         Set banked_sessions = banked_sessions + 1
+        Where client_id = %1$d;
+    </string>
+    <string name="decClientBankCommand">
+        Update Clients
+        Set banked_sessions = banked_sessions - 1
         Where client_id = %1$d;
     </string>
     <string name="weeklyBankCommand">

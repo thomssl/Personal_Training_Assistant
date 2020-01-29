@@ -190,8 +190,8 @@ class MainActivity : AppCompatActivity(),
      */
     private fun addSessionConfirm(session: Session, scheduleType: ScheduleType): Boolean{
         return if (!databaseOperations.checkSessionConflict(session, false)) {//checks if the new session conflicts an existing session
-            if (scheduleType == ScheduleType.WEEKLY_CONSTANT) {
-                if (!databaseOperations.removeCanceledSession(session.clientID)){//if the client's schedule is constant, attempt to remove a makeup session logged
+            if (scheduleType != ScheduleType.NO_SCHEDULE) {
+                if (!databaseOperations.decClientBank(session.clientID)){//if the client's schedule is no schedule, attempt to remove from client's bank
                     Snackbar.make(fab,"SQL error removing canceled session from Session_Changes", Snackbar.LENGTH_LONG).show()
                     return false//exit with false if an error occurred. Don't add session
                 }
