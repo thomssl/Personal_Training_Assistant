@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.trainingapp.trainingassistant.R
-import com.trainingapp.trainingassistant.objects.Exercise2
+import com.trainingapp.trainingassistant.objects.Exercise
 
 /**
  * Adapter to display all exercises found in the database. Displays all pertinent information about the exercise
@@ -14,7 +14,7 @@ import com.trainingapp.trainingassistant.objects.Exercise2
  * @param clickListener Function used by ExercisesFragment to handle item onClick event (ie edit exercise)
  * @param longClickListener Function used by ExercisesFragment to handle item onLongClick event (ie delete exercise)
  */
-class ExercisesRVAdapter(private val exercises: ArrayList<Exercise2>, private val clickListener: (Int) -> Unit, private val longClickListener: (Exercise2) -> Boolean): RecyclerView.Adapter<ExercisesRVAdapter.ExerciseViewHolder>() {
+class ExercisesRVAdapter(private val exercises: ArrayList<Exercise>, private val clickListener: (Int) -> Unit, private val longClickListener: (Exercise) -> Boolean): RecyclerView.Adapter<ExercisesRVAdapter.ExerciseViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExerciseViewHolder {
         return ExerciseViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.exercises_row, parent, false))
@@ -28,7 +28,7 @@ class ExercisesRVAdapter(private val exercises: ArrayList<Exercise2>, private va
 
     inner class ExerciseViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
 
-        fun onBindItems(exercise: Exercise2, clickListener: (Int) -> Unit, longClickListener: (Exercise2) -> Boolean){
+        fun onBindItems(exercise: Exercise, clickListener: (Int) -> Unit, longClickListener: (Exercise) -> Boolean){
             itemView.findViewById<TextView>(R.id.txtExercisesRowName).text = exercise.name
             itemView.findViewById<TextView>(R.id.txtExercisesRowType).text = exercise.type.text
             itemView.findViewById<TextView>(R.id.txtExercisesRowPrimaryMover).text = exercise.primaryMover.name

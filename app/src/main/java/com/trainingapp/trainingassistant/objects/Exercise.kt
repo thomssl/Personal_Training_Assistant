@@ -1,7 +1,6 @@
 package com.trainingapp.trainingassistant.objects
 
 import com.trainingapp.trainingassistant.enumerators.ExerciseType
-import java.lang.StringBuilder
 
 /**
  * Object to hold gathered data about an exercise (abstract exercise definition, not sets, reps or resistance)
@@ -29,13 +28,13 @@ class Exercise(val id: Int, var name: String, var type: ExerciseType, var primar
      * Private method to get the ids of all the secondary movers as a joined string. Used for database operations
      */
     private fun getDatabaseSecondaryMovers(): String{
-        val builder = StringBuilder()
-        if (secondaryMovers.size > 0) {
-            secondaryMovers.forEach { builder.append(it.id);builder.append(',') }
+        return if (secondaryMovers.size > 0) {
+            val builder = StringBuilder()
+            builder.append(" Insert Into Secondary_Movers(exercise_id, secondary_mover_id) Values ")
+            secondaryMovers.forEach { builder.append("($id,${it.id}),") }
             builder.deleteCharAt(builder.lastIndex)
-        } else
-            builder.append("0")
-        return builder.toString()
+            builder.toString()
+        } else ""
     }
 
     /**
@@ -49,7 +48,8 @@ class Exercise(val id: Int, var name: String, var type: ExerciseType, var primar
     fun clearSecondaryMovers() = secondaryMovers.clear()
 
     //database operations
-    fun getInsertCommand(): String = "Insert Into Exercises(exercise_name, exercise_type, primary_mover, secondary_movers) Values('$name', ${type.num}, ${primaryMover.id}, '${getDatabaseSecondaryMovers()}')"
-    fun getUpdateCommand(): String = "Update Exercises Set exercise_name = '$name', exercise_type = ${type.num}, primary_mover = ${primaryMover.id}, secondary_movers = '${getDatabaseSecondaryMovers()}' Where exercise_id = $id"
-    fun getDeleteCommand(): String = "Delete From Exercises Where exercise_id = $id"
+    fun getInsertCommand(): String = "Insert Into Exercises(exercise_name, exercise_type, primary_mover) Values('$name', ${type.num}, ${primaryMover.id});${getDatabaseSecondaryMovers()}"
+    fun getUpdateCommand(): String = "Update Exercises Set exercise_name = '$name', exercise_type = ${type.num}, primary_mover = ${primaryMover.id} Where exercise_id = $id; Delete From Secondary_Movers Where exercise_id = $id;" +
+        getDatabaseSecondaryMovers()
+    fun getDeleteCommand(): String = "Delete From Exercises Where exercise_id = $id;Delete From Secondary_Movers Where exercise_id = $id"
 }

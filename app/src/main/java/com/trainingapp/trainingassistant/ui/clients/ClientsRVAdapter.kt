@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.trainingapp.trainingassistant.R
-import com.trainingapp.trainingassistant.objects.Client2
+import com.trainingapp.trainingassistant.objects.Client
 
 /**
  * Adapter to display all the clients found in the database. Displays all pertinent information about a client
@@ -14,7 +14,7 @@ import com.trainingapp.trainingassistant.objects.Client2
  * @param clickListener Function used by ClientsFragment to handle item onClick event (ie edit client)
  * @param longClickListener Function used by ClientsFragment to handle item onLonClick event (ie delete client)
  */
-class ClientsRVAdapter(private val clients: ArrayList<Client2>, private val clickListener: (Int) -> Unit, private val longClickListener: (Client2) -> Boolean): RecyclerView.Adapter<ClientsRVAdapter.ClientsViewHolder>() {
+class ClientsRVAdapter(private val clients: ArrayList<Client>, private val clickListener: (Int) -> Unit, private val longClickListener: (Client) -> Boolean): RecyclerView.Adapter<ClientsRVAdapter.ClientsViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClientsViewHolder {
         return ClientsViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.client_row, parent, false))
@@ -28,7 +28,7 @@ class ClientsRVAdapter(private val clients: ArrayList<Client2>, private val clic
 
     inner class ClientsViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
 
-        fun onBindItems(client: Client2, clickListener: (Int) -> Unit, longClickListener: (Client2) -> Boolean){
+        fun onBindItems(client: Client, clickListener: (Int) -> Unit, longClickListener: (Client) -> Boolean){
             itemView.findViewById<TextView>(R.id.txtClientsName).text = client.name
             itemView.findViewById<TextView>(R.id.txtClientsSessionType).text = client.getStrSessionType()
             //if client has constant/variable session show start and end date, if no schedule blank

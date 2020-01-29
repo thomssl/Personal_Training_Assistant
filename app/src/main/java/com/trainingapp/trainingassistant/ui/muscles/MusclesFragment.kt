@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import com.trainingapp.trainingassistant.R
-import com.trainingapp.trainingassistant.database.DatabaseOperations2
+import com.trainingapp.trainingassistant.database.DatabaseOperations
 import com.trainingapp.trainingassistant.objects.MuscleJoint
 import com.trainingapp.trainingassistant.ui.dialogs.AddEditMuscleDialog
 import kotlinx.android.synthetic.main.fragment_muscles.*
@@ -24,13 +24,13 @@ import kotlin.coroutines.CoroutineContext
  */
 class MusclesFragment : Fragment(), CoroutineScope {
 
-    private lateinit var databaseOperations: DatabaseOperations2
+    private lateinit var databaseOperations: DatabaseOperations
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        databaseOperations = DatabaseOperations2(context)
+        databaseOperations = DatabaseOperations(context)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

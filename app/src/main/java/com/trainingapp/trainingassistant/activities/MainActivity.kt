@@ -18,10 +18,10 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.trainingapp.trainingassistant.R
-import com.trainingapp.trainingassistant.database.DatabaseOperations2
+import com.trainingapp.trainingassistant.database.DatabaseOperations
 import com.trainingapp.trainingassistant.enumerators.ScheduleType
 import com.trainingapp.trainingassistant.objects.MuscleJoint
-import com.trainingapp.trainingassistant.objects.Session2
+import com.trainingapp.trainingassistant.objects.Session
 import com.trainingapp.trainingassistant.ui.dialogs.AddEditMuscleDialog
 import com.trainingapp.trainingassistant.ui.dialogs.AddSessionDialog
 import com.trainingapp.trainingassistant.ui.schedule.ScheduleFragment
@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity(),
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var navController: NavController
-    private lateinit var databaseOperations: DatabaseOperations2
+    private lateinit var databaseOperations: DatabaseOperations
     private val calendar: Calendar = Calendar.getInstance()
 
 
@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity(),
         loadPreBuiltDatabase()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        databaseOperations = DatabaseOperations2(this)
+        databaseOperations = DatabaseOperations(this)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
@@ -188,7 +188,7 @@ class MainActivity : AppCompatActivity(),
      * @param scheduleType ScheduleType of the session owner. Used to check if a makeup session needs to be used
      * @return true if no errors occurred, false if something goes wrong
      */
-    private fun addSessionConfirm(session: Session2, scheduleType: ScheduleType): Boolean{
+    private fun addSessionConfirm(session: Session, scheduleType: ScheduleType): Boolean{
         return if (!databaseOperations.checkSessionConflict(session, false)) {//checks if the new session conflicts an existing session
             if (scheduleType == ScheduleType.WEEKLY_CONSTANT) {
                 if (!databaseOperations.removeCanceledSession(session.clientID)){//if the client's schedule is constant, attempt to remove a makeup session logged

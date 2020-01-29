@@ -9,7 +9,7 @@ import android.widget.Filter
 import android.widget.TextView
 import com.trainingapp.trainingassistant.R
 import com.trainingapp.trainingassistant.enumerators.ExerciseType
-import com.trainingapp.trainingassistant.objects.Exercise2
+import com.trainingapp.trainingassistant.objects.Exercise
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -19,9 +19,9 @@ import kotlin.collections.ArrayList
  * @param resource Layout resource used for each list item
  * @param exercises Full list of exercises to search through
  */
-class SearchForExerciseSession(context: Context, private val resource: Int, val exercises: ArrayList<Exercise2>) : ArrayAdapter<String>(context, resource) {
+class SearchForExerciseSession(context: Context, private val resource: Int, val exercises: ArrayList<Exercise>) : ArrayAdapter<String>(context, resource) {
 
-    var resultData = ArrayList<Exercise2>()//used to fill the FilterResults object
+    var resultData = ArrayList<Exercise>()//used to fill the FilterResults object
 
     override fun getCount(): Int = resultData.size
 

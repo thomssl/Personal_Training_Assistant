@@ -13,8 +13,8 @@ import androidx.fragment.app.Fragment
 import com.trainingapp.trainingassistant.R
 import com.trainingapp.trainingassistant.StaticFunctions
 import com.trainingapp.trainingassistant.activities.SessionActivity
-import com.trainingapp.trainingassistant.database.DatabaseOperations2
-import com.trainingapp.trainingassistant.objects.Day2
+import com.trainingapp.trainingassistant.database.DatabaseOperations
+import com.trainingapp.trainingassistant.objects.Day
 import kotlinx.android.synthetic.main.fragment_schedule.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -29,8 +29,8 @@ import kotlin.coroutines.CoroutineContext
 class ScheduleFragment : Fragment(), CalendarView.OnDateChangeListener, CoroutineScope {
 
     private val calendar: Calendar = Calendar.getInstance()
-    private lateinit var databaseOperations: DatabaseOperations2
-    private lateinit var day: Day2
+    private lateinit var databaseOperations: DatabaseOperations
+    private lateinit var day: Day
     private lateinit var iFragmentToActivity: IFragmentToActivity
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main
@@ -53,7 +53,7 @@ class ScheduleFragment : Fragment(), CalendarView.OnDateChangeListener, Coroutin
             e.printStackTrace()
             Toast.makeText(context, "Could not cast context as IFragmentToActivity", Toast.LENGTH_LONG).show()
         }
-        databaseOperations = DatabaseOperations2(context)
+        databaseOperations = DatabaseOperations(context)
     }
 
     override fun onResume() {

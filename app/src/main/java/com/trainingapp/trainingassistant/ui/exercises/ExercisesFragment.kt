@@ -10,8 +10,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.trainingapp.trainingassistant.R
 import com.trainingapp.trainingassistant.activities.AddEditExerciseActivity
-import com.trainingapp.trainingassistant.database.DatabaseOperations2
-import com.trainingapp.trainingassistant.objects.Exercise2
+import com.trainingapp.trainingassistant.database.DatabaseOperations
+import com.trainingapp.trainingassistant.objects.Exercise
 import kotlinx.android.synthetic.main.fragment_exercises.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -24,7 +24,7 @@ import kotlin.coroutines.CoroutineContext
  */
 class ExercisesFragment : Fragment(), CoroutineScope {
 
-    private lateinit var databaseOperations: DatabaseOperations2
+    private lateinit var databaseOperations: DatabaseOperations
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main
 
@@ -34,7 +34,7 @@ class ExercisesFragment : Fragment(), CoroutineScope {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        databaseOperations = DatabaseOperations2(context)
+        databaseOperations = DatabaseOperations(context)
     }
 
     override fun onResume() {
@@ -78,7 +78,7 @@ class ExercisesFragment : Fragment(), CoroutineScope {
      * @param exercise Exercise object to be removed from the database, from adapter
      * @return always true since the callback consumed the long click (See Android View.onLongClickListener for more info)
      */
-    private fun onItemLongClicked(exercise: Exercise2): Boolean{
+    private fun onItemLongClicked(exercise: Exercise): Boolean{
         val alertDialog = AlertDialog.Builder(context)
         alertDialog.setTitle(getString(R.string.alert_dialog_confirm_removal))
         alertDialog.setMessage(getString(R.string.confirm_delete, exercise.name))

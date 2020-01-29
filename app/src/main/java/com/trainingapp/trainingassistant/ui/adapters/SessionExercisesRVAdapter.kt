@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.trainingapp.trainingassistant.R
-import com.trainingapp.trainingassistant.objects.ExerciseSession2
-import com.trainingapp.trainingassistant.objects.Session2
+import com.trainingapp.trainingassistant.objects.ExerciseSession
+import com.trainingapp.trainingassistant.objects.Session
 
 /**
  * Adapter to display the ExerciseSessions found within a given Session
@@ -15,7 +15,7 @@ import com.trainingapp.trainingassistant.objects.Session2
  * @param clickListener Function from SessionActivity to handle the onClick event of an item
  * @param longClickListener Function from SessionActivity to handle the onLongClick event of an item
  */
-class SessionExercisesRVAdapter(var session: Session2, private val clickListener: (ExerciseSession2, Int) -> Unit, private val longClickListener: (ExerciseSession2) -> Boolean) : RecyclerView.Adapter<SessionExercisesRVAdapter
+class SessionExercisesRVAdapter(var session: Session, private val clickListener: (ExerciseSession, Int) -> Unit, private val longClickListener: (ExerciseSession) -> Boolean) : RecyclerView.Adapter<SessionExercisesRVAdapter
 .SessionExercisesViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SessionExercisesViewHolder {
@@ -30,7 +30,7 @@ class SessionExercisesRVAdapter(var session: Session2, private val clickListener
 
     inner class SessionExercisesViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
 
-        fun onBindItems(exerciseSession: ExerciseSession2, clickListener: (ExerciseSession2, Int) -> Unit, position: Int, longClickListener: (ExerciseSession2) -> Boolean){
+        fun onBindItems(exerciseSession: ExerciseSession, clickListener: (ExerciseSession, Int) -> Unit, position: Int, longClickListener: (ExerciseSession) -> Boolean){
             itemView.findViewById<TextView>(R.id.txtSessionExerciseOrder).text = exerciseSession.order.toString()
             itemView.findViewById<TextView>(R.id.txtSessionExerciseName).text = exerciseSession.name
             itemView.findViewById<TextView>(R.id.txtSessionExerciseResistance).text = exerciseSession.resistance

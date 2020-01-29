@@ -12,13 +12,13 @@ import androidx.fragment.app.DialogFragment
 import com.trainingapp.trainingassistant.R
 import com.trainingapp.trainingassistant.StaticFunctions
 import com.trainingapp.trainingassistant.enumerators.ScheduleType
-import com.trainingapp.trainingassistant.objects.Client2
+import com.trainingapp.trainingassistant.objects.Client
 import com.trainingapp.trainingassistant.objects.Program
-import com.trainingapp.trainingassistant.objects.Session2
+import com.trainingapp.trainingassistant.objects.Session
 import java.util.*
 import kotlin.collections.ArrayList
 
-class AddSessionDialog(private val clients: ArrayList<Client2>, private val calendar: Calendar, private val confirmListener: (Session2, ScheduleType) -> Boolean): DialogFragment() {
+class AddSessionDialog(private val clients: ArrayList<Client>, private val calendar: Calendar, private val confirmListener: (Session, ScheduleType) -> Boolean): DialogFragment() {
 
     private val clientNames = ArrayList<String>()
     private lateinit var btnTime: Button
@@ -55,7 +55,7 @@ class AddSessionDialog(private val clients: ArrayList<Client2>, private val cale
                     val duration = strDuration.toInt()
                     val client = clients[spnNames.selectedItemPosition]
                     if (duration in 1..120) {
-                        if (confirmListener(Session2(client.id, client.name, StaticFunctions.getStrDateTime(calendar), Program(0, "", ArrayList()), "", strDuration.toInt()), client.schedule.scheduleType))
+                        if (confirmListener(Session(client.id, client.name, StaticFunctions.getStrDateTime(calendar), Program(0, "", ArrayList()), "", strDuration.toInt()), client.schedule.scheduleType))
                             dismiss()
                     } else {
                         Toast.makeText(context, "Duration not valid. See Wiki 'Input Fields'", Toast.LENGTH_LONG).show()

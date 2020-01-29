@@ -1,22 +1,22 @@
 package com.trainingapp.trainingassistant.objects
 
-class Program (var id: Int, var name: String, var exercises: ArrayList<ExerciseSession2>) {
+class Program (var id: Int, var name: String, var exercises: ArrayList<ExerciseSession>) {
 
     //used to validate that a program has exercises
     // stops the user from removing all exercises from a session than updating or confirming a session that has never had any exercises
     fun hasExercises(): Boolean = exercises.size > 0
 
-    fun addExercise(exerciseSession: ExerciseSession2){
+    fun addExercise(exerciseSession: ExerciseSession){
         exercises.add(exerciseSession)
         exercises.sort()
     }
 
-    fun updateExercise(exerciseSession: ExerciseSession2, position: Int){
+    fun updateExercise(exerciseSession: ExerciseSession, position: Int){
         exercises[position] = exerciseSession
         exercises.sort()
     }
 
-    fun removeExercise(exerciseSession: ExerciseSession2){
+    fun removeExercise(exerciseSession: ExerciseSession){
         exercises.remove(exerciseSession)
         exercises.sort()
     }
@@ -27,7 +27,7 @@ class Program (var id: Int, var name: String, var exercises: ArrayList<ExerciseS
      * if the index is valid (index > -1), remove the ExerciseSession at that index and sort the remaining sessions
      * if the index is invalid, do nothing
      */
-    fun removeExercise(exercise: Exercise2){
+    fun removeExercise(exercise: Exercise){
         var index = -1
         for (i in exercises.indices){
             if (exercise.id == exercises[i].id){
@@ -47,7 +47,7 @@ class Program (var id: Int, var name: String, var exercises: ArrayList<ExerciseS
      * if the index is valid (index > -1), return the ExerciseSession at that index
      * if the index is invalid, return an empty ExerciseSession
      */
-    fun getExercise(exercise: Exercise2): ExerciseSession2 {
+    fun getExercise(exercise: Exercise): ExerciseSession {
         var index = -1
         for (i in exercises.indices){
             if (exercise.id == exercises[i].id){
@@ -55,10 +55,10 @@ class Program (var id: Int, var name: String, var exercises: ArrayList<ExerciseS
                 break
             }
         }
-        return if (index > -1) getExercise(index) else ExerciseSession2(exercise, "", "", "", 0)
+        return if (index > -1) getExercise(index) else ExerciseSession(exercise, "", "", "", 0)
     }
 
-    fun getExercise(index: Int): ExerciseSession2 = exercises[index]
+    fun getExercise(index: Int): ExerciseSession = exercises[index]
     fun getExerciseCount(): Int = exercises.size
 
     private fun getAllExerciseInserts(clientID: Int, dayTime: String): String{

@@ -4,16 +4,13 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
-class DatabaseHelper(context: Context): SQLiteOpenHelper(context,
-    DATABASE_NAME, null,
-    DATABASE_VERSION
-) {
+class DatabaseHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     /**
      * Need to update these table definitions
      */
     companion object {
-        private const val DATABASE_NAME: String = "data.db"
+        private const val DATABASE_NAME: String = "data.sqlite3"
         private const val DATABASE_VERSION: Int = 1
         private const val CREATE1 = "Create Table If Not Exists Clients(client_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, client_name TEXT NOT NULL UNIQUE, schedule_type INTEGER NOT NULL, days TEXT NOT NULL, times TEXT NOT NULL, durations TEXT NOT NULL, start_date TEXT NOT NULL, end_date TEXT NOT NULL)"
         private const val CREATE2 = "Create Table If Not Exists Exercise_Types(exercise_type_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, exercise_type_name TEXT NOT NULL UNIQUE)"
@@ -27,7 +24,7 @@ class DatabaseHelper(context: Context): SQLiteOpenHelper(context,
     }
 
     override fun onCreate(db: SQLiteDatabase) {
-        db.execSQL(CREATE1)
+        /*db.execSQL(CREATE1)
         db.execSQL(CREATE2)
         db.execSQL(CREATE3)
         db.execSQL(CREATE4)
@@ -35,7 +32,7 @@ class DatabaseHelper(context: Context): SQLiteOpenHelper(context,
         db.execSQL(CREATE6)
         db.execSQL(CREATE7)
         db.execSQL(CREATE8)
-        db.execSQL(CREATE9)
+        db.execSQL(CREATE9)*/
     }
 
     override fun onUpgrade(db: SQLiteDatabase, p1: Int, p2: Int) {

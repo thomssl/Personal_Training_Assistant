@@ -1,7 +1,6 @@
 package com.trainingapp.trainingassistant.objects
 
 import com.trainingapp.trainingassistant.StaticFunctions
-import java.lang.StringBuilder
 
 /**
  * Object to hold sessions for a single day
@@ -77,10 +76,7 @@ class Day (private var sessions: ArrayList<Session>) {
      */
     fun getConflicts(): ArrayList<Int>{
         val conflicts = ArrayList<Int>()
-        for (i in sessions.indices){
-            if (checkConflict(sessions[i], true))
-                conflicts.add(i)
-        }
+        sessions.forEachIndexed { index, session2 -> if (checkConflict(session2, true)) conflicts.add(index) }
         return conflicts
     }
 }

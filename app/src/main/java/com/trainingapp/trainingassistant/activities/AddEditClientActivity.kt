@@ -13,9 +13,9 @@ import androidx.core.text.isDigitsOnly
 import com.google.android.material.snackbar.Snackbar
 import com.trainingapp.trainingassistant.R
 import com.trainingapp.trainingassistant.StaticFunctions
-import com.trainingapp.trainingassistant.database.DatabaseOperations2
+import com.trainingapp.trainingassistant.database.DatabaseOperations
 import com.trainingapp.trainingassistant.enumerators.ScheduleType
-import com.trainingapp.trainingassistant.objects.Client2
+import com.trainingapp.trainingassistant.objects.Client
 import com.trainingapp.trainingassistant.objects.Schedule
 import kotlinx.android.synthetic.main.activity_add_edit_client.*
 import kotlinx.android.synthetic.main.monthly_variable.*
@@ -33,10 +33,10 @@ import kotlin.collections.ArrayList
  */
 class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener {
 
-    private lateinit var databaseOperations: DatabaseOperations2
+    private lateinit var databaseOperations: DatabaseOperations
     private var userSettings = ArrayList<Int>()
     private var isNew = false
-    private lateinit var intentClient: Client2
+    private lateinit var intentClient: Client
 
     /**
      * Creation method overridden to initialize the DatabaseOperations object and set the rules of how the layout changes with user input
@@ -47,7 +47,7 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
         setContentView(R.layout.activity_add_edit_client)
         setTitle(R.string.edit_client_title)//default is edit client, changed if invalid client id sent
 
-        databaseOperations = DatabaseOperations2(this)
+        databaseOperations = DatabaseOperations(this)
         userSettings = databaseOperations.getUserSettings()
         radGrpAddEditClient.setOnCheckedChangeListener(this)
         //each switch is set to follow similar rules. If it becomes checked, make the appropriate views visible and initialize the button text and duration to the default
@@ -289,7 +289,7 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
     fun onClientConfirm(view: View){
         val name = etxtAddEditClientName.text.toString()
         if (!StaticFunctions.badSQLText(name)) {//first check, make sure the name does not contain any illegal characters or isBlank
-            val client: Client2 = when (radGrpAddEditClient.checkedRadioButtonId) {//create Client object depending upon the checked radio button
+            val client: Client = when (radGrpAddEditClient.checkedRadioButtonId) {//create Client object depending upon the checked radio button
                 R.id.radIsWeeklyConst -> {
                     val startDate = btnAddEditClientStartDate.text.toString()
                     val endDate = btnAddEditClientEndDate.text.toString()
@@ -325,7 +325,7 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
                             }
                         }
                     }
-                    Client2(intentClient.id, name, Schedule(ScheduleType.WEEKLY_CONSTANT, days.sumBy { if(it > 0) 1 else 0 }, 0, days, durations), startDate, endDate)//construct Client object with data
+                    Client(intentClient.id, name, Schedule(ScheduleType.WEEKLY_CONSTANT, days.sumBy { if(it > 0) 1 else 0 }, 0, days, durations), startDate, endDate)//construct Client object with data
                 }
                 R.id.radIsWeeklyVar -> {
                     val startDate = btnAddEditClientStartDate.text.toString()
@@ -355,7 +355,7 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
                         return//exit function. Do nothing
                     }
                     //construct Client object with collected data. Times is set to "0" as default. if duration is set to 0 the default duration from the user settings is used
-                    Client2(intentClient.id, name, Schedule(ScheduleType.WEEKLY_VARIABLE, sessions.toInt(), if (duration.toInt() == 0) userSettings[0] else duration.toInt(), ArrayList(), ArrayList()), startDate, endDate)
+                    Client(intentClient.id, name, Schedule(ScheduleType.WEEKLY_VARIABLE, sessions.toInt(), if (duration.toInt() == 0) userSettings[0] else duration.toInt(), ArrayList(), ArrayList()), startDate, endDate)
                 }
                 R.id.radIsMonthlyVar -> {
                     val startDate = btnAddEditClientStartDate.text.toString()
@@ -385,7 +385,7 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
                         return//exit function. Do nothing
                     }
                     //construct Client object with collected data. Times is set to "0" as default. if duration is set to 0 the default duration from the user settings is used
-                    Client2(intentClient.id, name, Schedule(ScheduleType.MONTHLY_VARIABLE, sessions.toInt(), if (duration.toInt() == 0) userSettings[0] else duration.toInt(), ArrayList(), ArrayList()), startDate, endDate)
+                    Client(intentClient.id, name, Schedule(ScheduleType.MONTHLY_VARIABLE, sessions.toInt(), if (duration.toInt() == 0) userSettings[0] else duration.toInt(), ArrayList(), ArrayList()), startDate, endDate)
                 }
                 R.id.radIsNoSchedule -> {
                     val duration = etxtNoScheduleDuration.text.toString()
@@ -399,11 +399,11 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
                         return//exit function. Do nothing
                     }
                     //construct Client object with collected data. Days, Times, StartDate and EndDate are set to "0" as default. if duration is set to 0 the default duration from the user settings is used
-                    Client2(intentClient.id, name, Schedule(ScheduleType.NO_SCHEDULE, 0, if (duration.toInt() == 0) userSettings[0] else duration.toInt(), ArrayList(), ArrayList()), "0", "0")
+                    Client(intentClient.id, name, Schedule(ScheduleType.NO_SCHEDULE, 0, if (duration.toInt() == 0) userSettings[0] else duration.toInt(), ArrayList(), ArrayList()), "0", "0")
                 }
                 else -> {
                     //if somehow no radio button is selected a blank client is passed forward
-                    Client2(intentClient.id, "", Schedule(ScheduleType.NO_SCHEDULE, 0, 0, ArrayList(), ArrayList()), "", "")
+                    Client(intentClient.id, "", Schedule(ScheduleType.NO_SCHEDULE, 0, 0, ArrayList(), ArrayList()), "", "")
                 }
             }
             if (client.name != "") {//if the blank client has moved forward, it will be ignored

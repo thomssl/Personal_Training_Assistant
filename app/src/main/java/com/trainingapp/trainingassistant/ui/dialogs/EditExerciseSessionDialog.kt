@@ -9,14 +9,14 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import com.trainingapp.trainingassistant.R
-import com.trainingapp.trainingassistant.database.DatabaseOperations2
-import com.trainingapp.trainingassistant.objects.Exercise2
-import com.trainingapp.trainingassistant.objects.ExerciseSession2
+import com.trainingapp.trainingassistant.database.DatabaseOperations
+import com.trainingapp.trainingassistant.objects.Exercise
+import com.trainingapp.trainingassistant.objects.ExerciseSession
 
-class EditExerciseSessionDialog(val exerciseSession: ExerciseSession2, private val position: Int, private val  confirmListener: (EditExerciseSessionDialog, Int) -> Boolean): DialogFragment() {
+class EditExerciseSessionDialog(val exerciseSession: ExerciseSession, private val position: Int, private val  confirmListener: (EditExerciseSessionDialog, Int) -> Boolean): DialogFragment() {
 
-    private lateinit var databaseOperations: DatabaseOperations2
-    var exercises = ArrayList<Exercise2>()
+    private lateinit var databaseOperations: DatabaseOperations
+    var exercises = ArrayList<Exercise>()
     private var exerciseNames = ArrayList<String>()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -39,7 +39,7 @@ class EditExerciseSessionDialog(val exerciseSession: ExerciseSession2, private v
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        databaseOperations = DatabaseOperations2(context)
+        databaseOperations = DatabaseOperations(context)
         exercises = databaseOperations.getAllExercises()
         exercises.forEach{exerciseNames.add(it.name)}
     }

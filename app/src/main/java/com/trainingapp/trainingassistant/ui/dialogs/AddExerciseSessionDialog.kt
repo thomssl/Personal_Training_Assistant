@@ -10,14 +10,14 @@ import android.widget.AutoCompleteTextView
 import android.widget.EditText
 import androidx.fragment.app.DialogFragment
 import com.trainingapp.trainingassistant.R
-import com.trainingapp.trainingassistant.database.DatabaseOperations2
-import com.trainingapp.trainingassistant.objects.Exercise2
+import com.trainingapp.trainingassistant.database.DatabaseOperations
+import com.trainingapp.trainingassistant.objects.Exercise
 import com.trainingapp.trainingassistant.ui.adapters.SearchForExerciseSession
 
 class AddExerciseSessionDialog(private val clientID: Int, private val  confirmListener: (AddExerciseSessionDialog) -> Boolean): DialogFragment() {
 
-    private lateinit var databaseOperations: DatabaseOperations2
-    var exercises = ArrayList<Exercise2>()
+    private lateinit var databaseOperations: DatabaseOperations
+    var exercises = ArrayList<Exercise>()
     var exerciseNames = ArrayList<String>()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -45,7 +45,7 @@ class AddExerciseSessionDialog(private val clientID: Int, private val  confirmLi
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        databaseOperations = DatabaseOperations2(context)
+        databaseOperations = DatabaseOperations(context)
         exercises = databaseOperations.getAllExercises()
         exercises.forEach{exerciseNames.add(it.name)}
     }
