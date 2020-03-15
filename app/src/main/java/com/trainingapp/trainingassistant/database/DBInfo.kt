@@ -10,6 +10,24 @@ object DBInfo {
             const val NAME = "client_name"
             const val START_DATE = "start_date"
             const val END_DATE = "end_date"
+            const val BANKED_SESSIONS = "banked_sessions"
+            const val SCHEDULE_TYPE = "schedule_type"
+            const val DAYS = "days"
+            const val DURATION = "duration"
+            const val SUN = "sun"
+            const val MON = "mon"
+            const val TUE = "tue"
+            const val WED = "wed"
+            const val THU = "thu"
+            const val FRI = "fri"
+            const val SAT = "sat"
+            const val SUN_DURATION = "sun_duration"
+            const val MON_DURATION = "mon_duration"
+            const val TUE_DURATION = "tue_duration"
+            const val WED_DURATION = "wed_duration"
+            const val THU_DURATION = "thu_duration"
+            const val FRI_DURATION = "fri_duration"
+            const val SAT_DURATION = "sat_duration"
         }
     }
 
@@ -42,7 +60,7 @@ object DBInfo {
             const val EXERCISE_ID = "exercise_id"
             const val SETS = "sets"
             const val REPS = "reps"
-            const val RESISTANCE = "resistance"
+            const val DAY = "day"
             const val EXERCISE_ORDER = "exercise_order"
         }
     }
@@ -53,29 +71,6 @@ object DBInfo {
             const val CLIENT_ID = "client_id"
             const val DAYTIME = "dayTime"
             const val NAME = "program_name"
-        }
-    }
-
-    class SchedulesTable : BaseColumns{
-        companion object {
-            const val CLIENT_ID = "client_id"
-            const val SCHEDULE_TYPE = "schedule_type"
-            const val DAYS = "days"
-            const val DURATION = "duration"
-            const val SUN = "sun"
-            const val MON = "mon"
-            const val TUE = "tue"
-            const val WED = "wed"
-            const val THU = "thu"
-            const val FRI = "fri"
-            const val SAT = "sat"
-            const val SUN_DURATION = "sun_duration"
-            const val MON_DURATION = "mon_duration"
-            const val TUE_DURATION = "tue_duration"
-            const val WED_DURATION = "wed_duration"
-            const val THU_DURATION = "thu_duration"
-            const val FRI_DURATION = "fri_duration"
-            const val SAT_DURATION = "sat_duration"
         }
     }
 
@@ -95,11 +90,22 @@ object DBInfo {
         }
     }
 
+    class SessionExercisesTable : BaseColumns{
+        companion object {
+            const val SESSION_ID = "session_id"
+            const val EXERCISE_ID = "exercise_id"
+            const val SETS = "sets"
+            const val REPS = "reps"
+            const val RESISTANCE = "resistance"
+            const val EXERCISE_ORDER = "exercise_order"
+        }
+    }
+
     class SessionLogTable : BaseColumns{
         companion object{
+            const val SESSION_ID = "session_id"
             const val CLIENT_ID = "client_id"
             const val DAYTIME = "dayTime"
-            const val PROGRAM_ID = "program_id"
             const val NOTES = "notes"
             const val DURATION = "duration"
         }

@@ -9,11 +9,19 @@ import kotlin.collections.ArrayList
  * @param clientID id that corresponds to a client in the Clients table. Used to distinguish the owner of the session
  * @param clientName name that corresponds the id passed to the session. Found in Client table
  * @param dayTime date and time of the session as a String (later converted to a Calendar for better accessibility)
- * @param program Program object that contains the List of ExerciseSession objects that define the movements in a session
  * @param notes String of anything the user wants to remember about the session
  * @param duration duration of the session in minutes
+ * @param exercises list of exercises performed during the session
  */
-class Session (var clientID: Int, var clientName: String, dayTime: String, private var program: Program, var notes: String, var duration: Int): Comparable<Session> {
+class Session(
+    val sessionID: Int,
+    var clientID: Int,
+    var clientName: String,
+    dayTime: String,
+    var notes: String,
+    var duration: Int,
+    var exercises: ArrayList<ExerciseSession>
+): Comparable<Session> {
 
     // Used to ask a Session object for a certain SQL command
     companion object {
@@ -26,16 +34,62 @@ class Session (var clientID: Int, var clientName: String, dayTime: String, priva
 
     //used to validate that a session has exercises
     // stops the user from removing all exercises from a session than updating or confirming a session that has never had any exercises
-    fun hasExercises(): Boolean = program.hasExercises()
-    fun addExercise(exerciseSession: ExerciseSession) = program.addExercise(exerciseSession)
-    fun updateExercise(exerciseSession: ExerciseSession, position: Int) = program.updateExercise(exerciseSession, position)
-    fun removeExercise(exerciseSession: ExerciseSession) = program.removeExercise(exerciseSession)
-    fun removeExercise(exercise: Exercise) = program.removeExercise(exercise)
-    fun getExercise(exercise: Exercise): ExerciseSession = program.getExercise(exercise)
-    fun getExercise(index: Int): ExerciseSession = program.getExercise(index)
-    fun getExerciseCount(): Int = program.getExerciseCount()
-    fun getProgramID(): Int = program.id
-    fun updateProgramID(id: Int) { program.id = id }
+    fun hasExercises(): Boolean = exercises.size > 0
+    fun addExercise(exerciseSession: ExerciseSession){
+        exercises.add(exerciseSession)
+        exercises.sort()
+    }
+
+    fun updateExercise(exerciseSession: ExerciseSession, position: Int){
+        exercises[position] = exerciseSession
+        exercises.sort()
+    }
+
+    fun removeExercise(exerciseSession: ExerciseSession){
+        exercises.remove(exerciseSession)
+        exercises.sort()
+    }
+
+    /**
+     * Method to remove an ExerciseSession based upon a passed Exercise object
+     * Finds index of the ExerciseSession that contains the Exercise object passed
+     * if the index is valid (index > -1), remove the ExerciseSession at that index and sort the remaining sessions
+     * if the index is invalid, do nothing
+     */
+    fun removeExercise(exercise: Exercise){
+        var index = -1
+        for (i in exercises.indices){
+            if (exercise.id == exercises[i].id){
+                index = i
+                break
+            }
+        }
+        if (index >= 0) {
+            exercises.removeAt(index)
+            exercises.sort()
+        }
+    }
+
+    /**
+     * Method to get an ExerciseSession based upon a passed Exercise object
+     * Finds the index of the ExerciseSession that contains the Exercise object passed
+     * if the index is valid (index > -1), return the ExerciseSession at that index
+     * if the index is invalid, return an empty ExerciseSession
+     */
+    fun getExercise(exercise: Exercise): ExerciseSession {
+        var index = -1
+        for (i in exercises.indices){
+            if (exercise.id == exercises[i].id){
+                index = i
+                break
+            }
+        }
+        return if (index > -1) getExercise(index) else ExerciseSession(exercise, "", "", "", 0)
+    }
+
+    fun getExercise(index: Int): ExerciseSession = exercises[index]
+    fun getExerciseCount(): Int = exercises.size
+
     private fun getTime(): Int = (date[Calendar.HOUR_OF_DAY] * 60) + date[Calendar.MINUTE]//gets time as minutes in the day
     fun getTimeRange(): IntRange = getTime() until (getTime() + duration)//gets an IntRange from the start to end time
 
@@ -45,37 +99,53 @@ class Session (var clientID: Int, var clientName: String, dayTime: String, priva
      * For example, a new date can be used in the clone to check conflicts with the new theoretical Session without altering the original Session
      * @return copy of the original Session with the added parameters substituting the original Sessions attributes
      */
-    fun clone(dayTime: String = "", program: Program = Program(0, "", ArrayList()), notes: String = "", duration: Int = 0): Session{
+    fun clone(dayTime: String = "", exercises: ArrayList<ExerciseSession> = ArrayList(), notes: String = "", duration: Int = 0): Session{
         return Session(
+            sessionID,
             clientID,
             clientName,
             if (dayTime.isEmpty()) StaticFunctions.getStrDateTime(date) else dayTime,
-            if (!program.hasExercises()) this.program else program,
             if (notes.isEmpty()) this.notes else notes,
-            if (duration == 0) this.duration else duration
+            if (duration == 0) this.duration else duration,
+            if (exercises.size == 0) this.exercises else exercises
         )
+    }
+    private fun getAllExerciseInserts(): String{
+        val strSessionID = if (sessionID == 0)
+            "(Select program_id From Programs Where client_id = $clientID And datetime(dayTime) = datetime('${StaticFunctions.getStrDateTime(date)}'))"
+        else
+            sessionID.toString()
+        return exercises.joinToString { "($strSessionID, ${it.id}, '${it.sets}', '${it.reps}', '${it.resistance}', ${it.order})" }
+    }
+    private fun getDeleteSessionExercisesCommand() = "Delete From Session_Exercises Where session_id = $sessionID;"
+    private fun getDeleteSessionLogCommand() = "Delete From Session_log Where session_id = $sessionID;"
+    private fun getInsertExercisesCommand(): String {
+        return if (hasExercises())
+            "Insert Into Program_Exercises(program_id, exercise_id, sets, reps, resistance, exercise_order) Values ${getAllExerciseInserts()}"
+        else ""
     }
 
     /**
-     * Method to get a SQL command depending upon the desired command type passed as a companion object value
+     * Method to get a SQL commands depending upon the desired command type passed as a companion object value
      * @param type value denotes a type of SQL command. See companion object for value possibilities
      * @param oldDayTime blank unless the session is being updated and the date or time is changing
-     * @return SQL command requested as a String object
+     * @return List of SQL commands requested
      */
-    fun getSQLCommand(type: Int, oldDayTime: String = ""): String{
+    fun getSQLCommands(type: Int, oldDayTime: String = ""): List<String> {
         val dayTime = StaticFunctions.getStrDateTime(date)
         if (type == 3)//if Delete command
-            return "Delete From Session_log Where client_id = $clientID And datetime(dayTime) = datetime('$dayTime'); ${program.getDeleteProgramCommand(clientID, dayTime)}"
+            return listOf(getDeleteSessionLogCommand(), getDeleteSessionExercisesCommand())
 
         //return appropriate command. 1 = Insert, 2 = Update
         return when(type){
-            1 -> "${program.getInsertProgramsCommand(clientID, dayTime)};Insert Into Session_log(client_id, dayTime, notes, duration) Values($clientID, '$dayTime', (Select program_id From Programs Where client_id = $clientID And datetime(dayTime) = " +
-                    "datetime('$dayTime')), '$notes', $duration);${program.getInsertProgramExercisesCommand(clientID, dayTime)}"
-            2 -> {
-                "Update Session_log Set ${if (oldDayTime.isNotBlank())"dayTime = '$dayTime', " else ""}notes = '$notes', duration = $duration Where client_id = $clientID And datetime(dayTime) = " +
-                        "datetime('${if (oldDayTime.isNotBlank()) oldDayTime else dayTime}');${program.getUpdateProgramsCommand(dayTime, oldDayTime)};${program.getUpdateProgramExercisesCommand()}"
-            }
-            else -> "error"
+            1 -> listOf("Insert Into Session_log(client_id, dayTime, notes, duration) Values($clientID, '$dayTime', '$notes', $duration);",
+                        getInsertExercisesCommand()
+                )
+            2 -> listOf("Update Session_log Set dayTime = '$dayTime', notes = '$notes', duration = $duration Where session_id = $sessionID;",
+                        getDeleteSessionExercisesCommand(),
+                        getInsertExercisesCommand()
+                )
+            else -> listOf("error")
         }
     }
 

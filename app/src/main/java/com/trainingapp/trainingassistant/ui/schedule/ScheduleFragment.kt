@@ -102,6 +102,7 @@ class ScheduleFragment : Fragment(), CalendarView.OnDateChangeListener, Coroutin
      */
     private fun onItemClick(position: Int) {
         val intent = Intent(context, SessionActivity::class.java)
+        intent.putExtra("session_id", day.getSession(position).sessionID)
         intent.putExtra("client_id", day.getSession(position).clientID)
         intent.putExtra("dayTime", StaticFunctions.getStrDateTime(day.getSession(position).date))
         startActivity(intent)

@@ -13,7 +13,6 @@ import com.trainingapp.trainingassistant.R
 import com.trainingapp.trainingassistant.StaticFunctions
 import com.trainingapp.trainingassistant.enumerators.ScheduleType
 import com.trainingapp.trainingassistant.objects.Client
-import com.trainingapp.trainingassistant.objects.Program
 import com.trainingapp.trainingassistant.objects.Session
 import java.util.*
 import kotlin.collections.ArrayList
@@ -55,7 +54,7 @@ class AddSessionDialog(private val clients: ArrayList<Client>, private val calen
                     val duration = strDuration.toInt()
                     val client = clients[spnNames.selectedItemPosition]
                     if (duration in 1..120) {
-                        if (confirmListener(Session(client.id, client.name, StaticFunctions.getStrDateTime(calendar), Program(0, "", ArrayList()), "", strDuration.toInt()), client.schedule.scheduleType))
+                        if (confirmListener(Session(0, client.id, client.name, StaticFunctions.getStrDateTime(calendar), "", strDuration.toInt(), ArrayList()), client.schedule.scheduleType))
                             dismiss()
                     } else {
                         Toast.makeText(context, "Duration not valid. See Wiki 'Input Fields'", Toast.LENGTH_LONG).show()

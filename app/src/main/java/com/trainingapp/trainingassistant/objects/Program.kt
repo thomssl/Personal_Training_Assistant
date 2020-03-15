@@ -1,30 +1,30 @@
 package com.trainingapp.trainingassistant.objects
 
-class Program (var id: Int, var name: String, var exercises: ArrayList<ExerciseSession>) {
+class Program (var id: Int, var name: String, var days: Int, var desc: String, var exercises: ArrayList<ExerciseProgram>) {
 
     //used to validate that a program has exercises
     // stops the user from removing all exercises from a session than updating or confirming a session that has never had any exercises
     fun hasExercises(): Boolean = exercises.size > 0
 
-    fun addExercise(exerciseSession: ExerciseSession){
-        exercises.add(exerciseSession)
+    fun addExercise(ExerciseProgram: ExerciseProgram){
+        exercises.add(ExerciseProgram)
         exercises.sort()
     }
 
-    fun updateExercise(exerciseSession: ExerciseSession, position: Int){
-        exercises[position] = exerciseSession
+    fun updateExercise(ExerciseProgram: ExerciseProgram, position: Int){
+        exercises[position] = ExerciseProgram
         exercises.sort()
     }
 
-    fun removeExercise(exerciseSession: ExerciseSession){
-        exercises.remove(exerciseSession)
+    fun removeExercise(ExerciseProgram: ExerciseProgram){
+        exercises.remove(ExerciseProgram)
         exercises.sort()
     }
 
     /**
-     * Method to remove an ExerciseSession based upon a passed Exercise object
-     * Finds index of the ExerciseSession that contains the Exercise object passed
-     * if the index is valid (index > -1), remove the ExerciseSession at that index and sort the remaining sessions
+     * Method to remove an ExerciseProgram based upon a passed Exercise object
+     * Finds index of the ExerciseProgram that contains the Exercise object passed
+     * if the index is valid (index > -1), remove the ExerciseProgram at that index and sort the remaining sessions
      * if the index is invalid, do nothing
      */
     fun removeExercise(exercise: Exercise){
@@ -42,12 +42,12 @@ class Program (var id: Int, var name: String, var exercises: ArrayList<ExerciseS
     }
 
     /**
-     * Method to get an ExerciseSession based upon a passed Exercise object
-     * Finds the index of the ExerciseSession that contains the Exercise object passed
-     * if the index is valid (index > -1), return the ExerciseSession at that index
-     * if the index is invalid, return an empty ExerciseSession
+     * Method to get an ExerciseProgram based upon a passed Exercise object
+     * Finds the index of the ExerciseProgram that contains the Exercise object passed
+     * if the index is valid (index > -1), return the ExerciseProgram at that index
+     * if the index is invalid, return an empty ExerciseProgram
      */
-    fun getExercise(exercise: Exercise): ExerciseSession {
+    fun getExercise(exercise: Exercise): ExerciseProgram {
         var index = -1
         for (i in exercises.indices){
             if (exercise.id == exercises[i].id){
@@ -55,25 +55,44 @@ class Program (var id: Int, var name: String, var exercises: ArrayList<ExerciseS
                 break
             }
         }
-        return if (index > -1) getExercise(index) else ExerciseSession(exercise, "", "", "", 0)
+        return if (index > -1) getExercise(index) else ExerciseProgram(exercise, "", "", 0, 0)
     }
 
-    fun getExercise(index: Int): ExerciseSession = exercises[index]
+    fun getExercise(index: Int): ExerciseProgram = exercises[index]
     fun getExerciseCount(): Int = exercises.size
 
-    private fun getAllExerciseInserts(clientID: Int, dayTime: String): String{
-        val builder = StringBuilder()
-        exercises.forEach { builder.append("(${if (id == 0) "(Select program_id From Programs Where client_id = $clientID And datetime(dayTime) = datetime('$dayTime'))" else id.toString()}, ${it.id}, '${it.sets}', '${it.reps}', '${it.resistance}'," +
-                " ${it.order}),") }
-        if (builder.isNotBlank())
-            builder.deleteCharAt(builder.lastIndex)
-        return builder.toString()
+    private fun getAllExerciseInserts(): String{
+        val strProgramID = if (id == 0)
+            "(Select program_id From Programs Where program_name = $name)"
+        else
+            id.toString()
+        return exercises.joinToString { "($strProgramID, ${it.id}, '${it.sets}', '${it.reps}', '${it.day}', ${it.order})" }
     }
-
-    fun getInsertProgramsCommand(clientID: Int, dayTime: String): String = "Insert Into Programs(client_id, dayTime, program_name) Values($clientID, '$dayTime', '$name');"
-    fun getInsertProgramExercisesCommand(clientID: Int, dayTime: String): String =  if (hasExercises()) "Insert Into Program_Exercises(program_id, exercise_id, sets, reps, resistance, exercise_order) Values ${getAllExerciseInserts(clientID, 
-        dayTime)}" else ""
-    fun getUpdateProgramsCommand(dayTime: String, oldDayTime: String): String = if (oldDayTime.isNotBlank()) "Update Programs set dayTime = '$dayTime'" else ""
-    fun getUpdateProgramExercisesCommand(): String = if (hasExercises()) "Delete From ProgramExercises Where program_id = $id; ${getInsertProgramExercisesCommand(-1, "")}" else "Delete From ProgramExercises Where program_id = $id;"
-    fun getDeleteProgramCommand(clientID: Int, dayTime: String): String = "Delete From Program_Exercises Where program_id = ${id}; Delete From Programs Where client_id = $clientID And dateTime(dayTime) = dateTime('$dayTime')"
+    private fun getDeleteProgramCommand() = "Delete From Programs Where Where program_id = $id;"
+    private fun getDeleteProgramExercisesCommand() = "Delete From Program_Exercises Where program_id = $id;"
+    private fun getInsertProgramCommand() = "Insert Into Programs(program_name, program_desc, program_days) Values('$name', '$desc', $days);"
+    private fun getInsertProgramExercisesCommand(): String {
+        return if (hasExercises())
+            "Insert Into Program_Exercises(program_id, exercise_id, sets, reps, day, exercise_order) Values ${getAllExerciseInserts()}"
+        else ""
+    }
+    fun getInsertProgramCommands() : List<String>{
+        return listOf(
+            getInsertProgramCommand(),
+            getInsertProgramExercisesCommand()
+        )
+    }
+    fun getUpdateProgramCommands(): List<String> {
+        return listOf(
+            "Update Programs set program_name = '$name', program_desc = '$desc', program_days = $days Where program_id = $id;",
+            getDeleteProgramExercisesCommand(),
+            getInsertProgramExercisesCommand()
+            )
+    }
+    fun getDeleteProgramCommands(clientID: Int, dayTime: String): List<String> {
+        return listOf(
+            getDeleteProgramCommand(),
+            getDeleteProgramExercisesCommand()
+        )
+    }
 }

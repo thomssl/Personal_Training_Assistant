@@ -89,14 +89,24 @@ class Schedule (var scheduleType: ScheduleType, var days: Int, var duration: Int
 
     fun getCheckClientConflictDays(): String {
         val builder = StringBuilder()
-        daysList.forEachIndexed { index, i -> if (i > 0) builder.append("${StaticFunctions.NumToDay[index]} > 0 And ") }
+        daysList.forEachIndexed { index, i -> if (i > 0) builder.append("${StaticFunctions.NumToDay[index+1].toLowerCase(Locale.ROOT)} > 0 And ") }
         return builder.toString()
     }
 
-    fun getInsertCommand(id: Int): String = "Insert Into Schedules(client_id, schedule_type, days, duration, sun, mon, tue, wed, thu, fri, sat, sun, sun_duration, mon_duration, tue_duration, wed_duration, thu_duration, fri_duration, sat_duration) " +
-            "Values($id, $scheduleType, $days, $duration, ${daysList[0]}, ${daysList[1]}, ${daysList[2]}, ${daysList[3]}, ${daysList[4]}, ${daysList[5]}, ${daysList[6]}, ${durationsList[0]}, ${durationsList[1]}, ${durationsList[2]}, " +
-            "${durationsList[3]}, ${durationsList[4]}, ${durationsList[5]}, ${durationsList[6]})"
-    fun getUpdateCommand(id: Int): String = "Update Schedules Set schedule_type = $scheduleType, days = $days, duration = ${duration}, sun = ${daysList[0]}, mon = ${daysList[1]}, tue = ${daysList[2]}, wed = ${daysList[3]}, thu = ${daysList[4]}," +
-            " fri = ${daysList[5]}, sat = ${daysList[6]}, sun = ${daysList[0]}, sun_duration = ${durationsList[0]}, mon_duration = ${durationsList[1]}, tue_duration = ${durationsList[2]}, wed_duration = ${durationsList[3]}," +
-            " thu_duration = ${durationsList[4]}, fri_duration = ${durationsList[5]}, sat_duration = ${durationsList[6]} Where client_id = $id"
+    private fun getUpdateDays(): String{
+        val builder = StringBuilder()
+        daysList.forEachIndexed { index, i -> builder.append("${StaticFunctions.NumToDay[index+1].toLowerCase(Locale.ROOT)}=$i,") }
+        if (builder.isNotBlank()) builder.deleteCharAt(builder.lastIndex)
+        return builder.toString()
+    }
+
+    private fun getUpdateDurations(): String{
+        val builder = StringBuilder()
+        daysList.forEachIndexed { index, i -> builder.append("${StaticFunctions.NumToDay[index+1].toLowerCase(Locale.ROOT)}_duration=$i,") }
+        if (builder.isNotBlank()) builder.deleteCharAt(builder.lastIndex)
+        return builder.toString()
+    }
+
+    fun getInsertCommand(id: Int): String = "$scheduleType, $days, $duration,${daysList.joinToString()},${durationsList.joinToString()}"
+    fun getUpdateCommand(id: Int): String = "schedule_type=$scheduleType,days=$days,duration=${duration},${getUpdateDays()},${getUpdateDurations()}"
 }

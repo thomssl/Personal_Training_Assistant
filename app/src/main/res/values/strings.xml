@@ -225,6 +225,15 @@
             From Program_Exercises pe
             Where pe.exercise_id = %1$s
         );
+        Select *
+        from (Select *
+              From Program_Exercises pe
+              Where pe.exercise_id = %1$s
+              Union All
+              Select *
+              From Session_Exercises se
+              Where se.exercise_id = %1$s
+             );
     </string>
     <string name="getSession_SessionQuery">
         Select s.client_id,
