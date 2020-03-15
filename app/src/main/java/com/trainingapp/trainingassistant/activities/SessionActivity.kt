@@ -66,10 +66,11 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
      */
     override fun onResume() {
         super.onResume()
-        val id = intent.getIntExtra("client_id", 0)
+        val sessionID = intent.getIntExtra("session_id", 0)
+        val clientID = intent.getIntExtra("client_id", 0)
         val dayTime = intent.getStringExtra("dayTime")
-        if (id > 0)//checks to make sure the client id is valid
-            setupData(id, dayTime)
+        if (clientID > 0)//checks to make sure the client id is valid
+            setupData(sessionID,clientID, dayTime)
     }
 
     override fun onBackPressed() {
@@ -88,11 +89,11 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
 
     /**
      * Coroutine Method for the UI scope. Gets data to be presented to the user from a suspendable function. Sets UI will returned data
-     * @param clientID ID of the session holder passed through the Intent
-     * @param dayTime dayTime of the session pass through the Intent
+     * @param id ID of the session (sessionID) or the session holder (clientID) passed through the Intent
+     * @param dayTime dayTime of the session pass through the Intent, not included if the sessionID is valid (ie not 0)
      */
-    private fun setupData(clientID: Int, dayTime: String) = launch{
-        val result = getData(clientID, dayTime)
+    private fun setupData(sessionID: Int, clientID: Int, dayTime: String) = launch{
+        val result = getData(sessionID, clientID, dayTime)
         session = result
         calendar.time = session.date.time
         duration = session.duration
@@ -110,8 +111,8 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
     /**
      * Suspendable Method to query database for session data
      */
-    private suspend fun getData(clientID: Int, dayTime: String): Session = withContext(Dispatchers.IO){
-        databaseOperations.getSession(clientID, dayTime)
+    private suspend fun getData(sessionID: Int, clientID: Int, dayTime: String): Session = withContext(Dispatchers.IO){
+        databaseOperations.getSession(clientID, dayTime, sessionID)
     }
 
     /**
