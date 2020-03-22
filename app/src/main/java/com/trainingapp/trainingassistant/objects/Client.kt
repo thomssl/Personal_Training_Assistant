@@ -18,7 +18,7 @@ class Client (var id: Int, var name: String, var schedule: Schedule, var startDa
 
     //Database operations
     fun getInsertCommand(): String {
-        return "Insert Into Clients(client_name, start_date, end_date, schedule_type, days, duration, sun, mon, tue, wed, thu, fri, sat, sun, " +
+        return "Insert Into Clients(client_name, start_date, end_date, schedule_type, days, duration, sun, mon, tue, wed, thu, fri, sat, " +
                 "sun_duration, mon_duration, tue_duration, wed_duration, thu_duration, fri_duration, sat_duration) " +
                 "Values('$name', '$startDate', '$endDate',${schedule.getInsertCommand()});"
     }
