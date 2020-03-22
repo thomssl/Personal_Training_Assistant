@@ -102,11 +102,11 @@ class Schedule (var scheduleType: ScheduleType, var days: Int, var duration: Int
 
     private fun getUpdateDurations(): String{
         val builder = StringBuilder()
-        daysList.forEachIndexed { index, i -> builder.append("${StaticFunctions.NumToDay[index+1].toLowerCase(Locale.ROOT)}_duration=$i,") }
+        durationsList.forEachIndexed { index, i -> builder.append("${StaticFunctions.NumToDay[index+1].toLowerCase(Locale.ROOT)}_duration=$i,") }
         if (builder.isNotBlank()) builder.deleteCharAt(builder.lastIndex)
         return builder.toString()
     }
 
-    fun getInsertCommand(id: Int): String = "$scheduleType, $days, $duration,${daysList.joinToString()},${durationsList.joinToString()}"
-    fun getUpdateCommand(id: Int): String = "schedule_type=$scheduleType,days=$days,duration=${duration},${getUpdateDays()},${getUpdateDurations()}"
+    fun getInsertCommand(): String = "${scheduleType.value}, $days, $duration,${daysList.joinToString()},${durationsList.joinToString()}"
+    fun getUpdateCommand(): String = "schedule_type=${scheduleType.value},days=$days,duration=${duration},${getUpdateDays()},${getUpdateDurations()}"
 }

@@ -114,7 +114,7 @@ object DBInfo {
     class UserSettingsTable : BaseColumns{
         companion object{
             const val DEFAULT_DURATION = "default_duration"
-            const val CLOCK_24 = "'24_clock'"
+            const val CLOCK_24 = "clock24"
         }
     }
 

@@ -164,9 +164,11 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
                     val lstDurations = ArrayList<EditText>(listOf(etxtWeeklyConstantSundayDuration, etxtWeeklyConstantMondayDuration, etxtWeeklyConstantTuesdayDuration, etxtWeeklyConstantWednesdayDuration, etxtWeeklyConstantThursdayDuration, etxtWeeklyConstantFridayDuration, etxtWeeklyConstantSaturdayDuration))
                     intentClient.schedule.daysList.forEachIndexed {//use (it - 1) because days are from 1-7 while indices is from 0-6
                         index, it ->
-                        lstDays[index].isChecked = true
-                        lstTimes[index].text = it.toString()
-                        lstDurations[index].setText(intentClient.schedule.durationsList[index].toString())
+                        if (it > 0) {
+                            lstDays[index].isChecked = true
+                            lstTimes[index].text = intentClient.getStrTime(index)
+                            lstDurations[index].setText(intentClient.schedule.durationsList[index].toString())
+                        }
                     }
                     radGrpAddEditClient.check(R.id.radIsWeeklyConst)
                 }

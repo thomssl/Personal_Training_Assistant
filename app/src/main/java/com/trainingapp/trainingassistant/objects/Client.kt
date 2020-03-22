@@ -20,10 +20,10 @@ class Client (var id: Int, var name: String, var schedule: Schedule, var startDa
     fun getInsertCommand(): String {
         return "Insert Into Clients(client_name, start_date, end_date, schedule_type, days, duration, sun, mon, tue, wed, thu, fri, sat, sun, " +
                 "sun_duration, mon_duration, tue_duration, wed_duration, thu_duration, fri_duration, sat_duration) " +
-                "Values('$name', '$startDate', '$endDate',${schedule.getInsertCommand(id)});"
+                "Values('$name', '$startDate', '$endDate',${schedule.getInsertCommand()});"
     }
     fun getUpdateCommand(): String {
-        return "Update Clients Set client_name='$name',start_date='$startDate',end_date='$endDate',${schedule.getUpdateCommand(id)} Where client_id=$id;"
+        return "Update Clients Set client_name='$name',start_date='$startDate',end_date='$endDate',${schedule.getUpdateCommand()} Where client_id=$id;"
     }
     fun getDeleteCommand():String {
         return  "Delete From Clients         Where client_id = $id; " +
