@@ -106,9 +106,12 @@ class MainActivity : AppCompatActivity(),
      */
     private fun loadPreBuiltDatabase() {
         val file = File(getString(R.string.filePath))
+        val databasePath = File("data/data/$packageName/databases")
         if (!file.exists()) {
             val assetManager = assets
             try {
+                if (!databasePath.exists())
+                    databasePath.mkdir()
                 val input = assetManager.open("data.sqlite3")
                 val out: OutputStream = FileOutputStream(getString(R.string.filePath))
                 val buffer = ByteArray(1024)
