@@ -22,7 +22,7 @@ class Schedule (var scheduleType: ScheduleType, var days: Int, var duration: Int
         return when (scheduleType){
             ScheduleType.WEEKLY_CONSTANT -> {
                 val builder = StringBuilder()
-                daysList.forEachIndexed { index, i -> if (i > 0) builder.append("${StaticFunctions.NumToDay[index]}\n") }
+                daysList.forEachIndexed { index, i -> if (i > 0) builder.append("${StaticFunctions.NumToDay[index+1]}\n") }
                 if (builder.isNotBlank())
                     builder.deleteCharAt(builder.lastIndex)
                 builder.toString()

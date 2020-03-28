@@ -362,7 +362,7 @@ class DatabaseOperations(val context: Context) {
             while (!cursor.isAfterLast){
                 client.schedule.daysList.forEachIndexed { index, i ->
                     if (i > 0){
-                        val strDay = StaticFunctions.NumToDay[index]
+                        val strDay = StaticFunctions.NumToDay[index+1].toLowerCase(Locale.ROOT)
                         val time = cursor.getInt(cursor.getColumnIndex(strDay))
                         val duration = cursor.getInt(cursor.getColumnIndex("${strDay}_duration"))
                         if (StaticFunctions.compareTimeRanges(time..(time+duration),i until (i + client.schedule.durationsList[index])))//compare the time range of the found client with the new/updated client

@@ -299,6 +299,7 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
                         Snackbar.make(view, "Error. Start date and/or end date was no chosen", Snackbar.LENGTH_LONG).show()
                         return//exit function. Do nothing
                     }
+                    var hasDays = false
                     val days = ArrayList<Int>(listOf(0,0,0,0,0,0,0))
                     val durations = ArrayList<Int>(listOf(0,0,0,0,0,0,0))
                     val lstDays = ArrayList<Switch>(listOf(swWeeklyConstantIsSunday, swWeeklyConstantIsMonday, swWeeklyConstantIsTuesday, swWeeklyConstantIsWednesday, swWeeklyConstantIsThursday, swWeeklyConstantIsFriday, swWeeklyConstantIsSaturday))
@@ -306,6 +307,7 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
                     val lstDurations = ArrayList<EditText>(listOf(etxtWeeklyConstantSundayDuration, etxtWeeklyConstantMondayDuration, etxtWeeklyConstantTuesdayDuration, etxtWeeklyConstantWednesdayDuration, etxtWeeklyConstantThursdayDuration, etxtWeeklyConstantFridayDuration, etxtWeeklyConstantSaturdayDuration))
                     lstDays.forEachIndexed { index, switch ->  //loop through using the range of 0 -> length of lstDays (ie 0 -> 6)
                         if (switch.isChecked) {//if day is checked
+                            hasDays = true
                             val time = lstTimes[index].text.toString()
                             if (time != getString(R.string.time_format))//if time for day is not the default
                                 days[index] = StaticFunctions.getTimeInt(time)//add time as minute in day (format for database)
@@ -326,6 +328,10 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
                                 return//exit function. Do nothing
                             }
                         }
+                    }
+                    if (!hasDays) {
+                        Snackbar.make(view, "Error. No days selected", Snackbar.LENGTH_LONG).show()
+                        return//exit function. Do nothing
                     }
                     Client(intentClient.id, name, Schedule(ScheduleType.WEEKLY_CONSTANT, days.sumBy { if(it > 0) 1 else 0 }, 0, days, durations), startDate, endDate)//construct Client object with data
                 }
