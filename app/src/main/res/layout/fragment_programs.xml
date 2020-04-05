@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glPrograms1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.20"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glPrograms2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.3"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glPrograms3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.45"/>
+ 
+    <TextView
+        android:id="@+id/lblProgramName"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="@string/name_header"
+        android:gravity="center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/glPrograms1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/lblProgramDesc"/>
+
+    <TextView
+        android:id="@+id/lblProgramDays"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="@string/program_days"
+        android:gravity="center"
+        app:layout_constraintStart_toEndOf="@id/glPrograms1"
+        app:layout_constraintEnd_toStartOf="@id/glPrograms2"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/lblProgramDesc"/>
+
+    <TextView
+        android:id="@+id/lblProgramExerciseCount"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="@string/program_exercises"
+        android:gravity="center"
+        app:layout_constraintStart_toEndOf="@id/glPrograms2"
+        app:layout_constraintEnd_toStartOf="@id/glPrograms3"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/lblProgramDesc"/>
+
+    <TextView
+        android:id="@+id/lblProgramDesc"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/program_desc"
+        android:gravity="center"
+        app:layout_constraintStart_toEndOf="@id/glPrograms3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvPrograms"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintTop_toBottomOf="@id/lblProgramDesc"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <ProgressBar
+        android:id="@+id/prgProgramData"
+        style="?android:attr/progressBarStyle"
+        android:indeterminate="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

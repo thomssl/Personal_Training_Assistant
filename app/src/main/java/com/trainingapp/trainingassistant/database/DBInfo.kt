@@ -67,10 +67,10 @@ object DBInfo {
 
     class ProgramsTable : BaseColumns{
         companion object {
-            const val PROGRAM_ID = "program_id"
-            const val CLIENT_ID = "client_id"
-            const val DAYTIME = "dayTime"
+            const val ID = "program_id"
             const val NAME = "program_name"
+            const val DESC = "program_desc"
+            const val DAYS = "program_days"
         }
     }
 

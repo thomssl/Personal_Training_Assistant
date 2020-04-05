@@ -19,7 +19,7 @@ import kotlin.collections.ArrayList
  * @param resource Layout resource used for each list item
  * @param exercises Full list of exercises to search through
  */
-class SearchForExerciseSession(context: Context, private val resource: Int, val exercises: ArrayList<Exercise>) : ArrayAdapter<String>(context, resource) {
+class SearchForExerciseAutoComplete(context: Context, private val resource: Int, val exercises: ArrayList<Exercise>) : ArrayAdapter<String>(context, resource) {
 
     var resultData = ArrayList<Exercise>()//used to fill the FilterResults object
 
@@ -46,9 +46,15 @@ class SearchForExerciseSession(context: Context, private val resource: Int, val 
 
     inner class ListFilter : Filter(){
 
-        override fun performFiltering(input: CharSequence): FilterResults {
+        override fun performFiltering(input: CharSequence?): FilterResults {
             val filterResults = FilterResults()
             resultData.clear()
+            if (input == null){//if input is null, fill the list with entire library of exercises
+                resultData = ArrayList(exercises.toList())
+                filterResults.values = resultData
+                filterResults.count = resultData.size
+                return filterResults
+            }
             if (input.isBlank()){//if input has no characters, fill the list with entire library of exercises
                 resultData = ArrayList(exercises.toList())
                 filterResults.values = resultData

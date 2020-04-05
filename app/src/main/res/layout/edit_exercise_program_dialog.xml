@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/lblEditProgramExerciseName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <EditText
+        android:id="@+id/etxtEditProgramExerciseSets"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/lblExerciseSetsHeader"
+        android:importantForAutofill="no"
+        android:inputType="text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lblEditProgramExerciseName"/>
+
+    <EditText
+        android:id="@+id/etxtEditProgramExerciseReps"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/lblExerciseRepsHeader"
+        android:importantForAutofill="no"
+        android:inputType="text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/etxtEditProgramExerciseSets"/>
+
+    <EditText
+        android:id="@+id/etxtEditProgramExerciseOrder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/lblExerciseOrderHeader"
+        android:importantForAutofill="no"
+        android:inputType="number"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/etxtEditProgramExerciseReps"/>
+
+    <EditText
+        android:id="@+id/etxtEditProgramExerciseDay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/lblExerciseResistanceHeader"
+        android:importantForAutofill="no"
+        android:inputType="text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/etxtEditProgramExerciseOrder" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

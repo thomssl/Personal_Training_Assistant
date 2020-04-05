@@ -185,18 +185,18 @@ object DBQueries {
                                         "        Inner Join Clients c On s.client_id=c.client_id" +
                                         "        Where s.client_id = $id;"
 
-            fun getMultiSessionsExercises(sessionIDs: String) = "Select se.session_id" +
-                                                        "               dat.exercise_id," +
-                                                        "               dat.exercise_name," +
-                                                        "               dat.exercise_type," +
-                                                        "               dat.primary_mover_id," +
-                                                        "               dat.primary_mover_name," +
-                                                        "               dat.secondary_movers_ids," +
-                                                        "               dat.secondary_movers_names," +
-                                                        "               se.sets," +
-                                                        "               se.reps," +
-                                                        "               se.resistance," +
-                                                        "               se.exercise_order" +
+            fun getMultiSessionsExercises(sessionIDs: String) = "Select se.session_id as session_id," +
+                                                        "               dat.exercise_id as exercise_id," +
+                                                        "               dat.exercise_name as exercise_name," +
+                                                        "               dat.exercise_type as exercise_type," +
+                                                        "               dat.primary_mover_id as primary_mover_id," +
+                                                        "               dat.primary_mover_name as primary_mover_name," +
+                                                        "               dat.secondary_movers_ids as secondary_movers_ids," +
+                                                        "               dat.secondary_movers_names as secondary_movers_names," +
+                                                        "               se.sets as sets," +
+                                                        "               se.reps as reps," +
+                                                        "               se.resistance as resistance," +
+                                                        "               se.exercise_order as exercise_order" +
                                                         "        From Session_Exercises se" +
                                                         "        Inner Join (" +
                                                         "            Select e.exercise_id," +
@@ -259,17 +259,17 @@ object DBQueries {
                                                                 "        Where client_id = $id" +
                                                                 "        And datetime(change_dayTime) = datetime('$dayTime');"
 
-            fun getSessionExercises(id: Int) =  "Select dat.exercise_id," +
-                                        "               dat.exercise_name," +
-                                        "               dat.exercise_type," +
-                                        "               dat.primary_mover_id," +
-                                        "               dat.primary_mover_name," +
-                                        "               dat.secondary_movers_ids," +
-                                        "               dat.secondary_movers_names," +
-                                        "               se.sets," +
-                                        "               se.reps," +
-                                        "               se.resistance," +
-                                        "               se.exercise_order" +
+            fun getSessionExercises(id: Int) =  "Select dat.exercise_id as exercise_id," +
+                                        "               dat.exercise_name as exercise_name," +
+                                        "               dat.exercise_type as exercise_type," +
+                                        "               dat.primary_mover_id as primary_mover_id," +
+                                        "               dat.primary_mover_name as primary_mover_name," +
+                                        "               dat.secondary_movers_ids as secondary_movers_ids," +
+                                        "               dat.secondary_movers_names as secondary_movers_names," +
+                                        "               se.sets as sets," +
+                                        "               se.reps as reps," +
+                                        "               se.resistance as resistance," +
+                                        "               se.exercise_order as exercise_order" +
                                         "        From Session_Exercises se" +
                                         "        Inner Join (" +
                                         "            Select e.exercise_id," +
@@ -431,6 +431,72 @@ object DBQueries {
                                                     "        And date((Select last_clean" +
                                                     "                  From User_Settings" +
                                                     "                  )) < date('$currentDay');"
+
+            const val getAllPrograms = "Select * " +
+                                    "   From Programs;"
+
+            fun getProgram(id: Int) = " Select * " +
+                                    "   From Programs" +
+                                    "   Where program_id = $id;"
+
+            fun getMultiProgramsExercises(programIDs: String) = "Select pe.program_id as program_id," +
+                                                        "               dat.exercise_id as exercise_id," +
+                                                        "               dat.exercise_name as exercise_name," +
+                                                        "               dat.exercise_type as exercise_type," +
+                                                        "               dat.primary_mover_id as primary_mover_id," +
+                                                        "               dat.primary_mover_name as primary_mover_name," +
+                                                        "               dat.secondary_movers_ids as secondary_movers_ids," +
+                                                        "               dat.secondary_movers_names as secondary_movers_names," +
+                                                        "               pe.sets as sets," +
+                                                        "               pe.reps as reps," +
+                                                        "               pe.day as day," +
+                                                        "               pe.exercise_order as exercise_order" +
+                                                        "        From Program_Exercises pe" +
+                                                        "        Inner Join (" +
+                                                        "            Select e.exercise_id," +
+                                                        "                   e.exercise_name," +
+                                                        "                   e.exercise_type," +
+                                                        "                   e.primary_mover_id," +
+                                                        "                   (" +
+                                                        "                        Case" +
+                                                        "                            When e.exercise_type = 1 then m.muscle_name" +
+                                                        "                            When e.exercise_type = 2 or e.exercise_type = 3 then j.joint_name" +
+                                                        "                        End" +
+                                                        "                    ) as 'primary_mover_name'," +
+                                                        "                   ifnull" +
+                                                        "                    (" +
+                                                        "                        (" +
+                                                        "                            Select group_concat(s.secondary_mover_id)" +
+                                                        "                            From secondary_movers s" +
+                                                        "                            Where s.exercise_id = e.exercise_id" +
+                                                        "                            Group By s.exercise_id" +
+                                                        "                        )," +
+                                                        "                        '0'" +
+                                                        "                    ) as 'secondary_movers_ids'," +
+                                                        "                   ifnull" +
+                                                        "                    (" +
+                                                        "                        (" +
+                                                        "                            Select group_concat(" +
+                                                        "                                (" +
+                                                        "                                    Case" +
+                                                        "                                        When e.exercise_type = 1 then m.muscle_name" +
+                                                        "                                        When e.exercise_type = 2 or e.exercise_type = 3 then j.joint_name" +
+                                                        "                                    End" +
+                                                        "                                )" +
+                                                        "                            )" +
+                                                        "                            From secondary_movers s" +
+                                                        "                            left join Muscles m on s.secondary_mover_id=m.muscle_id" +
+                                                        "                            left join Joints j on s.secondary_mover_id=j.joint_id" +
+                                                        "                            Where s.exercise_id = e.exercise_id" +
+                                                        "                            Group By s.exercise_id" +
+                                                        "                        )," +
+                                                        "                        '0'" +
+                                                        "                    ) as 'secondary_movers_names'" +
+                                                        "            From Exercises e" +
+                                                        "            left join Muscles m on e.primary_mover_id=m.muscle_id" +
+                                                        "            left join Joints j on e.primary_mover_id=j.joint_id" +
+                                                        "        ) dat on dat.exercise_id=pe.exercise_id" +
+                                                        "        Where pe.program_id in ($programIDs);"
         }
     }
 }

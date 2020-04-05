@@ -168,7 +168,7 @@
         android:onClick="clickBtnAddExerciseSession"
         android:paddingStart="@dimen/base_pad"
         android:paddingEnd="@dimen/base_pad"
-        android:text="@string/btnAddExercisesSession"
+        android:text="@string/add_exercise"
         app:layout_constraintBottom_toBottomOf="@id/lblSessionDuration"
         app:layout_constraintEnd_toStartOf="@id/btnConfirmSession"
         app:layout_constraintTop_toTopOf="parent" />
@@ -199,7 +199,7 @@
         android:id="@+id/lblExerciseNameHeader"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/name_header"
+        android:text="@string/name_header_bold"
         android:textAlignment="center"
         android:textSize="@dimen/text_size_SW600dp"
         app:layout_constraintEnd_toStartOf="@id/glSession2"

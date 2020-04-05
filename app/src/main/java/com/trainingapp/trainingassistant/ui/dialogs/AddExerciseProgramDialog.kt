@@ -7,14 +7,13 @@ import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
 import android.widget.AutoCompleteTextView
-import android.widget.EditText
 import androidx.fragment.app.DialogFragment
 import com.trainingapp.trainingassistant.R
 import com.trainingapp.trainingassistant.database.DatabaseOperations
 import com.trainingapp.trainingassistant.objects.Exercise
 import com.trainingapp.trainingassistant.ui.adapters.SearchForExerciseAutoComplete
 
-class AddExerciseSessionDialog(private val clientID: Int, private val  confirmListener: (AddExerciseSessionDialog) -> Boolean): DialogFragment() {
+class AddExerciseProgramDialog(private val  confirmListener: (AddExerciseProgramDialog) -> Boolean): DialogFragment() {
 
     private lateinit var databaseOperations: DatabaseOperations
     var exercises = ArrayList<Exercise>()
@@ -22,18 +21,9 @@ class AddExerciseSessionDialog(private val clientID: Int, private val  confirmLi
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity.let {
-            val view = View.inflate(context, R.layout.add_exercise_dialog, null)
-            val txtNames = view.findViewById<AutoCompleteTextView>(R.id.actxtAddExerciseName)
+            val view = View.inflate(context, R.layout.add_exercise_program_dialog, null)
+            val txtNames = view.findViewById<AutoCompleteTextView>(R.id.actxtAddProgramExerciseName)
             txtNames.setAdapter(SearchForExerciseAutoComplete(context!!, R.layout.simple_autocomplete_item, exercises))
-            txtNames.setOnItemClickListener{ _, _, _, _ ->
-                val exerciseSession = databaseOperations.getLastOccurrence(exercises[exerciseNames.indexOf(txtNames.text.toString())], clientID)
-                if (exerciseSession.hasData()) {
-                    view.findViewById<EditText>(R.id.etxtAddResistance).setText(exerciseSession.resistance)
-                    view.findViewById<EditText>(R.id.etxtAddReps).setText(exerciseSession.reps)
-                    view.findViewById<EditText>(R.id.etxtAddSets).setText(exerciseSession.sets)
-                    view.findViewById<EditText>(R.id.etxtAddExerciseOrder).setText(exerciseSession.order.toString())
-                }
-            }
             val builder = AlertDialog.Builder(it)
             builder.setView(view)
                 .setPositiveButton(R.string.confirm) { _, _ -> }

@@ -18,6 +18,12 @@
         tools:layout="@layout/fragment_clients" />
 
     <fragment
+        android:id="@+id/nav_programs"
+        android:name="com.trainingapp.trainingassistant.ui.programs.ProgramsFragment"
+        android:label="@string/menu_programs"
+        tools:layout="@layout/fragment_programs" />
+
+    <fragment
         android:id="@+id/nav_exercises"
         android:name="com.trainingapp.trainingassistant.ui.exercises.ExercisesFragment"
         android:label="@string/menu_exercises"

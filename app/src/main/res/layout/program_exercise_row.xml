@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/txtProgramExerciseOrder"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/lblExerciseOrderHeader"
+        android:gravity="center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/glProgramExercise1"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/txtProgramExerciseName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/txtSessionExerciseNamePlaceHolder"
+        app:layout_constraintStart_toEndOf="@id/glProgramExercise1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/glProgramExercise2"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glProgramExercise1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.06"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glProgramExercise2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.4"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glProgramExercise3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.6"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glProgramExercise4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.8"/>
+
+    <TextView
+        android:id="@+id/txtProgramExerciseSets"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/txtSessionExerciseSetsPlaceHolder"
+        app:layout_constraintStart_toEndOf="@id/glProgramExercise2"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/glProgramExercise3"/>
+
+    <TextView
+        android:id="@+id/txtProgramExerciseReps"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/txtSessionExerciseRepsPlaceHolder"
+        app:layout_constraintStart_toEndOf="@id/glProgramExercise3"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/glProgramExercise4"/>
+
+    <TextView
+        android:id="@+id/txtProgramExerciseDays"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/program_days"
+        app:layout_constraintStart_toEndOf="@id/glProgramExercise4"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

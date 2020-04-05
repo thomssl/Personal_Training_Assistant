@@ -809,7 +809,7 @@ class DatabaseOperations(val context: Context) {
         }
         cursor.close()
         if (sessions.size > 0) {
-            val sessionIDs = sessions.filter { it.sessionID != 0 }.joinToString(",")
+            val sessionIDs = sessions.filter { it.sessionID != 0 }.joinToString(",") { it.sessionID.toString()}
             cursor = db.rawQuery(DBQueries.DBOperations.getMultiSessionsExercises(sessionIDs), null)
             if (cursor.moveToFirst()) {
                 while (!cursor.isAfterLast) {
@@ -975,4 +975,110 @@ class DatabaseOperations(val context: Context) {
         val date = StaticFunctions.getStrDate(calendar)
         return trySQLCommand(DBQueries.DBOperations.cleanSessionChanges(date))
     }
+
+    fun getAllPrograms(): ArrayList<Program>{
+        val programs = ArrayList<Program>()
+        var cursor = db.rawQuery(DBQueries.DBOperations.getAllPrograms, null)
+        if (cursor.moveToFirst()){
+            while (!cursor.isAfterLast){
+                programs.add(
+                    Program(
+                        cursor.getInt(cursor.getColumnIndex(DBInfo.ProgramsTable.ID)),
+                        cursor.getString(cursor.getColumnIndex(DBInfo.ProgramsTable.NAME)),
+                        cursor.getInt(cursor.getColumnIndex(DBInfo.ProgramsTable.DAYS)),
+                        cursor.getString(cursor.getColumnIndex(DBInfo.ProgramsTable.DESC)),
+                        ArrayList()
+                    )
+                )
+                cursor.moveToNext()
+            }
+        }
+        cursor.close()
+        if (programs.size > 0 ) {
+            val programIDS = programs.filter { it.id != 0 }.joinToString(",") { it.id.toString()}
+            cursor = db.rawQuery(DBQueries.DBOperations.getMultiProgramsExercises(programIDS), null)
+            if (cursor.moveToFirst()) {
+                while (!cursor.isAfterLast) {
+                    val programID = cursor.getInt(cursor.getColumnIndex(DBInfo.ProgramExercisesTable.PROGRAM_ID))
+                    val exerciseID = cursor.getInt(cursor.getColumnIndex(DBInfo.ExercisesTable.ID))
+                    val exerciseProgram = ExerciseProgram(
+                        exerciseID,
+                        cursor.getString(cursor.getColumnIndex(DBInfo.ExercisesTable.NAME)),
+                        getExerciseType(cursor.getInt(cursor.getColumnIndex(DBInfo.ExercisesTable.TYPE))),
+                        MuscleJoint(
+                            cursor.getInt(cursor.getColumnIndex(DBInfo.ExercisesTable.PRIMARY_MOVER)),
+                            cursor.getString(cursor.getColumnIndex(DBInfo.AliasesUsed.PRIMARY_MOVER_NAME))
+                        ),
+                        getSecondaryMoversFromCSV(
+                            exerciseID,
+                            cursor.getString(cursor.getColumnIndex(DBInfo.AliasesUsed.SECONDARY_MOVERS_IDS)),
+                            cursor.getString(cursor.getColumnIndex(DBInfo.AliasesUsed.SECONDARY_MOVERS_NAMES))
+                        ),
+                        cursor.getString(cursor.getColumnIndex(DBInfo.ProgramExercisesTable.SETS)),
+                        cursor.getString(cursor.getColumnIndex(DBInfo.ProgramExercisesTable.REPS)),
+                        cursor.getInt(cursor.getColumnIndex(DBInfo.ProgramExercisesTable.DAY)),
+                        cursor.getInt(cursor.getColumnIndex(DBInfo.ProgramExercisesTable.EXERCISE_ORDER))
+                    )
+                    programs.find { it.id == programID }.let { it?.addExercise(exerciseProgram) }
+                    cursor.moveToNext()
+                }
+            }
+            cursor.close()
+        }
+        return programs
+    }
+
+    fun getProgram(id: Int): Program{
+        var cursor = db.rawQuery(DBQueries.DBOperations.getProgram(id), null)
+        val program: Program = if (cursor.moveToFirst()){
+            Program(
+                cursor.getInt(cursor.getColumnIndex(DBInfo.ProgramsTable.ID)),
+                cursor.getString(cursor.getColumnIndex(DBInfo.ProgramsTable.NAME)),
+                cursor.getInt(cursor.getColumnIndex(DBInfo.ProgramsTable.DAYS)),
+                cursor.getString(cursor.getColumnIndex(DBInfo.ProgramsTable.DESC)),
+                ArrayList()
+            )
+        } else {
+            Program(
+                0,
+                "",
+                0,
+                "",
+                ArrayList()
+            )
+        }
+        cursor.close()
+        if (program.id > 0) {
+            cursor = db.rawQuery(DBQueries.DBOperations.getMultiProgramsExercises(program.id.toString()), null)
+            if (cursor.moveToFirst()) {
+                while (!cursor.isAfterLast) {
+                    val exerciseID = cursor.getInt(cursor.getColumnIndex(DBInfo.ExercisesTable.ID))
+                    val exerciseProgram = ExerciseProgram(
+                        exerciseID,
+                        cursor.getString(cursor.getColumnIndex(DBInfo.ExercisesTable.NAME)),
+                        getExerciseType(cursor.getInt(cursor.getColumnIndex(DBInfo.ExercisesTable.TYPE))),
+                        MuscleJoint(
+                            cursor.getInt(cursor.getColumnIndex(DBInfo.ExercisesTable.PRIMARY_MOVER)),
+                            cursor.getString(cursor.getColumnIndex(DBInfo.AliasesUsed.PRIMARY_MOVER_NAME))
+                        ),
+                        getSecondaryMoversFromCSV(
+                            exerciseID,
+                            cursor.getString(cursor.getColumnIndex(DBInfo.AliasesUsed.SECONDARY_MOVERS_IDS)),
+                            cursor.getString(cursor.getColumnIndex(DBInfo.AliasesUsed.SECONDARY_MOVERS_NAMES))
+                        ),
+                        cursor.getString(cursor.getColumnIndex(DBInfo.ProgramExercisesTable.SETS)),
+                        cursor.getString(cursor.getColumnIndex(DBInfo.ProgramExercisesTable.REPS)),
+                        cursor.getInt(cursor.getColumnIndex(DBInfo.ProgramExercisesTable.DAY)),
+                        cursor.getInt(cursor.getColumnIndex(DBInfo.ProgramExercisesTable.EXERCISE_ORDER))
+                    )
+                    program.addExercise(exerciseProgram)
+                    cursor.moveToNext()
+                }
+            }
+            cursor.close()
+        }
+        return program
+    }
+
+    fun removeProgram(program: Program) = trySQLCommands(program.getDeleteProgramCommands())
 }

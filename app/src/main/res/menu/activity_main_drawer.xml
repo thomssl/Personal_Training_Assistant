@@ -13,6 +13,10 @@
             android:icon="@drawable/ic_clients"
             android:title="@string/menu_clients" />
         <item
+            android:id="@+id/nav_programs"
+            android:icon="@drawable/ic_program_icon"
+            android:title="@string/menu_programs" />
+        <item
             android:id="@+id/nav_exercises"
             android:icon="@drawable/ic_exercises"
             android:title="@string/menu_exercises" />

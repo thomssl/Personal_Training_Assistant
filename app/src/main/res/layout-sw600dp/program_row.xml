@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/border_base"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glProgramsRow1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.2"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glProgramsRow2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.3"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glProgramsRow3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.45"/>
+
+    <TextView
+        android:id="@+id/txtProgramsRowName"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="@string/name_header"
+        android:textSize="18sp"
+        android:gravity="center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/glProgramsRow1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/txtProgramsRowDescription"/>
+
+    <TextView
+        android:id="@+id/txtProgramsRowDays"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="@string/program_days"
+        android:textSize="18sp"
+        android:gravity="center"
+        app:layout_constraintStart_toEndOf="@id/glProgramsRow1"
+        app:layout_constraintEnd_toStartOf="@id/glProgramsRow2"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/txtProgramsRowDescription"/>
+
+    <TextView
+        android:id="@+id/txtProgramsRowExercisesCount"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="@string/program_exercises"
+        android:textSize="18sp"
+        android:gravity="center"
+        app:layout_constraintStart_toEndOf="@id/glProgramsRow2"
+        app:layout_constraintEnd_toStartOf="@id/glProgramsRow3"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/txtProgramsRowDescription"/>
+
+    <TextView
+        android:id="@+id/txtProgramsRowDescription"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/program_desc"
+        android:textSize="18sp"
+        android:gravity="center"
+        app:layout_constraintStart_toEndOf="@id/glProgramsRow3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

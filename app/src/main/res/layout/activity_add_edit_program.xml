@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.AddEditProgramActivity">
+
+    <!-- Used to draw focus from the editText-->
+    <LinearLayout
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:layout_width="0px"
+        android:layout_height="0px"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glAddEditProgram"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.8"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glAddEditProgram1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.06"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glAddEditProgram2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.4"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glAddEditProgram3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.6"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glAddEditProgram4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.8"/>
+
+    <TextView
+        android:id="@+id/lblAddEditProgramName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/name_header"
+        android:labelFor="@id/etxtAddEditProgramName"
+        app:layout_constraintEnd_toEndOf="@id/lblAddEditProgramDesc"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/etxtAddEditProgramName"/>
+
+    <EditText
+        android:id="@+id/etxtAddEditProgramName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        app:layout_constraintStart_toEndOf="@id/lblAddEditProgramName"
+        app:layout_constraintEnd_toStartOf="@id/glAddEditProgram"
+        app:layout_constraintTop_toTopOf="parent"
+        android:importantForAutofill="no" />
+
+    <TextView
+        android:id="@+id/lblAddEditProgramDays"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/program_days"
+        android:labelFor="@id/etxtAddEditProgramName"
+        app:layout_constraintStart_toEndOf="@id/glAddEditProgram"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/etxtAddEditProgramName"/>
+
+    <Spinner
+        android:id="@+id/spnAddEditProgramDays"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        tools:listitem="@layout/support_simple_spinner_dropdown_item"
+        android:entries="@array/days"
+        app:layout_constraintStart_toEndOf="@id/lblAddEditProgramDays"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/etxtAddEditProgramName"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/lblAddEditProgramDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/program_desc"
+        android:labelFor="@id/etxtAddEditProgramDesc"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/etxtAddEditProgramName"
+        app:layout_constraintBottom_toBottomOf="@id/etxtAddEditProgramDesc"/>
+
+    <EditText
+        android:id="@+id/etxtAddEditProgramDesc"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        app:layout_constraintStart_toEndOf="@id/lblAddEditProgramDesc"
+        app:layout_constraintEnd_toStartOf="@id/glAddEditProgram"
+        app:layout_constraintTop_toBottomOf="@id/etxtAddEditProgramName"
+        android:importantForAutofill="no" />
+
+    <Button
+        android:id="@+id/btnAddEditProgramAddExercise"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:text="@string/add_exercise"
+        android:onClick="onClickBtnAddExercise"
+        app:layout_constraintStart_toEndOf="@id/glAddEditProgram"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/etxtAddEditProgramDesc"
+        app:layout_constraintBottom_toBottomOf="@id/etxtAddEditProgramDesc"/>
+
+    <TextView
+        android:id="@+id/lblProgramExerciseOrderHeader"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/lblExerciseOrderHeader"
+        android:textAlignment="center"
+        app:layout_constraintTop_toBottomOf="@id/etxtAddEditProgramDesc"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/glAddEditProgram1"/>
+
+    <TextView
+        android:id="@+id/lblProgramExerciseNameHeader"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/name_header_bold"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toStartOf="@id/glAddEditProgram2"
+        app:layout_constraintStart_toEndOf="@id/glAddEditProgram1"
+        app:layout_constraintTop_toTopOf="@id/lblProgramExerciseOrderHeader" />
+
+    <TextView
+        android:id="@+id/lblProgramExerciseSetsHeader"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/lblExerciseSetsHeader"
+        android:textAlignment="center"
+        app:layout_constraintTop_toTopOf="@id/lblProgramExerciseOrderHeader"
+        app:layout_constraintStart_toEndOf="@id/glAddEditProgram2"
+        app:layout_constraintEnd_toStartOf="@id/glAddEditProgram3"/>
+
+    <TextView
+        android:id="@+id/lblProgramExerciseRepsHeader"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/lblExerciseRepsHeader"
+        android:textAlignment="center"
+        app:layout_constraintTop_toTopOf="@id/lblProgramExerciseOrderHeader"
+        app:layout_constraintStart_toEndOf="@id/glAddEditProgram3"
+        app:layout_constraintEnd_toStartOf="@id/glAddEditProgram4"/>
+
+    <TextView
+        android:id="@+id/lblProgramExerciseDaysHeader"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/program_days_bold"
+        android:textAlignment="center"
+        app:layout_constraintTop_toTopOf="@id/lblProgramExerciseOrderHeader"
+        app:layout_constraintStart_toEndOf="@id/glAddEditProgram4"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvProgramExercises"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lblProgramExerciseOrderHeader"
+        app:layout_constraintBottom_toTopOf="@id/btnAddEditProgramConfirm"/>
+
+    <Button
+        android:id="@+id/btnAddEditProgramConfirm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/confirm"
+        android:onClick="onClickBtnConfirm"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -12,6 +12,7 @@
     <string name="action_wiki">Wiki</string>
     <string name="menu_schedule">Daily Schedule</string>
     <string name="menu_clients">Clients</string>
+    <string name="menu_programs">Programs</string>
     <string name="menu_exercises">Exercises</string>
     <string name="menu_camera">Camera (No Functionality.. Yet)</string>
     <string name="menu_muscles">Muscles</string>
@@ -33,7 +34,7 @@
     <string name="btnChangeSessionDuration">Change Duration</string>
     <string name="btnChangeSessionDate">Change Date</string>
     <string name="btnChangeSessionTime">Change Time</string>
-    <string name="btnAddExercisesSession">Add Exercise</string>
+    <string name="add_exercise">Add Exercise</string>
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
     <string name="lblNotes">Notes: </string>
@@ -43,10 +44,10 @@
     <string name="txtSessionExerciseSetsPlaceHolder">Sets: Sets Here</string>
     <string name="txtSessionExerciseRepsPlaceHolder">Reps: Reps Here</string>
     <string name="txtSessionExerciseResistancePlaceHolder">Resistance: Here</string>
-    <string name="lblExerciseOrderHeader">Order</string>
-    <string name="lblExerciseSetsHeader">Sets</string>
-    <string name="lblExerciseRepsHeader">Reps</string>
-    <string name="lblExerciseResistanceHeader">Resistance</string>
+    <string name="lblExerciseOrderHeader"><b>Order</b></string>
+    <string name="lblExerciseSetsHeader"><b>Sets</b></string>
+    <string name="lblExerciseRepsHeader"><b>Reps</b></string>
+    <string name="lblExerciseResistanceHeader"><b>Resistance</b></string>
     <string name="txtClientsName">Client Name</string>
     <string name="txtClientsSessionType">Session Type</string>
     <string name="txtClientsDays">Client Days</string>
@@ -55,6 +56,7 @@
     <string name="lblClientsDays">Days</string>
     <string name="lblClientsTimes">Times</string>
     <string name="name_header">Name</string>
+    <string name="name_header_bold"><b>Name</b></string>
     <string name="lblExercisesType">Exercise Type</string>
     <string name="lblExercisesPrimeMover">Prime Mover</string>
     <string name="lblExercisesSecondaryMovers">Secondary Movers</string>
@@ -116,7 +118,23 @@
     <string name="add_session_title">Add Session</string>
     <string name="add_client_title">Add Client</string>
     <string name="edit_client_title">Edit Client</string>
+    <string name="add_program_title">Add Program</string>
+    <string name="edit_program_title">Edit Program</string>
     <string name="alert_dialog_confirm_removal">Confirm Removal</string>
+    <string name="program_days">Days</string>
+    <string name="program_day">Day</string>
+    <string name="program_days_bold"><b>Days</b></string>
+    <string name="program_exercises"># Exercises</string>
+    <string name="program_desc">Description</string>
+    <string-array name="days">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+    </string-array>
     <string name="getExerciseQuery">
         Select e.exercise_id,
                e.exercise_name,

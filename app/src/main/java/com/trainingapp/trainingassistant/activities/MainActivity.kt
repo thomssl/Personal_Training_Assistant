@@ -153,6 +153,11 @@ class MainActivity : AppCompatActivity(),
                 val dialog = AddEditMuscleDialog(MuscleJoint(0, "")) {muscleJoint -> addConfirm(muscleJoint) }
                 dialog.show(supportFragmentManager, "Add Muscle")
             }
+            R.id.nav_programs -> {
+                val intent = Intent(this, AddEditProgramActivity::class.java)
+                intent.putExtra("id", 0)
+                startActivity(intent)
+            }
             else -> Snackbar.make(view,"None", Snackbar.LENGTH_LONG).show()
         }
     }

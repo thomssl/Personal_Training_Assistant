@@ -89,7 +89,7 @@ class Program (var id: Int, var name: String, var days: Int, var desc: String, v
             getInsertProgramExercisesCommand()
             )
     }
-    fun getDeleteProgramCommands(clientID: Int, dayTime: String): List<String> {
+    fun getDeleteProgramCommands(): List<String> {
         return listOf(
             getDeleteProgramCommand(),
             getDeleteProgramExercisesCommand()
