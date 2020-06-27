@@ -12,7 +12,13 @@ import java.util.*
  * @param daysList List of all times for the week. Only populated with non-zero values if scheduleType is constant
  * @param durationsList List of all durations for the week. Only populated with non-zero values if scheduleType is constant
  */
-class Schedule (var scheduleType: ScheduleType, var days: Int, var duration: Int, var daysList: ArrayList<Int>, var durationsList: ArrayList<Int>) {
+class Schedule (
+    var scheduleType: ScheduleType,
+    var days: Int,
+    var duration: Int,
+    var daysList: ArrayList<Int>,
+    var durationsList: ArrayList<Int>
+) {
 
     /**
      * Method to get the clients days for UI or database operations. Output accounts for ScheduleType
@@ -22,7 +28,10 @@ class Schedule (var scheduleType: ScheduleType, var days: Int, var duration: Int
         return when (scheduleType){
             ScheduleType.WEEKLY_CONSTANT -> {
                 val builder = StringBuilder()
-                daysList.forEachIndexed { index, i -> if (i > 0) builder.append("${StaticFunctions.NumToDay[index+1]}\n") }
+                daysList.forEachIndexed { index, i ->
+                    if (i > 0)
+                        builder.append("${StaticFunctions.NumToDay[index+1]}\n")
+                }
                 if (builder.isNotBlank())
                     builder.deleteCharAt(builder.lastIndex)
                 builder.toString()
@@ -42,7 +51,11 @@ class Schedule (var scheduleType: ScheduleType, var days: Int, var duration: Int
         return when (scheduleType){
             ScheduleType.WEEKLY_CONSTANT -> {
                 val builder = StringBuilder()
-                daysList.forEachIndexed { index, i -> if (i > 0) builder.append("${getTime(i)}/${getTime(i+durationsList[index])}\n") }//shows the start and end time
+                //shows the start and end time
+                daysList.forEachIndexed { index, i ->
+                    if (i > 0)
+                        builder.append("${getTime(i)}/${getTime(i+durationsList[index])}\n")
+                }
                 if (builder.isNotBlank())
                     builder.deleteCharAt(builder.lastIndex)
                 return builder.toString()
@@ -58,9 +71,12 @@ class Schedule (var scheduleType: ScheduleType, var days: Int, var duration: Int
      * @return String representation of the time sent formatted as am/pm
      */
     private fun getTime(time: Int): String {
-        val extra = time % 60//minute of the hour
-        val hour = (time - extra) / 60//hour in the day (24 format)
-        return "${if(hour <= 12) hour else hour - 12}:${String.format(Locale.CANADA, "%02d", extra)} ${if(hour < 12) "am" else "pm"}"//convert to am/pm String value
+        //minute of the hour
+        val extra = time % 60
+        //hour in the day (24 format)
+        val hour = (time - extra) / 60
+        //convert to am/pm String value
+        return "${if(hour <= 12) hour else hour - 12}:${String.format(Locale.CANADA, "%02d", extra)} ${if(hour < 12) "am" else "pm"}"
     }
 
     /**
@@ -82,27 +98,38 @@ class Schedule (var scheduleType: ScheduleType, var days: Int, var duration: Int
      * @return String representation of the time at the index sent formatted as am/pm
      */
     fun getStrTime(index: Int): String{
-        val extra = daysList[index] % 60//minute of the hour
-        val hour = (daysList[index] - extra) / 60//hour in the day (24 format)
-        return "${if(hour <= 12) hour else hour - 12}:${String.format(Locale.CANADA, "%02d", extra)} ${if(hour < 12) "am" else "pm"}"//convert to am/pm String value
+        //minute of the hour
+        val extra = daysList[index] % 60
+        //hour in the day (24 format)
+        val hour = (daysList[index] - extra) / 60
+        extra.toString()
+        //convert to am/pm String value
+        return "${if(hour <= 12) hour else hour - 12}:${String.format(Locale.CANADA, "%02d", extra)} ${if(hour < 12) "am" else "pm"}"
     }
 
     fun getCheckClientConflictDays(): String {
         val builder = StringBuilder()
-        daysList.forEachIndexed { index, i -> if (i > 0) builder.append("${StaticFunctions.NumToDay[index+1].toLowerCase(Locale.ROOT)} > 0 And ") }
+        daysList.forEachIndexed { index, i ->
+            if (i > 0)
+                builder.append("${StaticFunctions.NumToDay[index+1].toLowerCase(Locale.ROOT)} > 0 And ")
+        }
         return builder.toString()
     }
 
     private fun getUpdateDays(): String{
         val builder = StringBuilder()
-        daysList.forEachIndexed { index, i -> builder.append("${StaticFunctions.NumToDay[index+1].toLowerCase(Locale.ROOT)}=$i,") }
+        daysList.forEachIndexed { index, i ->
+            builder.append("${StaticFunctions.NumToDay[index+1].toLowerCase(Locale.ROOT)}=$i,")
+        }
         if (builder.isNotBlank()) builder.deleteCharAt(builder.lastIndex)
         return builder.toString()
     }
 
     private fun getUpdateDurations(): String{
         val builder = StringBuilder()
-        durationsList.forEachIndexed { index, i -> builder.append("${StaticFunctions.NumToDay[index+1].toLowerCase(Locale.ROOT)}_duration=$i,") }
+        durationsList.forEachIndexed { index, i ->
+            builder.append("${StaticFunctions.NumToDay[index+1].toLowerCase(Locale.ROOT)}_duration=$i,")
+        }
         if (builder.isNotBlank()) builder.deleteCharAt(builder.lastIndex)
         return builder.toString()
     }
