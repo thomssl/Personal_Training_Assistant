@@ -633,7 +633,7 @@ class DatabaseOperations(val context: Context) {
     }
 
     fun insertSession(session: Session): Boolean = trySQLCommands(session.getSQLCommands(Session.INSERT_COMMAND))
-    fun updateSession(session: Session, oldDayTime: String): Boolean = trySQLCommands(session.getSQLCommands(Session.UPDATE_COMMAND, oldDayTime))
+    fun updateSession(session: Session): Boolean = trySQLCommands(session.getSQLCommands(Session.UPDATE_COMMAND))
     private fun deleteSession(session: Session): Boolean = trySQLCommands(session.getSQLCommands(Session.DELETE_COMMAND))
 
     /**

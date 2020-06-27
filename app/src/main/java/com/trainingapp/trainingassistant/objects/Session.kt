@@ -90,8 +90,10 @@ class Session(
     fun getExercise(index: Int): ExerciseSession = exercises[index]
     fun getExerciseCount(): Int = exercises.size
 
-    private fun getTime(): Int = (date[Calendar.HOUR_OF_DAY] * 60) + date[Calendar.MINUTE]//gets time as minutes in the day
-    fun getTimeRange(): IntRange = getTime() until (getTime() + duration)//gets an IntRange from the start to end time
+    //gets time as minutes in the day
+    private fun getTime(): Int = (date[Calendar.HOUR_OF_DAY] * 60) + date[Calendar.MINUTE]
+    //gets an IntRange from the start to end time
+    fun getTimeRange(): IntRange = getTime() until (getTime() + duration)
 
     /**
      * Method used to check new values for time, date or duration within a Session
@@ -112,7 +114,10 @@ class Session(
     }
     private fun getAllExerciseInserts(): String{
         val strSessionID = if (sessionID == 0)
-            "(Select program_id From Programs Where client_id = $clientID And datetime(dayTime) = datetime('${StaticFunctions.getStrDateTime(date)}'))"
+            "(Select program_id " +
+            "From Programs " +
+            "Where client_id = $clientID " +
+            "And datetime(dayTime) = datetime('${StaticFunctions.getStrDateTime(date)}'))"
         else
             sessionID.toString()
         return exercises.joinToString { "($strSessionID, ${it.id}, '${it.sets}', '${it.reps}', '${it.resistance}', ${it.order})" }
@@ -128,22 +133,25 @@ class Session(
     /**
      * Method to get a SQL commands depending upon the desired command type passed as a companion object value
      * @param type value denotes a type of SQL command. See companion object for value possibilities
-     * @param oldDayTime blank unless the session is being updated and the date or time is changing
      * @return List of SQL commands requested
      */
-    fun getSQLCommands(type: Int, oldDayTime: String = ""): List<String> {
+    fun getSQLCommands(type: Int): List<String> {
         val dayTime = StaticFunctions.getStrDateTime(date)
-        if (type == 3)//if Delete command
+        //if Delete command
+        if (type == 3)
             return listOf(getDeleteSessionLogCommand(), getDeleteSessionExercisesCommand())
 
         //return appropriate command. 1 = Insert, 2 = Update
         return when(type){
-            1 -> listOf("Insert Into Session_log(client_id, dayTime, notes, duration) Values($clientID, '$dayTime', '$notes', $duration);",
-                        getInsertExercisesCommand()
+            1 -> listOf(
+                    "Insert Into Session_log(client_id, dayTime, notes, duration) Values($clientID, '$dayTime', '$notes', $duration);",
+                    getInsertExercisesCommand()
                 )
-            2 -> listOf("Update Session_log Set dayTime = '$dayTime', notes = '$notes', duration = $duration Where session_id = $sessionID;",
-                        getDeleteSessionExercisesCommand(),
-                        getInsertExercisesCommand()
+            2 -> listOf(
+                    "Update Session_log Set dayTime = '$dayTime', notes = '$notes', duration = $duration " +
+                    "Where session_id = $sessionID;",
+                    getDeleteSessionExercisesCommand(),
+                    getInsertExercisesCommand()
                 )
             else -> listOf("error")
         }
