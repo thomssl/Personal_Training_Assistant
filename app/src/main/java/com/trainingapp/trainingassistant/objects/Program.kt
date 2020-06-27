@@ -4,7 +4,7 @@ class Program (var id: Int, var name: String, var days: Int, var desc: String, v
 
     //used to validate that a program has exercises
     // stops the user from removing all exercises from a session than updating or confirming a session that has never had any exercises
-    fun hasExercises(): Boolean = exercises.size > 0
+    private fun hasExercises(): Boolean = exercises.size > 0
 
     fun addExercise(ExerciseProgram: ExerciseProgram){
         exercises.add(ExerciseProgram)

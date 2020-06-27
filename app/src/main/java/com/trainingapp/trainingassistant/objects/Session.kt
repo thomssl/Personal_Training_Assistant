@@ -34,7 +34,7 @@ class Session(
 
     //used to validate that a session has exercises
     // stops the user from removing all exercises from a session than updating or confirming a session that has never had any exercises
-    fun hasExercises(): Boolean = exercises.size > 0
+    private fun hasExercises(): Boolean = exercises.size > 0
     fun addExercise(exerciseSession: ExerciseSession){
         exercises.add(exerciseSession)
         exercises.sort()

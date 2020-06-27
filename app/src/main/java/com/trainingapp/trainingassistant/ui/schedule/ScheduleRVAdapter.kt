@@ -20,7 +20,7 @@ import com.trainingapp.trainingassistant.objects.Session
  */
 class ScheduleRVAdapter(private val context: Context?, private val day: Day, private val clickListener: (Int) -> Unit, private val longClickListener: (Int) -> Boolean): RecyclerView.Adapter<ScheduleRVAdapter.ScheduleViewHolder>() {
 
-    private var conflicts = ArrayList<Int>()
+    private lateinit var conflicts: List<Int>
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScheduleViewHolder {
         conflicts = day.getConflicts()//fills list with sessions indices that have a conflict with another session

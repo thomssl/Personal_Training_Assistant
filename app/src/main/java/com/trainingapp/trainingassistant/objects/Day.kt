@@ -57,11 +57,16 @@ class Day (private var sessions: ArrayList<Session>) {
     fun checkConflict(session: Session, isSameDate: Boolean = false): Boolean{
         var result = false
         for(daySession in sessions){
-            val isSameClient = session.clientID == daySession.clientID
-            if (!isSameClient)//if the session being analyzed is not for the same client as the given session
+            //val isSameClient = session.clientID == daySession.clientID
+            result = if (session.clientID == daySession.clientID)
+                StaticFunctions.compareTimeRanges(daySession.getTimeRange(), session.getTimeRange())
+            else
+                !isSameDate
+            /*
+            if (session.clientID == daySession.clientID)//if the session being analyzed is not for the same client as the given session
                 result = StaticFunctions.compareTimeRanges(daySession.getTimeRange(), session.getTimeRange())//compare time ranges for the sessions to see if there is an overlap
-            else if (isSameClient && !isSameDate)//if the session being analyzed is for the same client as the given session and the isSameDate flag is not set (ie if it breaks the rule of one session per day per client), set result as true
-                result = true
+            else //if (isSameClient && !isSameDate)//if the session being analyzed is for the same client as the given session and the isSameDate flag is not set (ie if it breaks the rule of one session per day per client), set result as true
+                result = !isSameDate*/
 
             if (result)//if the analyzed session fails the tests, break the loop and return the result as true
                 break
@@ -74,9 +79,10 @@ class Day (private var sessions: ArrayList<Session>) {
      * Method to get the indices of any session that conflict with another. Uses the above function to check sessions for conflicts.
      * @return List of indices that have a conflict. Used to highlight conflicting sessions in the ScheduleFragment
      */
-    fun getConflicts(): ArrayList<Int>{
-        val conflicts = ArrayList<Int>()
+    fun getConflicts(): List<Int> {
+        return sessions.filter { session ->  checkConflict(session, true) }.mapIndexed { index, _ ->  index}
+        /*val conflicts = ArrayList<Int>()
         sessions.forEachIndexed { index, session2 -> if (checkConflict(session2, true)) conflicts.add(index) }
-        return conflicts
+        return conflicts*/
     }
 }
