@@ -14,19 +14,21 @@ import com.trainingapp.trainingassistant.enumerators.ExerciseType
  * @param resistance String representation of the resistance, usually numbers but the user has full discretion to use characters that follow the rules
  * @param order number of occurrence within the session, can repeat for concurrent sets
  */
-class ExerciseSession(var id: Int,
-                      var name: String,
-                      var type: ExerciseType,
-                      private val primaryMover: MuscleJoint,
-                      private val secondaryMovers: ArrayList<MuscleJoint>,
-                      var sets: String,
-                      var reps: String,
-                      var resistance: String,
-                      var order: Int
+class ExerciseSession(
+    var id: Int,
+    var name: String,
+    var type: ExerciseType,
+    private val primaryMover: MuscleJoint,
+    private val secondaryMovers: ArrayList<MuscleJoint>,
+    var sets: String,
+    var reps: String,
+    var resistance: String,
+    var order: Int
 ): Comparable<ExerciseSession>{
 
     /**
-     * Secondary constructor to populate an ExerciseSession with an Exercise, sets, reps, resistance and order instead of all the base data. Used most often due to simplicity
+     * Secondary constructor to populate an ExerciseSession with an Exercise, sets, reps, resistance and order instead of all the base data.
+     * Used most often due to simplicity
      */
     constructor(exercise: Exercise, sets: String, reps: String, resistance: String, order: Int):
             this(exercise.id, exercise.name, exercise.type, exercise.primaryMover, exercise.getLstSecondaryMovers(), sets, reps, resistance, order)
