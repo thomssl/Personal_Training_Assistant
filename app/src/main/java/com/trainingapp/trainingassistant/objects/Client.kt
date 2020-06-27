@@ -11,7 +11,13 @@ package com.trainingapp.trainingassistant.objects
  * @param endDate String formatted as yyyy-MM-dd for the end date of the client (for constant or variable scheduled clients)
  *                or '0' (for no schedule clients)
  */
-class Client (var id: Int, var name: String, var schedule: Schedule, var startDate: String, var endDate: String) {
+class Client (
+    var id: Int,
+    var name: String,
+    var schedule: Schedule,
+    var startDate: String,
+    var endDate: String
+) {
 
     fun getDaysString(): String = schedule.getDays()
     fun getTimesString(): String = schedule.getTimes()

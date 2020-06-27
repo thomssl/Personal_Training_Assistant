@@ -14,19 +14,21 @@ import com.trainingapp.trainingassistant.enumerators.ExerciseType
  * @param day Int representation of the day of the week for this exercises
  * @param order number of occurrence within the session, can repeat for concurrent sets
  */
-class ExerciseProgram(var id: Int,
-                      var name: String,
-                      var type: ExerciseType,
-                      private val primaryMover: MuscleJoint,
-                      private val secondaryMovers: ArrayList<MuscleJoint>,
-                      var sets: String,
-                      var reps: String,
-                      var day: Int,
-                      var order: Int
+class ExerciseProgram(
+    var id: Int,
+    var name: String,
+    var type: ExerciseType,
+    private val primaryMover: MuscleJoint,
+    private val secondaryMovers: ArrayList<MuscleJoint>,
+    var sets: String,
+    var reps: String,
+    var day: Int,
+    var order: Int
 ): Comparable<ExerciseProgram>{
 
     /**
-     * Secondary constructor to populate an ExerciseProgram with an Exercise, sets, reps, day and order instead of all the base data. Used most often due to simplicity
+     * Secondary constructor to populate an ExerciseProgram with an Exercise, sets, reps, day and order instead of all the base data.
+     * Used most often due to simplicity
      */
     constructor(exercise: Exercise, sets: String, reps: String, day: Int, order: Int):
             this(exercise.id, exercise.name, exercise.type, exercise.primaryMover, exercise.getLstSecondaryMovers(), sets, reps, day, order)
