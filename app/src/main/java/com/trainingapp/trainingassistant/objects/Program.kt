@@ -1,6 +1,12 @@
 package com.trainingapp.trainingassistant.objects
 
-class Program (var id: Int, var name: String, var days: Int, var desc: String, var exercises: ArrayList<ExerciseProgram>) {
+class Program (
+    var id: Int,
+    var name: String,
+    var days: Int,
+    var desc: String,
+    var exercises: ArrayList<ExerciseProgram>
+) {
 
     //used to validate that a program has exercises
     // stops the user from removing all exercises from a session than updating or confirming a session that has never had any exercises
@@ -84,7 +90,9 @@ class Program (var id: Int, var name: String, var days: Int, var desc: String, v
     }
     fun getUpdateProgramCommands(): List<String> {
         return listOf(
-            "Update Programs set program_name = '$name', program_desc = '$desc', program_days = $days Where program_id = $id;",
+            "Update Programs " +
+            "Set program_name = '$name', program_desc = '$desc', program_days = $days " +
+            "Where program_id = $id;",
             getDeleteProgramExercisesCommand(),
             getInsertProgramExercisesCommand()
             )
