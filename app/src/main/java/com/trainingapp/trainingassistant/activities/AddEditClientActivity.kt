@@ -46,7 +46,8 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_edit_client)
-        setTitle(R.string.edit_client_title)//default is edit client, changed if invalid client id sent
+        // Default is edit client, changed if invalid client id sent
+        setTitle(R.string.edit_client_title)
 
         lstDays = listOf(
             swWeeklyConstantIsSunday,
@@ -89,7 +90,7 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
         userSettings = databaseOperations.getUserSettings()
         defaultDuration = userSettings[0].toString()
         radGrpAddEditClient.setOnCheckedChangeListener(this)
-        //each switch is set to follow similar rules. If it becomes checked, make the appropriate views visible and initialize the button text and
+        // Each switch is set to follow similar rules. If it becomes checked, make the appropriate views visible and initialize the button text and
         // duration to the default. If it becomes unchecked, set views to invisible
         swWeeklyConstantIsMonday.setOnCheckedChangeListener { _, isChecked -> handleWeeklyConstSwitch(isChecked, 1)}
         swWeeklyConstantIsTuesday.setOnCheckedChangeListener { _, isChecked -> handleWeeklyConstSwitch(isChecked, 2) }
@@ -545,7 +546,10 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
         } else {
             Snackbar.make(
                 view,
-                if (name.isBlank()) "Name is empty" else "Invalid input character inside client name. See Wiki for more information",
+                if (name.isBlank())
+                    "Name is empty"
+                else
+                    "Invalid input character inside client name. See Wiki for more information",
                 Snackbar.LENGTH_LONG
             ).show()
         }
