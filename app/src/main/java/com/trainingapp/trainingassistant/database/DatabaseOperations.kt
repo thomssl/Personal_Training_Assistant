@@ -76,7 +76,7 @@ class DatabaseOperations(val context: Context) {
         }
     }
 
-    private fun getSecondaryMoversFromCSV(id: Int, csvSecondaryMoversIDs: String, csvSecondaryMoversNames: String): MutableList<MuscleJoint>{
+    private fun getSecondaryMoversFromCSV(id: Int, csvSecondaryMoversIDs: String, csvSecondaryMoversNames: String): MutableList<MuscleJoint> {
         // if the id = 0 that means no exercise was found. If strSecondaryMovers is empty than no secondary movers are present
         // Either way, return a blank list is returned
         if (id == 0 || csvSecondaryMoversIDs == "0")
@@ -296,19 +296,18 @@ class DatabaseOperations(val context: Context) {
     fun updateClient(client: Client): Boolean = trySQLCommand(client.getUpdateCommand())
     fun deleteClient(client: Client): Boolean = trySQLCommand(client.getDeleteCommand())
 
-    /**
+/*    *
      * Private method to get the ExerciseType enum from an int obtained from the database
      * @param type Int representation of the ExerciseType
-     * @return corresponding ExerciseType of the Int parameter
-     */
-    private fun getExerciseType(type: Int): ExerciseType {
+     * @return corresponding ExerciseType of the Int parameter*/
+/*    private fun getExerciseType(type: Int): ExerciseType {
         return when(type){
             1 -> ExerciseType.STRENGTH
             2 -> ExerciseType.MOBILITY
             3 -> ExerciseType.STABILITY
             else -> ExerciseType.BLANK
         }
-    }
+    }*/
 
     /**
      * Method to get an Exercises object given and exercise id
@@ -327,7 +326,7 @@ class DatabaseOperations(val context: Context) {
             Exercise(
                 exerciseID,
                 cursor.getString(cursor.getColumnIndex(DBInfo.ExercisesTable.NAME)),
-                getExerciseType(cursor.getInt(cursor.getColumnIndex(DBInfo.ExercisesTable.TYPE))),
+                Exercise.getExerciseType(cursor.getInt(cursor.getColumnIndex(DBInfo.ExercisesTable.TYPE))),
                 primaryMover,
                 getSecondaryMoversFromCSV(exerciseID, cursor.getString(cursor.getColumnIndex(DBInfo.AliasesUsed.SECONDARY_MOVERS_IDS)), cursor.getString(cursor.getColumnIndex(DBInfo.AliasesUsed.SECONDARY_MOVERS_NAMES)))
             )
@@ -361,7 +360,7 @@ class DatabaseOperations(val context: Context) {
                 Exercise(
                     exerciseID,
                     it.getString(it.getColumnIndex(DBInfo.ExercisesTable.NAME)),
-                    getExerciseType(it.getInt(it.getColumnIndex(DBInfo.ExercisesTable.TYPE))),
+                    Exercise.getExerciseType(it.getInt(it.getColumnIndex(DBInfo.ExercisesTable.TYPE))),
                     primaryMover,
                     getSecondaryMoversFromCSV(
                         exerciseID,
@@ -431,26 +430,8 @@ class DatabaseOperations(val context: Context) {
             val cursor1 = db.rawQuery(DBQueries.DBOperations.getSessionExercises(session.sessionID), null)
             generateSequence { if (cursor1.moveToNext()) cursor1 else null }
                 .forEach {
-                    val id = it.getInt(it.getColumnIndex(DBInfo.ExercisesTable.ID))
                     session.addExercise(
-                        ExerciseSession(
-                            id,
-                            it.getString(it.getColumnIndex(DBInfo.ExercisesTable.NAME)),
-                            getExerciseType(it.getInt(it.getColumnIndex(DBInfo.ExercisesTable.TYPE))),
-                            MuscleJoint(
-                                it.getInt(it.getColumnIndex(DBInfo.ExercisesTable.PRIMARY_MOVER)),
-                                it.getString(it.getColumnIndex(DBInfo.AliasesUsed.PRIMARY_MOVER_NAME))
-                            ),
-                            getSecondaryMoversFromCSV(
-                                id,
-                                it.getString(it.getColumnIndex(DBInfo.AliasesUsed.SECONDARY_MOVERS_IDS)),
-                                it.getString(it.getColumnIndex(DBInfo.AliasesUsed.SECONDARY_MOVERS_NAMES))
-                            ),
-                            it.getString(it.getColumnIndex(DBInfo.SessionExercisesTable.SETS)),
-                            it.getString(it.getColumnIndex(DBInfo.SessionExercisesTable.REPS)),
-                            it.getString(it.getColumnIndex(DBInfo.SessionExercisesTable.RESISTANCE)),
-                            it.getInt(it.getColumnIndex(DBInfo.SessionExercisesTable.EXERCISE_ORDER))
-                        )
+                        ExerciseSession.withCursor(it)
                     )
                 }
             cursor1.close()
@@ -561,25 +542,7 @@ class DatabaseOperations(val context: Context) {
         generateSequence { if (cursor.moveToNext()) cursor else null }
             .forEach {
                 val sessionID = it.getInt(it.getColumnIndex(DBInfo.SessionExercisesTable.SESSION_ID))
-                val exerciseID = it.getInt(it.getColumnIndex(DBInfo.ExercisesTable.ID))
-                val exerciseSession = ExerciseSession(
-                    exerciseID,
-                    it.getString(it.getColumnIndex(DBInfo.ExercisesTable.NAME)),
-                    getExerciseType(it.getInt(it.getColumnIndex(DBInfo.ExercisesTable.TYPE))),
-                    MuscleJoint(
-                        it.getInt(it.getColumnIndex(DBInfo.ExercisesTable.PRIMARY_MOVER)),
-                        it.getString(it.getColumnIndex(DBInfo.AliasesUsed.PRIMARY_MOVER_NAME))
-                    ),
-                    getSecondaryMoversFromCSV(
-                        exerciseID,
-                        it.getString(it.getColumnIndex(DBInfo.AliasesUsed.SECONDARY_MOVERS_IDS)),
-                        it.getString(it.getColumnIndex(DBInfo.AliasesUsed.SECONDARY_MOVERS_NAMES))
-                    ),
-                    it.getString(it.getColumnIndex(DBInfo.SessionExercisesTable.SETS)),
-                    it.getString(it.getColumnIndex(DBInfo.SessionExercisesTable.REPS)),
-                    it.getString(it.getColumnIndex(DBInfo.SessionExercisesTable.RESISTANCE)),
-                    it.getInt(it.getColumnIndex(DBInfo.SessionExercisesTable.EXERCISE_ORDER))
-                )
+                val exerciseSession = ExerciseSession.withCursor(it)
                 sessions.find { s -> s.sessionID == sessionID }.let { s -> s?.addExercise(exerciseSession) }
             }
         cursor.close()
@@ -642,25 +605,7 @@ class DatabaseOperations(val context: Context) {
             generateSequence { if (cursor.moveToNext()) cursor else null }
                 .forEach {
                     val sessionID = it.getInt(it.getColumnIndex(DBInfo.SessionExercisesTable.SESSION_ID))
-                    val exerciseID = it.getInt(it.getColumnIndex(DBInfo.ExercisesTable.ID))
-                    val exerciseSession = ExerciseSession(
-                        exerciseID,
-                        it.getString(it.getColumnIndex(DBInfo.ExercisesTable.NAME)),
-                        getExerciseType(it.getInt(it.getColumnIndex(DBInfo.ExercisesTable.TYPE))),
-                        MuscleJoint(
-                            it.getInt(it.getColumnIndex(DBInfo.ExercisesTable.PRIMARY_MOVER)),
-                            it.getString(it.getColumnIndex(DBInfo.AliasesUsed.PRIMARY_MOVER_NAME))
-                        ),
-                        getSecondaryMoversFromCSV(
-                            exerciseID,
-                            it.getString(it.getColumnIndex(DBInfo.AliasesUsed.SECONDARY_MOVERS_IDS)),
-                            it.getString(it.getColumnIndex(DBInfo.AliasesUsed.SECONDARY_MOVERS_NAMES))
-                        ),
-                        it.getString(it.getColumnIndex(DBInfo.SessionExercisesTable.SETS)),
-                        it.getString(it.getColumnIndex(DBInfo.SessionExercisesTable.REPS)),
-                        it.getString(it.getColumnIndex(DBInfo.SessionExercisesTable.RESISTANCE)),
-                        it.getInt(it.getColumnIndex(DBInfo.SessionExercisesTable.EXERCISE_ORDER))
-                    )
+                    val exerciseSession = ExerciseSession.withCursor(it)
                     sessions.find { s -> s.sessionID == sessionID }.let { s -> s?.addExercise(exerciseSession) }
                 }
         }
@@ -749,13 +694,7 @@ class DatabaseOperations(val context: Context) {
     fun getLastOccurrence(exercise: Exercise, clientID: Int): ExerciseSession {
         val cursor = db.rawQuery(DBQueries.DBOperations.getLastOccurrence(clientID, exercise.id), null)
         val exerciseSession: ExerciseSession = if (cursor.moveToFirst()){
-            ExerciseSession(
-                exercise,
-                cursor.getString(cursor.getColumnIndex(DBInfo.SessionExercisesTable.SETS)),
-                cursor.getString(cursor.getColumnIndex(DBInfo.SessionExercisesTable.REPS)),
-                cursor.getString(cursor.getColumnIndex(DBInfo.SessionExercisesTable.RESISTANCE)),
-                cursor.getInt(cursor.getColumnIndex(DBInfo.SessionExercisesTable.EXERCISE_ORDER))
-            )
+            ExerciseSession.withCursor(cursor)
         } else
             ExerciseSession.empty(exercise)
         cursor.close()
@@ -773,13 +712,7 @@ class DatabaseOperations(val context: Context) {
         val cursor = db.rawQuery(DBQueries.DBOperations.getAllOccurrences(clientID, exercise.id), null)
         val exerciseSessions = generateSequence { if (cursor.moveToNext()) cursor else null }
             .map {
-                ExerciseSession(
-                    exercise,
-                    it.getString(it.getColumnIndex(DBInfo.SessionExercisesTable.SETS)),
-                    it.getString(it.getColumnIndex(DBInfo.SessionExercisesTable.REPS)),
-                    it.getString(it.getColumnIndex(DBInfo.SessionExercisesTable.RESISTANCE)),
-                    it.getInt(it.getColumnIndex(DBInfo.SessionExercisesTable.EXERCISE_ORDER))
-                )
+                ExerciseSession.withCursor(exercise, it)
             }.toMutableList()
         cursor.close()
         return exerciseSessions
@@ -814,7 +747,7 @@ class DatabaseOperations(val context: Context) {
                     val exerciseProgram = ExerciseProgram(
                         exerciseID,
                         it.getString(it.getColumnIndex(DBInfo.ExercisesTable.NAME)),
-                        getExerciseType(it.getInt(it.getColumnIndex(DBInfo.ExercisesTable.TYPE))),
+                        Exercise.getExerciseType(it.getInt(it.getColumnIndex(DBInfo.ExercisesTable.TYPE))),
                         MuscleJoint(
                             it.getInt(it.getColumnIndex(DBInfo.ExercisesTable.PRIMARY_MOVER)),
                             it.getString(it.getColumnIndex(DBInfo.AliasesUsed.PRIMARY_MOVER_NAME))
@@ -858,7 +791,7 @@ class DatabaseOperations(val context: Context) {
                     val exerciseProgram = ExerciseProgram(
                         exerciseID,
                         it.getString(it.getColumnIndex(DBInfo.ExercisesTable.NAME)),
-                        getExerciseType(it.getInt(it.getColumnIndex(DBInfo.ExercisesTable.TYPE))),
+                        Exercise.getExerciseType(it.getInt(it.getColumnIndex(DBInfo.ExercisesTable.TYPE))),
                         MuscleJoint(
                             it.getInt(it.getColumnIndex(DBInfo.ExercisesTable.PRIMARY_MOVER)),
                             it.getString(it.getColumnIndex(DBInfo.AliasesUsed.PRIMARY_MOVER_NAME))

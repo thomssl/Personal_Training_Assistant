@@ -1,5 +1,7 @@
 package com.trainingapp.trainingassistant.objects
 
+import android.database.Cursor
+import com.trainingapp.trainingassistant.database.DBInfo
 import com.trainingapp.trainingassistant.enumerators.ExerciseType
 
 /**
@@ -24,7 +26,7 @@ class ExerciseSession(
     var reps: String,
     var resistance: String,
     var order: Int
-): Comparable<ExerciseSession>{
+): Comparable<ExerciseSession> {
 
     companion object {
         fun empty(exercise: Exercise) = ExerciseSession(
@@ -34,6 +36,38 @@ class ExerciseSession(
             "",
             0
         )
+
+        fun withCursor(it: Cursor): ExerciseSession {
+            val exerciseID = it.getInt(it.getColumnIndex(DBInfo.ExercisesTable.ID))
+            return ExerciseSession(
+                exerciseID,
+                it.getString(it.getColumnIndex(DBInfo.ExercisesTable.NAME)),
+                Exercise.getExerciseType(it.getInt(it.getColumnIndex(DBInfo.ExercisesTable.TYPE))),
+                MuscleJoint(
+                    it.getInt(it.getColumnIndex(DBInfo.ExercisesTable.PRIMARY_MOVER)),
+                    it.getString(it.getColumnIndex(DBInfo.AliasesUsed.PRIMARY_MOVER_NAME))
+                ),
+                Exercise.getSecondaryMoversFromCSV(
+                    exerciseID,
+                    it.getString(it.getColumnIndex(DBInfo.AliasesUsed.SECONDARY_MOVERS_IDS)),
+                    it.getString(it.getColumnIndex(DBInfo.AliasesUsed.SECONDARY_MOVERS_NAMES))
+                ),
+                it.getString(it.getColumnIndex(DBInfo.SessionExercisesTable.SETS)),
+                it.getString(it.getColumnIndex(DBInfo.SessionExercisesTable.REPS)),
+                it.getString(it.getColumnIndex(DBInfo.SessionExercisesTable.RESISTANCE)),
+                it.getInt(it.getColumnIndex(DBInfo.SessionExercisesTable.EXERCISE_ORDER))
+            )
+        }
+
+        fun withCursor(exercise: Exercise, it: Cursor): ExerciseSession {
+            return ExerciseSession(
+                exercise,
+                it.getString(it.getColumnIndex(DBInfo.SessionExercisesTable.SETS)),
+                it.getString(it.getColumnIndex(DBInfo.SessionExercisesTable.REPS)),
+                it.getString(it.getColumnIndex(DBInfo.SessionExercisesTable.RESISTANCE)),
+                it.getInt(it.getColumnIndex(DBInfo.SessionExercisesTable.EXERCISE_ORDER))
+            )
+        }
     }
     /**
      * Secondary constructor to populate an ExerciseSession with an Exercise, sets, reps, resistance and order instead of all the base data.

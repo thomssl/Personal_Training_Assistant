@@ -1,5 +1,6 @@
 package com.trainingapp.trainingassistant.objects
 
+import com.trainingapp.trainingassistant.StaticFunctions
 import com.trainingapp.trainingassistant.enumerators.ExerciseType
 
 /**
@@ -18,6 +19,32 @@ class Exercise(
     var primaryMover: MuscleJoint,
     private val secondaryMovers: MutableList<MuscleJoint>
 ) {
+
+    companion object {
+        /**
+         * Static method to get the ExerciseType enum from an int obtained from the database
+         * @param type Int representation of the ExerciseType
+         * @return corresponding ExerciseType of the Int parameter
+         */
+        fun getExerciseType(type: Int): ExerciseType {
+            return when(type){
+                1 -> ExerciseType.STRENGTH
+                2 -> ExerciseType.MOBILITY
+                3 -> ExerciseType.STABILITY
+                else -> ExerciseType.BLANK
+            }
+        }
+
+        fun getSecondaryMoversFromCSV(id: Int, csvSecondaryMoversIDs: String, csvSecondaryMoversNames: String): MutableList<MuscleJoint> {
+            // if the id = 0 that means no exercise was found. If strSecondaryMovers is empty than no secondary movers are present
+            // Either way, return a blank list is returned
+            if (id == 0 || csvSecondaryMoversIDs == "0")
+                return mutableListOf()
+            val lstSecondaryMoversIDs = StaticFunctions.toListInt(csvSecondaryMoversIDs)
+            val lstSecondaryMoversNames = csvSecondaryMoversNames.split(",")
+            return lstSecondaryMoversIDs.mapIndexed { index, s -> MuscleJoint(s, lstSecondaryMoversNames[index]) }.toMutableList()
+        }
+    }
     /**
      * Method to get the names of all the secondary movers as a joined string
      */
