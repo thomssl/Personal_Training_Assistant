@@ -35,6 +35,13 @@ class Exercise(
             }
         }
 
+        /**
+         * Static method to get the secondary movers from a csv string
+         * @param id Exercise ID
+         * @param csvSecondaryMoversIDs CSV string for the all secondary movers (IDs)
+         * @param csvSecondaryMoversNames CSV string of all the names of the secondary movers
+         * @return MutableList of the secondary movers as MuscleJoints
+         */
         fun getSecondaryMoversFromCSV(id: Int, csvSecondaryMoversIDs: String, csvSecondaryMoversNames: String): MutableList<MuscleJoint> {
             // if the id = 0 that means no exercise was found. If strSecondaryMovers is empty than no secondary movers are present
             // Either way, return a blank list is returned
