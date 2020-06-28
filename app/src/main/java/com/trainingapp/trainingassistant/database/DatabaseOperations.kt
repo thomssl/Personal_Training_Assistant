@@ -61,21 +61,6 @@ class DatabaseOperations(val context: Context) {
         return result
     }
 
-    /**
-     * Private method to get the ScheduleType enum from an int obtained from the database
-     * @param type Int representation of the ScheduleType
-     * @return corresponding ScheduleType of the Int parameter
-     */
-    private fun getScheduleType(type: Int): ScheduleType{
-        return when (type){
-            0 -> ScheduleType.NO_SCHEDULE
-            1 -> ScheduleType.WEEKLY_CONSTANT
-            2 -> ScheduleType.WEEKLY_VARIABLE
-            3 -> ScheduleType.MONTHLY_VARIABLE
-            else -> ScheduleType.NO_SCHEDULE
-        }
-    }
-
     private fun getSecondaryMoversFromCSV(id: Int, csvSecondaryMoversIDs: String, csvSecondaryMoversNames: String): MutableList<MuscleJoint> {
         // if the id = 0 that means no exercise was found. If strSecondaryMovers is empty than no secondary movers are present
         // Either way, return a blank list is returned
@@ -242,7 +227,7 @@ class DatabaseOperations(val context: Context) {
         val cursor = db.rawQuery(DBQueries.DBOperations.getClientType(clientID), null)
         val result: ScheduleType = if (cursor.moveToFirst())
             //if record found with given client id, return corresponding ScheduleType
-            getScheduleType(cursor.getInt(cursor.getColumnIndex(DBInfo.ClientsTable.SCHEDULE_TYPE)))
+            Client.getScheduleType(cursor.getInt(cursor.getColumnIndex(DBInfo.ClientsTable.SCHEDULE_TYPE)))
         else
             //if no record found, return BLANK or -1
             ScheduleType.BLANK

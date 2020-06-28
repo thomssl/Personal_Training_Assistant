@@ -42,7 +42,7 @@ class Client (
          * @param type Int representation of the ScheduleType
          * @return corresponding ScheduleType of the Int parameter
          */
-        private fun getScheduleType(type: Int): ScheduleType{
+        fun getScheduleType(type: Int): ScheduleType{
             return when (type){
                 0 -> ScheduleType.NO_SCHEDULE
                 1 -> ScheduleType.WEEKLY_CONSTANT
