@@ -3,7 +3,6 @@ package com.trainingapp.trainingassistant.database
 import android.content.Context
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
-import com.trainingapp.trainingassistant.R
 import com.trainingapp.trainingassistant.StaticFunctions
 import com.trainingapp.trainingassistant.enumerators.ExerciseType
 import com.trainingapp.trainingassistant.enumerators.ScheduleType
@@ -68,7 +67,9 @@ class DatabaseOperations(val context: Context) {
             return mutableListOf()
         val lstSecondaryMoversIDs = StaticFunctions.toListInt(csvSecondaryMoversIDs)
         val lstSecondaryMoversNames = csvSecondaryMoversNames.split(",")
-        return lstSecondaryMoversIDs.mapIndexed { index, s -> MuscleJoint(s, lstSecondaryMoversNames[index]) }.toMutableList()
+        return lstSecondaryMoversIDs
+            .mapIndexed { index, s -> MuscleJoint(s, lstSecondaryMoversNames[index]) }
+            .toMutableList()
     }
 
     /**
@@ -78,10 +79,11 @@ class DatabaseOperations(val context: Context) {
      */
     fun getUserSettings(): List<Int>{
         val cursor = db.rawQuery(DBQueries.DBOperations.getUserSettings(), null)
-        val result = if (cursor.moveToFirst()) listOf(
-            cursor.getInt(cursor.getColumnIndex(DBInfo.UserSettingsTable.DEFAULT_DURATION)),
-            cursor.getInt(cursor.getColumnIndex(DBInfo.UserSettingsTable.CLOCK_24))
-        )
+        val result = if (cursor.moveToFirst())
+            listOf(
+                cursor.getInt(cursor.getColumnIndex(DBInfo.UserSettingsTable.DEFAULT_DURATION)),
+                cursor.getInt(cursor.getColumnIndex(DBInfo.UserSettingsTable.CLOCK_24))
+            )
         else
             listOf()
         cursor.close()
@@ -97,10 +99,10 @@ class DatabaseOperations(val context: Context) {
      */
     fun getJoint(id: Int): MuscleJoint {
         val cursor = db.rawQuery(DBQueries.DBOperations.getJoint(id), null)
-        val result = if (cursor.moveToFirst()) MuscleJoint(
-            cursor.getInt(cursor.getColumnIndex(DBInfo.JointsTable.ID)),
-            cursor.getString(cursor.getColumnIndex(DBInfo.JointsTable.NAME))
-        ) else MuscleJoint.empty
+        val result = if (cursor.moveToFirst())
+            MuscleJoint.withCursor(cursor, isMuscle = false)
+        else
+            MuscleJoint.empty
         cursor.close()
         return result
     }
@@ -112,12 +114,8 @@ class DatabaseOperations(val context: Context) {
     fun getAllJoints(): MutableList<MuscleJoint>{
         val cursor = db.rawQuery(DBQueries.DBOperations.getAllJoints(), null)
         val joints = generateSequence { if (cursor.moveToNext()) cursor else null }
-            .map {
-                MuscleJoint(
-                    it.getInt(it.getColumnIndex(DBInfo.JointsTable.ID)),
-                    it.getString(it.getColumnIndex(DBInfo.JointsTable.NAME))
-                )
-            }.toMutableList()
+            .map { MuscleJoint.withCursor(it, isMuscle = false) }
+            .toMutableList()
         cursor.close()
         return joints
     }
@@ -129,10 +127,10 @@ class DatabaseOperations(val context: Context) {
      */
     fun getMuscle(id: Int): MuscleJoint {
         val cursor = db.rawQuery(DBQueries.DBOperations.getMuscle(id), null)
-        val muscle = if (cursor.moveToFirst()) MuscleJoint(//if muscle found return populated MuscleJoint object
-            cursor.getInt(cursor.getColumnIndex(DBInfo.MusclesTable.ID)),
-            cursor.getString(cursor.getColumnIndex(DBInfo.MusclesTable.NAME))
-        ) else MuscleJoint.empty
+        val muscle = if (cursor.moveToFirst())
+            MuscleJoint.withCursor(cursor, isMuscle = true)
+        else
+            MuscleJoint.empty
         cursor.close()
         return muscle
     }
@@ -144,12 +142,8 @@ class DatabaseOperations(val context: Context) {
     fun getAllMuscles(): MutableList<MuscleJoint>{
         val cursor = db.rawQuery(DBQueries.DBOperations.getAllMuscles(), null)
         val muscles = generateSequence { if (cursor.moveToNext()) cursor else null }
-            .map {
-                MuscleJoint(
-                    it.getInt(it.getColumnIndex(DBInfo.MusclesTable.ID)),
-                    it.getString(it.getColumnIndex(DBInfo.MusclesTable.NAME))
-                )
-            }.toMutableList()
+            .map { MuscleJoint.withCursor(it, isMuscle = true) }
+            .toMutableList()
         cursor.close()
         return muscles
     }
@@ -208,9 +202,8 @@ class DatabaseOperations(val context: Context) {
     fun getAllClients(): MutableList<Client> {
         val cursor = db.rawQuery(DBQueries.DBOperations.getAllClients(), null)
         val clients = generateSequence { if (cursor.moveToNext()) cursor else null }
-            .map {
-                Client.withCursor(it)
-            }.toMutableList()
+            .map { Client.withCursor(it) }
+            .toMutableList()
         cursor.close()
         return clients
     }
@@ -403,15 +396,7 @@ class DatabaseOperations(val context: Context) {
         //gets base Session class information, fills in the client_name with a join and finds only sessions for a given client and dayTime
         val cursor = db.rawQuery(DBQueries.DBOperations.getSession(sessionID), null)
         val session: Session = if (cursor.moveToFirst()){//if a record is found, populate the Session object
-            val session = Session(
-                cursor.getInt(cursor.getColumnIndex(DBInfo.SessionLogTable.SESSION_ID)),
-                cursor.getInt(cursor.getColumnIndex(DBInfo.SessionLogTable.CLIENT_ID)),
-                cursor.getString(cursor.getColumnIndex(DBInfo.ClientsTable.NAME)),
-                cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogTable.DAYTIME)),
-                cursor.getString(cursor.getColumnIndex(DBInfo.SessionLogTable.NOTES)),
-                cursor.getInt(cursor.getColumnIndex(DBInfo.SessionLogTable.DURATION)),
-                mutableListOf()
-            )
+            val session = Session.withCursor(cursor)
             val cursor1 = db.rawQuery(DBQueries.DBOperations.getSessionExercises(session.sessionID), null)
             generateSequence { if (cursor1.moveToNext()) cursor1 else null }
                 .forEach {
@@ -436,10 +421,6 @@ class DatabaseOperations(val context: Context) {
         cursor.close()
         return session
     }
-
-    //checked
-    //removes the first available makeup session (represented with a 0 in change_dayTime)
-    fun removeCanceledSession(clientID: Int): Boolean = trySQLCommand(context.getString(R.string.removeCanceledSessionCommand, clientID))
 
     /**
      * checked
@@ -544,9 +525,8 @@ class DatabaseOperations(val context: Context) {
         val day = getScheduleByDay(calendar)
         val cursor = db.rawQuery(DBQueries.DBOperations.getAddSessionClients(day.getStrIDs()), null)
         val clients = generateSequence { if (cursor.moveToNext()) cursor else null }
-            .map {
-                Client.withCursor(it)
-            }.toList()
+            .map {Client.withCursor(it) }
+            .toList()
         cursor.close()
         return clients
     }
@@ -686,9 +666,8 @@ class DatabaseOperations(val context: Context) {
     fun getAllOccurrences(exercise: Exercise, clientID: Int): MutableList<ExerciseSession> {
         val cursor = db.rawQuery(DBQueries.DBOperations.getAllOccurrences(clientID, exercise.id), null)
         val exerciseSessions = generateSequence { if (cursor.moveToNext()) cursor else null }
-            .map {
-                ExerciseSession.withCursor(exercise, it)
-            }.toMutableList()
+            .map { ExerciseSession.withCursor(exercise, it) }
+            .toMutableList()
         cursor.close()
         return exerciseSessions
     }
