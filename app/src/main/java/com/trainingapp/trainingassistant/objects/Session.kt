@@ -1,6 +1,8 @@
 package com.trainingapp.trainingassistant.objects
 
+import android.database.Cursor
 import com.trainingapp.trainingassistant.StaticFunctions
+import com.trainingapp.trainingassistant.database.DBInfo
 import java.util.*
 
 /**
@@ -37,6 +39,18 @@ class Session(
             0,
             mutableListOf()
         )
+
+        fun withCursor(it: Cursor, sessionID: Int = -1, dayTime: String? = null, notes: String? = null, duration: Int = 0): Session{
+            return Session(
+                if (sessionID == -1) it.getInt(it.getColumnIndex(DBInfo.SessionLogTable.SESSION_ID)) else sessionID,
+                it.getInt(it.getColumnIndex(DBInfo.SessionLogTable.CLIENT_ID)),
+                it.getString(it.getColumnIndex(DBInfo.ClientsTable.NAME)),
+                dayTime ?: it.getString(it.getColumnIndex(DBInfo.SessionLogTable.DAYTIME)),
+                notes ?: it.getString(it.getColumnIndex(DBInfo.SessionLogTable.NOTES)),
+                if (duration == 0) it.getInt(it.getColumnIndex(DBInfo.SessionLogTable.DURATION)) else duration,
+                mutableListOf()
+            )
+        }
     }
 
     var date: Calendar = StaticFunctions.getDate(dayTime)

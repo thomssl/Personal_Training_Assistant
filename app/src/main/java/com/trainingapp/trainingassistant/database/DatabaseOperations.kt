@@ -587,15 +587,7 @@ class DatabaseOperations(val context: Context) {
         generateSequence { if (cursor.moveToNext()) cursor else null }
             .forEach {
                 sessions.add(
-                    Session(
-                        it.getInt(it.getColumnIndex(DBInfo.SessionLogTable.SESSION_ID)),
-                        it.getInt(it.getColumnIndex(DBInfo.SessionLogTable.CLIENT_ID)),
-                        it.getString(it.getColumnIndex(DBInfo.ClientsTable.NAME)),
-                        it.getString(it.getColumnIndex(DBInfo.SessionLogTable.DAYTIME)),
-                        it.getString(it.getColumnIndex(DBInfo.SessionLogTable.NOTES)),
-                        it.getInt(it.getColumnIndex(DBInfo.SessionLogTable.DURATION)),
-                        mutableListOf()
-                    )
+                    Session.withCursor(it)
                 )
             }
         cursor.close()
@@ -621,14 +613,12 @@ class DatabaseOperations(val context: Context) {
                     calendarChosen[Calendar.HOUR_OF_DAY] = hour
                     calendarChosen[Calendar.MINUTE] = minutes
                     sessions.add(
-                        Session(
-                            0,
-                            it.getInt(it.getColumnIndex(DBInfo.ClientsTable.ID)),
-                            it.getString(it.getColumnIndex(DBInfo.ClientsTable.NAME)),
-                            StaticFunctions.getStrDateTime(calendarChosen),
-                            "",
-                            duration,
-                            mutableListOf()
+                        Session.withCursor(
+                            it,
+                            sessionID = 0,
+                            dayTime = StaticFunctions.getStrDateTime(calendarChosen),
+                            notes = "",
+                            duration = duration
                         )
                     )
                 }
@@ -636,15 +626,15 @@ class DatabaseOperations(val context: Context) {
             cursor = db.rawQuery(DBQueries.DBOperations.getScheduleByDaySessionChanges(date), null)
             generateSequence { if (cursor.moveToNext()) cursor else null }
                 .forEach {
+                    val dayTime = it.getString(it.getColumnIndex(DBInfo.SessionChangesTable.CHANGE_DAYTIME))
+                    val duration = it.getInt(it.getColumnIndex(DBInfo.SessionChangesTable.DURATION))
                     sessions.add(
-                        Session(
-                            0,
-                            it.getInt(it.getColumnIndex(DBInfo.SessionChangesTable.CLIENT_ID)),
-                            it.getString(it.getColumnIndex(DBInfo.ClientsTable.NAME)),
-                            it.getString(it.getColumnIndex(DBInfo.SessionChangesTable.CHANGE_DAYTIME)),
-                            "",
-                            it.getInt(it.getColumnIndex(DBInfo.SessionChangesTable.DURATION)),
-                            mutableListOf()
+                        Session.withCursor(
+                            it,
+                            sessionID = 0,
+                            dayTime = dayTime,
+                            notes = "",
+                            duration = duration
                         )
                     )
                 }
