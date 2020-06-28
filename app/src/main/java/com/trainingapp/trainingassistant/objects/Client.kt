@@ -1,5 +1,7 @@
 package com.trainingapp.trainingassistant.objects
 
+import android.database.Cursor
+import com.trainingapp.trainingassistant.database.DBInfo
 import com.trainingapp.trainingassistant.enumerators.ScheduleType
 
 /**
@@ -34,6 +36,53 @@ class Client (
             "",
             ""
         )
+
+        /**
+         * Private method to get the ScheduleType enum from an int obtained from the database
+         * @param type Int representation of the ScheduleType
+         * @return corresponding ScheduleType of the Int parameter
+         */
+        private fun getScheduleType(type: Int): ScheduleType{
+            return when (type){
+                0 -> ScheduleType.NO_SCHEDULE
+                1 -> ScheduleType.WEEKLY_CONSTANT
+                2 -> ScheduleType.WEEKLY_VARIABLE
+                3 -> ScheduleType.MONTHLY_VARIABLE
+                else -> ScheduleType.NO_SCHEDULE
+            }
+        }
+
+        fun withCursor(it: Cursor): Client {
+            return Client(
+                it.getInt(it.getColumnIndex(DBInfo.ClientsTable.ID)),
+                it.getString(it.getColumnIndex(DBInfo.ClientsTable.NAME)),
+                Schedule(
+                    getScheduleType(it.getInt(it.getColumnIndex(DBInfo.ClientsTable.SCHEDULE_TYPE))),
+                    it.getInt(it.getColumnIndex(DBInfo.ClientsTable.DAYS)),
+                    it.getInt(it.getColumnIndex(DBInfo.ClientsTable.DURATION)),
+                    mutableListOf(
+                        it.getInt(it.getColumnIndex(DBInfo.ClientsTable.SUN)),
+                        it.getInt(it.getColumnIndex(DBInfo.ClientsTable.MON)),
+                        it.getInt(it.getColumnIndex(DBInfo.ClientsTable.TUE)),
+                        it.getInt(it.getColumnIndex(DBInfo.ClientsTable.WED)),
+                        it.getInt(it.getColumnIndex(DBInfo.ClientsTable.THU)),
+                        it.getInt(it.getColumnIndex(DBInfo.ClientsTable.FRI)),
+                        it.getInt(it.getColumnIndex(DBInfo.ClientsTable.SAT))
+                    ),
+                    mutableListOf(
+                        it.getInt(it.getColumnIndex(DBInfo.ClientsTable.SUN_DURATION)),
+                        it.getInt(it.getColumnIndex(DBInfo.ClientsTable.MON_DURATION)),
+                        it.getInt(it.getColumnIndex(DBInfo.ClientsTable.TUE_DURATION)),
+                        it.getInt(it.getColumnIndex(DBInfo.ClientsTable.WED_DURATION)),
+                        it.getInt(it.getColumnIndex(DBInfo.ClientsTable.THU_DURATION)),
+                        it.getInt(it.getColumnIndex(DBInfo.ClientsTable.FRI_DURATION)),
+                        it.getInt(it.getColumnIndex(DBInfo.ClientsTable.SAT_DURATION))
+                    )
+                ),
+                it.getString(it.getColumnIndex(DBInfo.ClientsTable.START_DATE)),
+                it.getString(it.getColumnIndex(DBInfo.ClientsTable.END_DATE))
+            )
+        }
     }
 
     fun getDaysString(): String = schedule.getDays()

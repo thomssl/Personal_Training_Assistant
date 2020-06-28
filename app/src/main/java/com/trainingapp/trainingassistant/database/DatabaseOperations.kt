@@ -209,35 +209,7 @@ class DatabaseOperations(val context: Context) {
     fun getClient(id: Int): Client {
         val cursor = db.rawQuery(DBQueries.DBOperations.getClient(id), null)
         val client: Client = if (cursor.moveToFirst())//if a record is found, return a populated Client object
-            Client(
-                cursor.getInt(cursor.getColumnIndex(DBInfo.ClientsTable.ID)),
-                cursor.getString(cursor.getColumnIndex(DBInfo.ClientsTable.NAME)),
-                Schedule(
-                    getScheduleType(cursor.getInt(cursor.getColumnIndex(DBInfo.ClientsTable.SCHEDULE_TYPE))),
-                    cursor.getInt(cursor.getColumnIndex(DBInfo.ClientsTable.DAYS)),
-                    cursor.getInt(cursor.getColumnIndex(DBInfo.ClientsTable.DURATION)),
-                    mutableListOf(
-                        cursor.getInt(cursor.getColumnIndex(DBInfo.ClientsTable.SUN)),
-                        cursor.getInt(cursor.getColumnIndex(DBInfo.ClientsTable.MON)),
-                        cursor.getInt(cursor.getColumnIndex(DBInfo.ClientsTable.TUE)),
-                        cursor.getInt(cursor.getColumnIndex(DBInfo.ClientsTable.WED)),
-                        cursor.getInt(cursor.getColumnIndex(DBInfo.ClientsTable.THU)),
-                        cursor.getInt(cursor.getColumnIndex(DBInfo.ClientsTable.FRI)),
-                        cursor.getInt(cursor.getColumnIndex(DBInfo.ClientsTable.SAT))
-                    ),
-                    mutableListOf(
-                        cursor.getInt(cursor.getColumnIndex(DBInfo.ClientsTable.SUN_DURATION)),
-                        cursor.getInt(cursor.getColumnIndex(DBInfo.ClientsTable.MON_DURATION)),
-                        cursor.getInt(cursor.getColumnIndex(DBInfo.ClientsTable.TUE_DURATION)),
-                        cursor.getInt(cursor.getColumnIndex(DBInfo.ClientsTable.WED_DURATION)),
-                        cursor.getInt(cursor.getColumnIndex(DBInfo.ClientsTable.THU_DURATION)),
-                        cursor.getInt(cursor.getColumnIndex(DBInfo.ClientsTable.FRI_DURATION)),
-                        cursor.getInt(cursor.getColumnIndex(DBInfo.ClientsTable.SAT_DURATION))
-                    )
-                ),
-                cursor.getString(cursor.getColumnIndex(DBInfo.ClientsTable.START_DATE)),
-                cursor.getString(cursor.getColumnIndex(DBInfo.ClientsTable.END_DATE))
-            )
+            Client.withCursor(cursor)
         else//if no client found with given id, return an empty object
             Client.empty
         cursor.close()
@@ -248,39 +220,11 @@ class DatabaseOperations(val context: Context) {
      * Method to get all clients currently in the Clients Table
      * @return MutableList of Client objects for all defined clients
      */
-    fun getAllClients(): MutableList<Client>{
+    fun getAllClients(): MutableList<Client> {
         val cursor = db.rawQuery(DBQueries.DBOperations.getAllClients(), null)
         val clients = generateSequence { if (cursor.moveToNext()) cursor else null }
             .map {
-                Client(
-                    it.getInt(it.getColumnIndex(DBInfo.ClientsTable.ID)),
-                    it.getString(it.getColumnIndex(DBInfo.ClientsTable.NAME)),
-                    Schedule(
-                        getScheduleType(it.getInt(it.getColumnIndex(DBInfo.ClientsTable.SCHEDULE_TYPE))),
-                        it.getInt(it.getColumnIndex(DBInfo.ClientsTable.DAYS)),
-                        it.getInt(it.getColumnIndex(DBInfo.ClientsTable.DURATION)),
-                        mutableListOf(
-                            it.getInt(it.getColumnIndex(DBInfo.ClientsTable.SUN)),
-                            it.getInt(it.getColumnIndex(DBInfo.ClientsTable.MON)),
-                            it.getInt(it.getColumnIndex(DBInfo.ClientsTable.TUE)),
-                            it.getInt(it.getColumnIndex(DBInfo.ClientsTable.WED)),
-                            it.getInt(it.getColumnIndex(DBInfo.ClientsTable.THU)),
-                            it.getInt(it.getColumnIndex(DBInfo.ClientsTable.FRI)),
-                            it.getInt(it.getColumnIndex(DBInfo.ClientsTable.SAT))
-                        ),
-                        mutableListOf(
-                            it.getInt(it.getColumnIndex(DBInfo.ClientsTable.SUN_DURATION)),
-                            it.getInt(it.getColumnIndex(DBInfo.ClientsTable.MON_DURATION)),
-                            it.getInt(it.getColumnIndex(DBInfo.ClientsTable.TUE_DURATION)),
-                            it.getInt(it.getColumnIndex(DBInfo.ClientsTable.WED_DURATION)),
-                            it.getInt(it.getColumnIndex(DBInfo.ClientsTable.THU_DURATION)),
-                            it.getInt(it.getColumnIndex(DBInfo.ClientsTable.FRI_DURATION)),
-                            it.getInt(it.getColumnIndex(DBInfo.ClientsTable.SAT_DURATION))
-                        )
-                    ),
-                    it.getString(it.getColumnIndex(DBInfo.ClientsTable.START_DATE)),
-                    it.getString(it.getColumnIndex(DBInfo.ClientsTable.END_DATE))
-                )
+                Client.withCursor(it)
             }.toMutableList()
         cursor.close()
         return clients
@@ -294,7 +238,7 @@ class DatabaseOperations(val context: Context) {
      * @param clientID client id value. See Clients Table
      * @return Int value representing the schedule type that a given client follows
      */
-    private fun getClientType(clientID: Int): ScheduleType{
+    private fun getClientType(clientID: Int): ScheduleType {
         val cursor = db.rawQuery(DBQueries.DBOperations.getClientType(clientID), null)
         val result: ScheduleType = if (cursor.moveToFirst())
             //if record found with given client id, return corresponding ScheduleType
@@ -308,11 +252,12 @@ class DatabaseOperations(val context: Context) {
 
     /**
      * Method to check if a client conflicts with the given client list. Only looks at clients with constant schedules (ie session_type = 1)
-     * Should only be called if the client's ScheduleType is Weekly_Constant
      * @param client Client object created from data collected in the AddEditClientActivity
-     * @return empty string if a conflict is found with the current constant schedule. String with conflict client names if any conflicts are found
+     * @return empty String if no conflicts found or client does not have a WEEKLY_CONSTANT schedule
+     * non-empty String with conflict client names if any conflicts are found
      */
-    fun checkClientConflict(client: Client): String{
+    fun checkClientConflict(client: Client): String {
+        if (client.schedule.scheduleType != ScheduleType.WEEKLY_CONSTANT) return ""
         val conflicts = StringBuilder()
         val sessionDays = client.schedule.sessionDays
         val days = StaticFunctions.NumToDay.slice(1 until 8).filterIndexed { index, _ ->
@@ -356,7 +301,7 @@ class DatabaseOperations(val context: Context) {
      * @param type Int representation of the ExerciseType
      * @return corresponding ExerciseType of the Int parameter
      */
-    private fun getExerciseType(type: Int): ExerciseType{
+    private fun getExerciseType(type: Int): ExerciseType {
         return when(type){
             1 -> ExerciseType.STRENGTH
             2 -> ExerciseType.MOBILITY
@@ -403,7 +348,7 @@ class DatabaseOperations(val context: Context) {
      * Method to get all the exercises with in the Exercises Table
      * @return MutableList of Exercise objects representing the entire Exercise library
      */
-    fun getAllExercises(): List<Exercise>{
+    fun getAllExercises(): List<Exercise> {
         //gets base Exercise class information and fills in the ExerciseType using a join and Case clause to get the appropriate data (ie if strength, muscle_name and if mobility or stability, joint_name)
         val cursor = db.rawQuery(DBQueries.DBOperations.getAllExercises(), null)
         val exercises = generateSequence { if (cursor.moveToNext()) cursor else null }
@@ -435,7 +380,7 @@ class DatabaseOperations(val context: Context) {
      * @param exercise Exercise object collected from the user in AddEditExerciseActivity
      * @return true if a conflict is found
      */
-    fun checkExerciseConflict(exercise: Exercise): Boolean{
+    fun checkExerciseConflict(exercise: Exercise): Boolean {
         val cursor = db.rawQuery(DBQueries.DBOperations.getExerciseConflict(exercise.name,exercise.id), null)
         val result = cursor.moveToFirst()
         cursor.close()
@@ -537,7 +482,7 @@ class DatabaseOperations(val context: Context) {
      * @param isSameDate true if changing the time, false in all other occasions
      * @return true if conflict found. false if no conflict found
      */
-    fun checkSessionConflict(session: Session, isSameDate: Boolean): Boolean{
+    fun checkSessionConflict(session: Session, isSameDate: Boolean): Boolean {
         val day = getScheduleByDay(session.date)
         return day.checkConflict(session, isSameDate)
     }
@@ -548,7 +493,7 @@ class DatabaseOperations(val context: Context) {
      * @param session Session object to be checked
      * @return true if session found in log, false if not found
      */
-    fun checkSessionLog(session: Session): Boolean{
+    fun checkSessionLog(session: Session): Boolean {
         val cursor = db.rawQuery(DBQueries.DBOperations.checkSessionLog(session.sessionID), null)
         val result = cursor.moveToFirst()
         cursor.close()
@@ -565,7 +510,7 @@ class DatabaseOperations(val context: Context) {
      * @param session Session object to be canceled
      * @return true if cancellation was successful
      */
-    fun cancelSession(session: Session): Boolean{
+    fun cancelSession(session: Session): Boolean {
         return when(getClientType(session.clientID)){
             ScheduleType.WEEKLY_CONSTANT ->  {
                 //if any of the transactions fail, return false. if all transactions pass, return true
@@ -595,7 +540,7 @@ class DatabaseOperations(val context: Context) {
      * @param client Client object representing the client who to be searched for logged sessions
      * @return MutableList of Session objects representing all the sessions logged for a client
      */
-    fun getClientSessions(client: Client): List<Session>{
+    fun getClientSessions(client: Client): List<Session> {
         //gets base Session class information, fills in the client_name with a join and finds only sessions for a given client
         var cursor = db.rawQuery(DBQueries.DBOperations.getClientSessions(client.id), null)
         val sessions = generateSequence { if (cursor.moveToNext()) cursor else null }
@@ -647,40 +592,12 @@ class DatabaseOperations(val context: Context) {
      * @param calendar Calendar object holding a given date to check
      * @return List of clients as Clients objects representing all clients that can add a session to a date
      */
-    fun getAddSessionsClientsByDay(calendar: Calendar): List<Client>{
+    fun getAddSessionsClientsByDay(calendar: Calendar): List<Client> {
         val day = getScheduleByDay(calendar)
         val cursor = db.rawQuery(DBQueries.DBOperations.getAddSessionClients(day.getStrIDs()), null)
         val clients = generateSequence { if (cursor.moveToNext()) cursor else null }
             .map {
-                Client(
-                    it.getInt(it.getColumnIndex(DBInfo.ClientsTable.ID)),
-                    it.getString(it.getColumnIndex(DBInfo.ClientsTable.NAME)),
-                    Schedule(
-                        getScheduleType(it.getInt(it.getColumnIndex(DBInfo.ClientsTable.SCHEDULE_TYPE))),
-                        it.getInt(it.getColumnIndex(DBInfo.ClientsTable.DAYS)),
-                        it.getInt(it.getColumnIndex(DBInfo.ClientsTable.DURATION)),
-                        mutableListOf(
-                            it.getInt(it.getColumnIndex(DBInfo.ClientsTable.SUN)),
-                            it.getInt(it.getColumnIndex(DBInfo.ClientsTable.MON)),
-                            it.getInt(it.getColumnIndex(DBInfo.ClientsTable.TUE)),
-                            it.getInt(it.getColumnIndex(DBInfo.ClientsTable.WED)),
-                            it.getInt(it.getColumnIndex(DBInfo.ClientsTable.THU)),
-                            it.getInt(it.getColumnIndex(DBInfo.ClientsTable.FRI)),
-                            it.getInt(it.getColumnIndex(DBInfo.ClientsTable.SAT))
-                        ),
-                        mutableListOf(
-                            it.getInt(it.getColumnIndex(DBInfo.ClientsTable.SUN_DURATION)),
-                            it.getInt(it.getColumnIndex(DBInfo.ClientsTable.MON_DURATION)),
-                            it.getInt(it.getColumnIndex(DBInfo.ClientsTable.TUE_DURATION)),
-                            it.getInt(it.getColumnIndex(DBInfo.ClientsTable.WED_DURATION)),
-                            it.getInt(it.getColumnIndex(DBInfo.ClientsTable.THU_DURATION)),
-                            it.getInt(it.getColumnIndex(DBInfo.ClientsTable.FRI_DURATION)),
-                            it.getInt(it.getColumnIndex(DBInfo.ClientsTable.SAT_DURATION))
-                        )
-                    ),
-                    it.getString(it.getColumnIndex(DBInfo.ClientsTable.START_DATE)),
-                    it.getString(it.getColumnIndex(DBInfo.ClientsTable.END_DATE))
-                )
+                Client.withCursor(it)
             }.toList()
         cursor.close()
         return clients
@@ -798,14 +715,14 @@ class DatabaseOperations(val context: Context) {
      * @param session Session object containing the information about a session
      * @return true if session exists
      */
-    fun checkChange(session: Session): Boolean{
+    fun checkChange(session: Session): Boolean {
         val cursor = db.rawQuery(DBQueries.DBOperations.checkChange(session.clientID, StaticFunctions.getStrDateTime(session.date)), null)
         val result: Boolean = cursor.moveToFirst()
         cursor.close()
         return result
     }
 
-    fun insertChange(oldSession: Session, newSession: Session): Boolean{
+    fun insertChange(oldSession: Session, newSession: Session): Boolean {
         return trySQLCommand(DBQueries.DBOperations.insertChange(oldSession.clientID,
                                                             StaticFunctions.getStrDateTime(oldSession.date),
                                                             StaticFunctions.getStrDateTime(newSession.date),
@@ -852,7 +769,7 @@ class DatabaseOperations(val context: Context) {
      * @param clientID id of the given client used to search Session_log table
      * @return ExerciseSession object containing the information about the all the occurrences of the given exercise. Empty MutableList returned if the given exercise has been performed
      */
-    fun getAllOccurrences(exercise: Exercise, clientID: Int): MutableList<ExerciseSession>{
+    fun getAllOccurrences(exercise: Exercise, clientID: Int): MutableList<ExerciseSession> {
         val cursor = db.rawQuery(DBQueries.DBOperations.getAllOccurrences(clientID, exercise.id), null)
         val exerciseSessions = generateSequence { if (cursor.moveToNext()) cursor else null }
             .map {
@@ -868,13 +785,13 @@ class DatabaseOperations(val context: Context) {
         return exerciseSessions
     }
 
-    fun cleanSessionChanges(): Boolean{
+    fun cleanSessionChanges(): Boolean {
         val calendar = Calendar.getInstance()
         val date = StaticFunctions.getStrDate(calendar)
         return trySQLCommand(DBQueries.DBOperations.cleanSessionChanges(date))
     }
 
-    fun getAllPrograms(): List<Program>{
+    fun getAllPrograms(): List<Program> {
         var cursor = db.rawQuery(DBQueries.DBOperations.getAllPrograms, null)
         val programs = generateSequence { if (cursor.moveToNext()) cursor else null }
             .map {
@@ -919,7 +836,7 @@ class DatabaseOperations(val context: Context) {
         return programs
     }
 
-    fun getProgram(id: Int): Program{
+    fun getProgram(id: Int): Program {
         var cursor = db.rawQuery(DBQueries.DBOperations.getProgram(id), null)
         val program: Program = if (cursor.moveToFirst()){
             Program(

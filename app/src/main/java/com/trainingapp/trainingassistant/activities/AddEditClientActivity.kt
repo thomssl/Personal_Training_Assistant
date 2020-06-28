@@ -4,8 +4,7 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.RadioGroup
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.isDigitsOnly
 import com.google.android.material.snackbar.Snackbar
@@ -34,6 +33,11 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
     private lateinit var userSettings: List<Int>
     private var isNew = false
     private lateinit var intentClient: Client
+    private lateinit var defaultDuration: String
+    private lateinit var lstDays: List<Switch>
+    private lateinit var lstTimes: List<Button>
+    private lateinit var lstDurations: List<EditText>
+    private lateinit var lstLabels: List<TextView>
 
     /**
      * Creation method overridden to initialize the DatabaseOperations object and set the rules of how the layout changes with user input
@@ -44,123 +48,79 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
         setContentView(R.layout.activity_add_edit_client)
         setTitle(R.string.edit_client_title)//default is edit client, changed if invalid client id sent
 
+        lstDays = listOf(
+            swWeeklyConstantIsSunday,
+            swWeeklyConstantIsMonday,
+            swWeeklyConstantIsTuesday,
+            swWeeklyConstantIsWednesday,
+            swWeeklyConstantIsThursday,
+            swWeeklyConstantIsFriday,
+            swWeeklyConstantIsSaturday
+        )
+        lstLabels = listOf(
+            lblWeeklyConstantSundayDuration,
+            lblWeeklyConstantMondayDuration,
+            lblWeeklyConstantTuesdayDuration,
+            lblWeeklyConstantWednesdayDuration,
+            lblWeeklyConstantThursdayDuration,
+            lblWeeklyConstantFridayDuration,
+            lblWeeklyConstantSundayDuration
+        )
+        lstTimes = listOf(
+            btnWeeklyConstantSundayTime,
+            btnWeeklyConstantMondayTime,
+            btnWeeklyConstantTuesdayTime,
+            btnWeeklyConstantWednesdayTime,
+            btnWeeklyConstantThursdayTime,
+            btnWeeklyConstantFridayTime,
+            btnWeeklyConstantSaturdayTime
+        )
+        lstDurations = listOf(
+            etxtWeeklyConstantSundayDuration,
+            etxtWeeklyConstantMondayDuration,
+            etxtWeeklyConstantTuesdayDuration,
+            etxtWeeklyConstantWednesdayDuration,
+            etxtWeeklyConstantThursdayDuration,
+            etxtWeeklyConstantFridayDuration,
+            etxtWeeklyConstantSaturdayDuration
+        )
+
         databaseOperations = DatabaseOperations(this)
         userSettings = databaseOperations.getUserSettings()
+        defaultDuration = userSettings[0].toString()
         radGrpAddEditClient.setOnCheckedChangeListener(this)
-        //each switch is set to follow similar rules. If it becomes checked, make the appropriate views visible and initialize the button text and duration to the default
-        //If it becomes unchecked, set views to invisible
-        swWeeklyConstantIsMonday.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked){
-                lblWeeklyConstantMondayDuration.visibility = View.VISIBLE
-                btnWeeklyConstantMondayTime.visibility = View.VISIBLE
-                btnWeeklyConstantMondayTime.text = getString(R.string.time_format)
-                etxtWeeklyConstantMondayDuration.visibility = View.VISIBLE
-                etxtWeeklyConstantMondayDuration.setText(userSettings[0].toString())
-            } else {
-                lblWeeklyConstantMondayDuration.visibility = View.INVISIBLE
-                btnWeeklyConstantMondayTime.visibility = View.INVISIBLE
-                etxtWeeklyConstantMondayDuration.visibility = View.INVISIBLE
-            }
-        }
-        swWeeklyConstantIsTuesday.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked){
-                lblWeeklyConstantTuesdayDuration.visibility = View.VISIBLE
-                btnWeeklyConstantTuesdayTime.visibility = View.VISIBLE
-                btnWeeklyConstantTuesdayTime.text = getString(R.string.time_format)
-                etxtWeeklyConstantTuesdayDuration.visibility = View.VISIBLE
-                etxtWeeklyConstantTuesdayDuration.setText(userSettings[0].toString())
-            } else {
-                lblWeeklyConstantTuesdayDuration.visibility = View.INVISIBLE
-                btnWeeklyConstantTuesdayTime.visibility = View.INVISIBLE
-                etxtWeeklyConstantTuesdayDuration.visibility = View.INVISIBLE
-            }
-        }
-        swWeeklyConstantIsWednesday.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked){
-                lblWeeklyConstantWednesdayDuration.visibility = View.VISIBLE
-                btnWeeklyConstantWednesdayTime.visibility = View.VISIBLE
-                btnWeeklyConstantWednesdayTime.text = getString(R.string.time_format)
-                etxtWeeklyConstantWednesdayDuration.visibility = View.VISIBLE
-                etxtWeeklyConstantWednesdayDuration.setText(userSettings[0].toString())
-            } else {
-                lblWeeklyConstantWednesdayDuration.visibility = View.INVISIBLE
-                btnWeeklyConstantWednesdayTime.visibility = View.INVISIBLE
-                etxtWeeklyConstantWednesdayDuration.visibility = View.INVISIBLE
-            }
-        }
-        swWeeklyConstantIsThursday.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked){
-                lblWeeklyConstantThursdayDuration.visibility = View.VISIBLE
-                btnWeeklyConstantThursdayTime.visibility = View.VISIBLE
-                btnWeeklyConstantThursdayTime.text = getString(R.string.time_format)
-                etxtWeeklyConstantThursdayDuration.visibility = View.VISIBLE
-                etxtWeeklyConstantThursdayDuration.setText(userSettings[0].toString())
-            } else {
-                lblWeeklyConstantThursdayDuration.visibility = View.INVISIBLE
-                btnWeeklyConstantThursdayTime.visibility = View.INVISIBLE
-                etxtWeeklyConstantThursdayDuration.visibility = View.INVISIBLE
-            }
-        }
-        swWeeklyConstantIsFriday.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked){
-                lblWeeklyConstantFridayDuration.visibility = View.VISIBLE
-                btnWeeklyConstantFridayTime.visibility = View.VISIBLE
-                btnWeeklyConstantFridayTime.text = getString(R.string.time_format)
-                etxtWeeklyConstantFridayDuration.visibility = View.VISIBLE
-                etxtWeeklyConstantFridayDuration.setText(userSettings[0].toString())
-            } else {
-                lblWeeklyConstantFridayDuration.visibility = View.INVISIBLE
-                btnWeeklyConstantFridayTime.visibility = View.INVISIBLE
-                etxtWeeklyConstantFridayDuration.visibility = View.INVISIBLE
-            }
-        }
-        swWeeklyConstantIsSaturday.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked){
-                lblWeeklyConstantSaturdayDuration.visibility = View.VISIBLE
-                btnWeeklyConstantSaturdayTime.visibility = View.VISIBLE
-                btnWeeklyConstantSaturdayTime.text = getString(R.string.time_format)
-                etxtWeeklyConstantSaturdayDuration.visibility = View.VISIBLE
-                etxtWeeklyConstantSaturdayDuration.setText(userSettings[0].toString())
-            } else {
-                lblWeeklyConstantSaturdayDuration.visibility = View.INVISIBLE
-                btnWeeklyConstantSaturdayTime.visibility = View.INVISIBLE
-                etxtWeeklyConstantSaturdayDuration.visibility = View.INVISIBLE
-            }
-        }
-        swWeeklyConstantIsSunday.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked){
-                lblWeeklyConstantSundayDuration.visibility = View.VISIBLE
-                btnWeeklyConstantSundayTime.visibility = View.VISIBLE
-                btnWeeklyConstantSundayTime.text = getString(R.string.time_format)
-                etxtWeeklyConstantSundayDuration.visibility = View.VISIBLE
-                etxtWeeklyConstantSundayDuration.setText(userSettings[0].toString())
-            } else {
-                lblWeeklyConstantSundayDuration.visibility = View.INVISIBLE
-                btnWeeklyConstantSundayTime.visibility = View.INVISIBLE
-                etxtWeeklyConstantSundayDuration.visibility = View.INVISIBLE
-            }
-        }
-        //get client from passed client id
+        //each switch is set to follow similar rules. If it becomes checked, make the appropriate views visible and initialize the button text and
+        // duration to the default. If it becomes unchecked, set views to invisible
+        swWeeklyConstantIsMonday.setOnCheckedChangeListener { _, isChecked -> handleWeeklyConstSwitch(isChecked, 1)}
+        swWeeklyConstantIsTuesday.setOnCheckedChangeListener { _, isChecked -> handleWeeklyConstSwitch(isChecked, 2) }
+        swWeeklyConstantIsWednesday.setOnCheckedChangeListener { _, isChecked -> handleWeeklyConstSwitch(isChecked, 3) }
+        swWeeklyConstantIsThursday.setOnCheckedChangeListener { _, isChecked -> handleWeeklyConstSwitch(isChecked, 4) }
+        swWeeklyConstantIsFriday.setOnCheckedChangeListener { _, isChecked -> handleWeeklyConstSwitch(isChecked, 5) }
+        swWeeklyConstantIsSaturday.setOnCheckedChangeListener { _, isChecked -> handleWeeklyConstSwitch(isChecked, 6) }
+        swWeeklyConstantIsSunday.setOnCheckedChangeListener { _, isChecked -> handleWeeklyConstSwitch(isChecked, 0) }
+        // Get client from passed client id
         intentClient = databaseOperations.getClient(intent.getIntExtra("id", 0))
-        if (intentClient.id == 0){//if client is invalid/blank
-            isNew = true//set flag
-            setTitle(R.string.add_client_title)//set title to add client
-        } else {//if valid client
+        // If client is invalid/blank
+        if (intentClient.id == 0){
+            // Set flag
+            isNew = true
+            // Set title to add client
+            setTitle(R.string.add_client_title)
+        } else {
+            // If valid client
             btnAddEditClientStartDate.text = intentClient.startDate
             btnAddEditClientEndDate.text = intentClient.endDate
             etxtAddEditClientName.setText(intentClient.name)
-            //populate layout depending upon client parameters
+            // Populate layout depending upon client parameters
             when (intentClient.schedule.scheduleType) {
                 ScheduleType.NO_SCHEDULE -> {
-                    etxtNoScheduleDuration.setText(intentClient.schedule.duration.toString())//load default duration to field
+                    // Load default duration to field
+                    etxtNoScheduleDuration.setText(intentClient.schedule.duration.toString())
                     radGrpAddEditClient.check(R.id.radIsNoSchedule)
                 }
-                ScheduleType.WEEKLY_CONSTANT -> {//use list of views to set appropriate view properties for client
-                    val lstDays = listOf(swWeeklyConstantIsSunday, swWeeklyConstantIsMonday, swWeeklyConstantIsTuesday, swWeeklyConstantIsWednesday, swWeeklyConstantIsThursday, swWeeklyConstantIsFriday, swWeeklyConstantIsSaturday)
-                    val lstTimes = listOf(btnWeeklyConstantSundayTime, btnWeeklyConstantMondayTime, btnWeeklyConstantTuesdayTime, btnWeeklyConstantWednesdayTime, btnWeeklyConstantThursdayTime, btnWeeklyConstantFridayTime, btnWeeklyConstantSaturdayTime)
-                    val lstDurations = listOf(etxtWeeklyConstantSundayDuration, etxtWeeklyConstantMondayDuration, etxtWeeklyConstantTuesdayDuration, etxtWeeklyConstantWednesdayDuration, etxtWeeklyConstantThursdayDuration, etxtWeeklyConstantFridayDuration, etxtWeeklyConstantSaturdayDuration)
-                    intentClient.schedule.daysList.forEachIndexed {//use (it - 1) because days are from 1-7 while indices is from 0-6
-                        index, it ->
+                // Use list of views to set appropriate view properties for client
+                ScheduleType.WEEKLY_CONSTANT -> {
+                    intentClient.schedule.daysList.forEachIndexed { index, it ->
                         if (it > 0) {
                             lstDays[index].isChecked = true
                             lstTimes[index].text = intentClient.getStrTime(index)
@@ -179,54 +139,54 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
                     etxtMonthlyVariableDuration.setText(intentClient.schedule.duration.toString())
                     radGrpAddEditClient.check(R.id.radIsMonthlyVar)
                 }
-                ScheduleType.BLANK -> finish()//close activity is ScheduleType is invalid
+                ScheduleType.BLANK -> finish()// Close activity is ScheduleType is invalid
             }
         }
     }
 
+    private fun handleWeeklyConstSwitch(isChecked: Boolean, dayOfWeek: Int) {
+        lstLabels[dayOfWeek].visibility = if (isChecked) View.VISIBLE else View.INVISIBLE
+        lstTimes[dayOfWeek].visibility = if (isChecked) View.VISIBLE else View.INVISIBLE
+        lstDurations[dayOfWeek].visibility = if (isChecked) View.VISIBLE else View.INVISIBLE
+        if (isChecked){
+            lstTimes[dayOfWeek].text = getString(R.string.time_format)
+            lstDurations[dayOfWeek].setText(defaultDuration)
+        }
+    }
+
     override fun onCheckedChanged(p0: RadioGroup?, checkedID: Int) {
+        val isNotNoSchedule = checkedID != R.id.radIsNoSchedule
+        btnAddEditClientEndDate.visibility = if(isNotNoSchedule) View.VISIBLE else View.GONE
+        lblAddEditClientEndDate.visibility = if(isNotNoSchedule) View.VISIBLE else View.GONE
+        btnAddEditClientStartDate.visibility = if(isNotNoSchedule) View.VISIBLE else View.GONE
+        lblAddEditClientStartDate.visibility = if(isNotNoSchedule) View.VISIBLE else View.GONE
         when (checkedID){
             //if not NoSchedule, make startDate and endDate views visible. if NoSchedule make views invisible
             //make the right include view visible
             R.id.radIsWeeklyConst -> {
-                btnAddEditClientEndDate.visibility = View.VISIBLE
-                lblAddEditClientEndDate.visibility = View.VISIBLE
-                btnAddEditClientStartDate.visibility = View.VISIBLE
-                lblAddEditClientStartDate.visibility = View.VISIBLE
                 incAddEditClientWeeklyConstant.visibility = View.VISIBLE
                 incAddEditClientWeeklyVariable.visibility = View.GONE
                 incAddEditClientMonthlyVariable.visibility = View.GONE
                 incAddEditClientNoSchedule.visibility = View.GONE
             }
             R.id.radIsWeeklyVar -> {
-                etxtWeeklyVariableDuration.setText(userSettings[0].toString())
-                btnAddEditClientEndDate.visibility = View.VISIBLE
-                lblAddEditClientEndDate.visibility = View.VISIBLE
-                btnAddEditClientStartDate.visibility = View.VISIBLE
-                lblAddEditClientStartDate.visibility = View.VISIBLE
+                etxtWeeklyVariableDuration.setText(defaultDuration)
                 incAddEditClientWeeklyConstant.visibility = View.GONE
                 incAddEditClientWeeklyVariable.visibility = View.VISIBLE
                 incAddEditClientMonthlyVariable.visibility = View.GONE
                 incAddEditClientNoSchedule.visibility = View.GONE
             }
             R.id.radIsMonthlyVar -> {
-                etxtMonthlyVariableDuration.setText(userSettings[0].toString())
-                btnAddEditClientEndDate.visibility = View.VISIBLE
-                lblAddEditClientEndDate.visibility = View.VISIBLE
-                btnAddEditClientStartDate.visibility = View.VISIBLE
-                lblAddEditClientStartDate.visibility = View.VISIBLE
+                etxtMonthlyVariableDuration.setText(defaultDuration)
                 incAddEditClientWeeklyConstant.visibility = View.GONE
                 incAddEditClientWeeklyVariable.visibility = View.GONE
                 incAddEditClientMonthlyVariable.visibility = View.VISIBLE
                 incAddEditClientNoSchedule.visibility = View.GONE
             }
             R.id.radIsNoSchedule -> {
-                btnAddEditClientEndDate.visibility = View.GONE
-                btnAddEditClientEndDate.text = getString(R.string.date_format)//reset values for when they become visible again and the value needs to be set again
-                lblAddEditClientEndDate.visibility = View.GONE
-                btnAddEditClientStartDate.visibility = View.GONE
-                btnAddEditClientStartDate.text = getString(R.string.date_format)//reset values for when they become visible again and the value needs to be set again
-                lblAddEditClientStartDate.visibility = View.GONE
+                //reset values for when they become visible again and the value needs to be set again
+                btnAddEditClientEndDate.text = getString(R.string.date_format)
+                btnAddEditClientStartDate.text = getString(R.string.date_format)
                 incAddEditClientWeeklyConstant.visibility = View.GONE
                 incAddEditClientWeeklyVariable.visibility = View.GONE
                 incAddEditClientMonthlyVariable.visibility = View.GONE
@@ -287,154 +247,307 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
      */
     fun onClientConfirm(view: View){
         val name = etxtAddEditClientName.text.toString()
-        if (!StaticFunctions.badSQLText(name)) {//first check, make sure the name does not contain any illegal characters or isBlank
-            val client: Client = when (radGrpAddEditClient.checkedRadioButtonId) {//create Client object depending upon the checked radio button
+        // First check, make sure the name does not contain any illegal characters or isBlank
+        if (!StaticFunctions.badSQLText(name)) {
+            // Create Client object depending upon the checked radio button
+            val client: Client = when (radGrpAddEditClient.checkedRadioButtonId) {
                 R.id.radIsWeeklyConst -> {
                     val startDate = btnAddEditClientStartDate.text.toString()
                     val endDate = btnAddEditClientEndDate.text.toString()
-                    if (startDate == getString(R.string.date_format) || endDate == getString(R.string.date_format)){//make sure startDate and endDate are not the default values
+                    // Make sure startDate and endDate are not the default values
+                    if (startDate == getString(R.string.date_format) || endDate == getString(R.string.date_format)){
                         Snackbar.make(view, "Error. Start date and/or end date was no chosen", Snackbar.LENGTH_LONG).show()
-                        return//exit function. Do nothing
+                        return
                     }
                     var hasDays = false
                     val days = mutableListOf(0,0,0,0,0,0,0)
                     val durations = mutableListOf(0,0,0,0,0,0,0)
-                    val lstDays = listOf(swWeeklyConstantIsSunday, swWeeklyConstantIsMonday, swWeeklyConstantIsTuesday, swWeeklyConstantIsWednesday, swWeeklyConstantIsThursday, swWeeklyConstantIsFriday, swWeeklyConstantIsSaturday)
-                    val lstTimes = listOf( btnWeeklyConstantSundayTime, btnWeeklyConstantMondayTime, btnWeeklyConstantTuesdayTime, btnWeeklyConstantWednesdayTime, btnWeeklyConstantThursdayTime, btnWeeklyConstantFridayTime, btnWeeklyConstantSaturdayTime)
-                    val lstDurations = listOf(etxtWeeklyConstantSundayDuration, etxtWeeklyConstantMondayDuration, etxtWeeklyConstantTuesdayDuration, etxtWeeklyConstantWednesdayDuration, etxtWeeklyConstantThursdayDuration, etxtWeeklyConstantFridayDuration, etxtWeeklyConstantSaturdayDuration)
-                    lstDays.forEachIndexed { index, switch ->  //loop through using the range of 0 -> length of lstDays (ie 0 -> 6)
-                        if (switch.isChecked) {//if day is checked
+                    // Loop through using the range of 0 -> length of lstDays (ie 0 -> 6)
+                    lstDays.forEachIndexed { index, switch ->
+                        if (switch.isChecked) {
                             hasDays = true
                             val time = lstTimes[index].text.toString()
-                            if (time != getString(R.string.time_format))//if time for day is not the default
-                                days[index] = StaticFunctions.getTimeInt(time)//add time as minute in day (format for database)
-                            else{//if time not set
-                                Snackbar.make(view, "Error. One or more of the times for a chosen day was not entered", Snackbar.LENGTH_LONG).show()
-                                return//exit function. Do Nothing
+                            // If time for day is not the default
+                            if (time != getString(R.string.time_format))
+                                // Add time as minute in day (format for database)
+                                days[index] = StaticFunctions.getTimeInt(time)
+                            // If time not set
+                            else {
+                                Snackbar.make(
+                                    view,
+                                    "Error. One or more of the times for a chosen day was not entered",
+                                    Snackbar.LENGTH_LONG
+                                ).show()
+                                return
                             }
                             val duration = lstDurations[index].text.toString()
-                            if (duration.isDigitsOnly() && duration.isNotBlank()) {//if the duration text is only digit (ie Int). Should always be true due to view's input type
-                                if (duration.toInt() in 1..120){//check if duration fits within range of 0 <= duration <= 120. See Wiki
+                            // If the duration text is only digit (ie Int). Should always be true due to view's input type
+                            if (duration.isDigitsOnly() && duration.isNotBlank()) {
+                                // Check if duration fits within range of 0 <= duration <= 120. See Wiki
+                                if (duration.toInt() in 1..120) {
                                     durations[index] = duration.toInt()
                                 } else {
-                                    Snackbar.make(view, "Error. The duration entered is 0 or greater than 120mins. See Wiki for more information", Snackbar.LENGTH_LONG).show()
-                                    return//exit function. Do nothing
+                                    Snackbar.make(
+                                        view,
+                                        "Error. The duration entered is 0 or greater than 120mins. See Wiki for more information",
+                                        Snackbar.LENGTH_LONG
+                                    ).show()
+                                    return
                                 }
                             } else {
-                                Snackbar.make(view, "Error. Duration is not an integer", Snackbar.LENGTH_LONG).show()
-                                return//exit function. Do nothing
+                                Snackbar.make(
+                                    view,
+                                    "Error. Duration is not an integer",
+                                    Snackbar.LENGTH_LONG
+                                ).show()
+                                return
                             }
                         }
                     }
                     if (!hasDays) {
-                        Snackbar.make(view, "Error. No days selected", Snackbar.LENGTH_LONG).show()
-                        return//exit function. Do nothing
+                        Snackbar.make(
+                            view,
+                            "Error. No days selected",
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                        return
                     }
-                    Client(intentClient.id, name, Schedule(ScheduleType.WEEKLY_CONSTANT, days.sumBy { if(it > 0) 1 else 0 }, 0, days, durations), startDate, endDate)//construct Client object with data
+                    Client(
+                        intentClient.id,
+                        name,
+                        Schedule(
+                            ScheduleType.WEEKLY_CONSTANT,
+                            days.sumBy { if(it > 0) 1 else 0 },
+                            0,
+                            days,
+                            durations
+                        ),
+                        startDate,
+                        endDate
+                    )
                 }
                 R.id.radIsWeeklyVar -> {
                     val startDate = btnAddEditClientStartDate.text.toString()
                     val endDate = btnAddEditClientEndDate.text.toString()
                     val duration = etxtWeeklyVariableDuration.text.toString()
                     val sessions = etxtWeeklyVariableNumSessions.text.toString()
-                    if (startDate == getString(R.string.date_format) || endDate == getString(R.string.date_format)) {//make sure startDate and endDate are not the default values
+                    // Make sure startDate and endDate are not the default values
+                    if (startDate == getString(R.string.date_format) || endDate == getString(R.string.date_format)) {
                         Snackbar.make(view, "Error. Start date and/or end date was no chosen", Snackbar.LENGTH_LONG).show()
-                        return//exit function. Do nothing
+                        return
                     }
-                    if (duration.isDigitsOnly() && duration.isNotBlank()) {//if the duration text is only digit (ie Int). Should always be true due to view's input type
-                        if (duration.toInt() > 120 || duration.toInt() <= 0){//check if duration fits within range of 0 <= duration <= 120. See Wiki
-                            Snackbar.make(view, "Error. The duration entered is 0 or greater than 120mins. See Wiki for more information", Snackbar.LENGTH_LONG).show()
-                            return//exit function. Do nothing
+                    // If the duration text is only digit (ie Int). Should always be true due to view's input type
+                    if (duration.isDigitsOnly() && duration.isNotBlank()) {
+                        // Check if duration fits within range of 0 <= duration <= 120. See Wiki
+                        if (duration.toInt() > 120 || duration.toInt() <= 0) {
+                            Snackbar.make(
+                                view,
+                                "Error. The duration entered is 0 or greater than 120mins. See Wiki for more information",
+                                Snackbar.LENGTH_LONG
+                            ).show()
+                            return
                         }
                     } else {
-                        Snackbar.make(view, "Error. Duration is not an integer", Snackbar.LENGTH_LONG).show()
-                        return//exit function. Do nothing
+                        Snackbar.make(
+                            view,
+                            "Error. Duration is not an integer",
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                        return
                     }
-                    if(sessions.isDigitsOnly() && sessions.isNotBlank()) {//if the # of sessions/week text is only digit (ie Int). Should always be true due to view's input type
-                        if (sessions.toInt() > 7 || sessions.toInt() <= 0){//check if # of sessions/week fits within range of 0 < # of sessions/week < 8
-                            Snackbar.make(view, "Error. Number of sessions is too high or too low for a single week", Snackbar.LENGTH_LONG).show()
-                            return//exit function. Do nothing
+                    // If the # of sessions/week text is only digit (ie Int). Should always be true due to view's input type
+                    if(sessions.isDigitsOnly() && sessions.isNotBlank()) {
+                        // Check if # of sessions/week fits within range of 0 < # of sessions/week < 8
+                        if (sessions.toInt() > 7 || sessions.toInt() <= 0) {
+                            Snackbar.make(
+                                view,
+                                "Error. Number of sessions is too high or too low for a single week",
+                                Snackbar.LENGTH_LONG
+                            ).show()
+                            return
                         }
                     } else {
-                        Snackbar.make(view, "Error. Number of sessions is not an integer", Snackbar.LENGTH_LONG).show()
-                        return//exit function. Do nothing
+                        Snackbar.make(
+                            view,
+                            "Error. Number of sessions is not an integer",
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                        return
                     }
-                    //construct Client object with collected data. Times is set to "0" as default. if duration is set to 0 the default duration from the user settings is used
-                    Client(intentClient.id, name, Schedule(ScheduleType.WEEKLY_VARIABLE, sessions.toInt(), if (duration.toInt() == 0) userSettings[0] else duration.toInt(), mutableListOf(), mutableListOf()), startDate, endDate)
+                    // Construct Client object with collected data. Times is set to "0" as default
+                    // If duration is set to 0 the default duration from the user settings is used
+                    Client(
+                        intentClient.id,
+                        name,
+                        Schedule(
+                            ScheduleType.WEEKLY_VARIABLE,
+                            sessions.toInt(),
+                            if (duration.toInt() == 0) userSettings[0] else duration.toInt(),
+                            mutableListOf(),
+                            mutableListOf()
+                        ),
+                        startDate,
+                        endDate
+                    )
                 }
                 R.id.radIsMonthlyVar -> {
                     val startDate = btnAddEditClientStartDate.text.toString()
                     val endDate = btnAddEditClientEndDate.text.toString()
                     val duration = etxtMonthlyVariableDuration.text.toString()
                     val sessions = etxtMonthlyVariableNumSessions.text.toString()
-                    if (startDate == getString(R.string.date_format) || endDate == getString(R.string.date_format)) {//make sure startDate and endDate are not the default values
-                        Snackbar.make(view, "Error. Start date and/or end date was no chosen", Snackbar.LENGTH_LONG).show()
-                        return//exit function. Do nothing
+                    // Make sure startDate and endDate are not the default values
+                    if (startDate == getString(R.string.date_format) || endDate == getString(R.string.date_format)) {
+                        Snackbar.make(
+                            view,
+                            "Error. Start date and/or end date was no chosen",
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                        return
                     }
-                    if (duration.isDigitsOnly() && duration.isNotBlank()) {//if the duration text is only digit (ie Int). Should always be true due to view's input type
-                        if (duration.toInt() > 120 || duration.toInt() <= 0){//check if duration fits within range of 0 <= duration <= 120. See Wiki
-                            Snackbar.make(view, "Error. The duration entered is 0 or greater than 120mins. See Wiki for more information", Snackbar.LENGTH_LONG).show()
-                            return//exit function. Do nothing
+                    // If the duration text is only digit (ie Int). Should always be true due to view's input type
+                    if (duration.isDigitsOnly() && duration.isNotBlank()) {
+                        // Check if duration fits within range of 0 <= duration <= 120. See Wiki
+                        if (duration.toInt() > 120 || duration.toInt() <= 0) {
+                            Snackbar.make(
+                                view,
+                                "Error. The duration entered is 0 or greater than 120mins. See Wiki for more information",
+                                Snackbar.LENGTH_LONG
+                            ).show()
+                            return
                         }
                     } else {
-                        Snackbar.make(view, "Error. Durations is not an integer", Snackbar.LENGTH_LONG).show()
-                        return//exit function. Do nothing
+                        Snackbar.make(
+                            view,
+                            "Error. Durations is not an integer",
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                        return
                     }
-                    if (sessions.isDigitsOnly() && sessions.isNotBlank()) {//if the # of sessions/month text is only digit (ie Int). Should always be true due to view's input type
-                        if (sessions.toInt() > 28 || sessions.toInt() <= 0){//check if # of sessions/week fits within range of 0 < # of sessions/week < 30
-                            Snackbar.make(view, "Error. Number of sessions is too high or too low for a single month", Snackbar.LENGTH_LONG).show()
-                            return//exit function. Do nothing
+                    // If the # of sessions/month text is only digit (ie Int). Should always be true due to view's input type
+                    if (sessions.isDigitsOnly() && sessions.isNotBlank()) {
+                        // Check if # of sessions/week fits within range of 0 < # of sessions/week < 30
+                        if (sessions.toInt() > 28 || sessions.toInt() <= 0) {
+                            Snackbar.make(
+                                view,
+                                "Error. Number of sessions is too high or too low for a single month",
+                                Snackbar.LENGTH_LONG
+                            ).show()
+                            return
                         }
                     } else {
-                        Snackbar.make(view, "Error. Number of sessions is not an integer", Snackbar.LENGTH_LONG).show()
-                        return//exit function. Do nothing
+                        Snackbar.make(
+                            view,
+                            "Error. Number of sessions is not an integer",
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                        return
                     }
-                    //construct Client object with collected data. Times is set to "0" as default. if duration is set to 0 the default duration from the user settings is used
-                    Client(intentClient.id, name, Schedule(ScheduleType.MONTHLY_VARIABLE, sessions.toInt(), if (duration.toInt() == 0) userSettings[0] else duration.toInt(), mutableListOf(), mutableListOf()), startDate, endDate)
+                    // Construct Client object with collected data. Times is set to "0" as default
+                    // If duration is set to 0 the default duration from the user settings is used
+                    Client(
+                        intentClient.id,
+                        name,
+                        Schedule(
+                            ScheduleType.MONTHLY_VARIABLE,
+                            sessions.toInt(),
+                            if (duration.toInt() == 0) userSettings[0] else duration.toInt(),
+                            mutableListOf(),
+                            mutableListOf()
+                        ),
+                        startDate,
+                        endDate
+                    )
                 }
                 R.id.radIsNoSchedule -> {
                     val duration = etxtNoScheduleDuration.text.toString()
-                    if (duration.isDigitsOnly() && duration.isNotBlank()){//if the duration text is only digit (ie Int). Should always be true due to view's input type
-                        if (duration.toInt() > 120 || duration.toInt() <= 0){//check if duration fits within range of 0 <= duration <= 120. See Wiki
-                            Snackbar.make(view, "Error. The duration entered is 0 or greater than 120mins. See Wiki for more information", Snackbar.LENGTH_LONG).show()
-                            return//exit function. Do nothing
+                    // If the duration text is only digit (ie Int). Should always be true due to view's input type
+                    if (duration.isDigitsOnly() && duration.isNotBlank()) {
+                        // Check if duration fits within range of 0 <= duration <= 120. See Wiki
+                        if (duration.toInt() > 120 || duration.toInt() <= 0) {
+                            Snackbar.make(
+                                view,
+                                "Error. The duration entered is 0 or greater than 120mins. See Wiki for more information",
+                                Snackbar.LENGTH_LONG
+                            ).show()
+                            return
                         }
                     } else {
-                        Snackbar.make(view, "Error. Duration is not an integer", Snackbar.LENGTH_LONG).show()
-                        return//exit function. Do nothing
+                        Snackbar.make(
+                            view,
+                            "Error. Duration is not an integer",
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                        return
                     }
-                    //construct Client object with collected data. Days, Times, StartDate and EndDate are set to "0" as default. if duration is set to 0 the default duration from the user settings is used
-                    Client(intentClient.id, name, Schedule(ScheduleType.NO_SCHEDULE, 0, if (duration.toInt() == 0) userSettings[0] else duration.toInt(), mutableListOf(), mutableListOf()), "0", "0")
+                    // Construct Client object with collected data. Days, Times, StartDate and EndDate are set to "0" as default
+                    // If duration is set to 0 the default duration from the user settings is used
+                    Client(
+                        intentClient.id,
+                        name,
+                        Schedule(
+                            ScheduleType.NO_SCHEDULE,
+                            0,
+                            if (duration.toInt() == 0) userSettings[0] else duration.toInt(),
+                            mutableListOf(),
+                            mutableListOf()
+                        ),
+                        "0",
+                        "0"
+                    )
                 }
                 else -> {
-                    //if somehow no radio button is selected a blank client is passed forward
-                    Client(intentClient.id, "", Schedule(ScheduleType.NO_SCHEDULE, 0, 0, mutableListOf(), mutableListOf()), "", "")
+                    // If somehow no radio button is selected a blank client is passed forward
+                    Client.empty
                 }
             }
-            if (client.name != "") {//if the blank client has moved forward, it will be ignored
-                //get conflicts with other existing clients. String will be empty if no conflicts and filled with conflict names if conflicts are found
-                val conflicts = if (client.schedule.scheduleType == ScheduleType.WEEKLY_CONSTANT) databaseOperations.checkClientConflict(client) else ""
-                if (conflicts.isEmpty()) {//if no conflicts found
+            // If the blank client has moved forward, it will be ignored
+            if (client.name != "") {
+                // Get conflicts with other existing clients. String will be empty if no conflicts and filled with names if conflicts are found
+                val conflicts = databaseOperations.checkClientConflict(client)
+                // If no conflicts found
+                if (conflicts.isEmpty()) {
                     if (isNew) {
                         if (databaseOperations.insertClient(client)) {
-                            Snackbar.make(view, "Inserted new client", Snackbar.LENGTH_LONG).show()
+                            Snackbar.make(
+                                view,
+                                "Inserted new client",
+                                Snackbar.LENGTH_LONG).show()
                             finish()
                         } else
-                            Snackbar.make(view, "SQL Error inserting new client", Snackbar.LENGTH_LONG).show()
+                            Snackbar.make(
+                                view,
+                                "SQL Error inserting new client",
+                                Snackbar.LENGTH_LONG).show()
                     } else {
                         if (databaseOperations.updateClient(client)) {
-                            Snackbar.make(view, "Updated client", Snackbar.LENGTH_LONG).show()
+                            Snackbar.make(
+                                view,
+                                "Updated client",
+                                Snackbar.LENGTH_LONG).show()
                             finish()
                         } else
-                            Snackbar.make(view, "SQL Error updating client", Snackbar.LENGTH_LONG).show()
+                            Snackbar.make(
+                                view,
+                                "SQL Error updating client",
+                                Snackbar.LENGTH_LONG).show()
                     }
                 } else
-                    Snackbar.make(view, "Error. Conflict with $conflicts", Snackbar.LENGTH_LONG).show()
+                    Snackbar.make(
+                        view,
+                        "Error. Conflict with $conflicts",
+                        Snackbar.LENGTH_LONG).show()
             } else {
-                Snackbar.make(view, "Error. No radio button selected", Snackbar.LENGTH_LONG).show()
+                Snackbar.make(
+                    view,
+                    "Error. No radio button selected",
+                    Snackbar.LENGTH_LONG).show()
             }
         } else {
-            Snackbar.make(view, if (name.isBlank()) "Name is empty" else "Invalid input character inside client name. See Wiki for more information", Snackbar.LENGTH_LONG).show()
+            Snackbar.make(
+                view,
+                if (name.isBlank()) "Name is empty" else "Invalid input character inside client name. See Wiki for more information",
+                Snackbar.LENGTH_LONG
+            ).show()
         }
     }
 }
