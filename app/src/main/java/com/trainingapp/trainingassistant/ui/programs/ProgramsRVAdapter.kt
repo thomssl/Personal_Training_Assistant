@@ -14,7 +14,11 @@ import com.trainingapp.trainingassistant.objects.Program
  * @param clickListener Function used by ProgramsFragment to handle item onClick event (ie edit program)
  * @param longClickListener Function used by ProgramsFragment to handle item onLongClick event (ie delete program)
  */
-class ProgramsRVAdapter(private val programs: ArrayList<Program>, private val clickListener: (Int) -> Unit, private val longClickListener: (Program) -> Boolean): RecyclerView.Adapter<ProgramsRVAdapter.ProgramViewHolder>() {
+class ProgramsRVAdapter(
+    private val programs: List<Program>,
+    private val clickListener: (Int) -> Unit,
+    private val longClickListener: (Program) -> Boolean
+): RecyclerView.Adapter<ProgramsRVAdapter.ProgramViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProgramViewHolder {
         return ProgramViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.program_row, parent, false))

@@ -14,7 +14,11 @@ import com.trainingapp.trainingassistant.objects.MuscleJoint
  * @param secondaryMovers Movers contained within the Exercise that need to be set as selected upon init
  * @param clickListener Function that handles the onClick event of an item within the AddEditExerciseActivity
  */
-class EditExerciseSecondaryRVAdapter(val muscleJoints: ArrayList<MuscleJoint>, private val secondaryMovers: ArrayList<MuscleJoint>, private val clickListener: (MuscleJoint, Boolean) -> Unit): RecyclerView.Adapter<EditExerciseSecondaryRVAdapter.AddExerciseSecondaryViewHolder>() {
+class EditExerciseSecondaryRVAdapter(
+    val muscleJoints: MutableList<MuscleJoint>,
+    private val secondaryMovers: MutableList<MuscleJoint>,
+    private val clickListener: (MuscleJoint, Boolean) -> Unit
+): RecyclerView.Adapter<EditExerciseSecondaryRVAdapter.AddExerciseSecondaryViewHolder>() {
 
     val isSelected = Array(muscleJoints.size) {false}
 

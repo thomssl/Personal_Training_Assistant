@@ -208,7 +208,7 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
      * Method to handle btnConfirmSession's onClick event. If the session has exercises attached, Update/Insert Session_log entry
      */
     fun clickBtnConfirmSession(view: View){
-        if (confirmSessionChanges()) Snackbar.make(view, "Session exercises inserted", Snackbar.LENGTH_LONG).show()
+        if (confirmSessionChanges()) Snackbar.make(view, "Session updated", Snackbar.LENGTH_LONG).show()
         else Snackbar.make(view, "Error confirming changes", Snackbar.LENGTH_LONG).show()
     }
 
@@ -381,6 +381,7 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
                 val exercise = sessionDialog.exercises[sessionDialog.exerciseNames.indexOf(exerciseName)]
                 val exerciseSession = ExerciseSession(exercise, sets, reps, resistance, order)
                 session.addExercise(exerciseSession)
+                changeExercise = true
                 setAdapter()
                 return true
             }
@@ -429,6 +430,7 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
             else -> {//if the input passes all tests, get populate a new ExerciseSession object and add that object to the Session
                 val exerciseSession = ExerciseSession(sessionDialog.exerciseSession.getExercise(), sets, reps, resistance, order)
                 session.updateExercise(exerciseSession, position)
+                changeExercise = true
                 setAdapter()
                 return true
             }

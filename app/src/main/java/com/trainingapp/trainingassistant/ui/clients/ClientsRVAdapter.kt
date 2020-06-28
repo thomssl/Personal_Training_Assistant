@@ -14,7 +14,7 @@ import com.trainingapp.trainingassistant.objects.Client
  * @param clickListener Function used by ClientsFragment to handle item onClick event (ie edit client)
  * @param longClickListener Function used by ClientsFragment to handle item onLonClick event (ie delete client)
  */
-class ClientsRVAdapter(private val clients: ArrayList<Client>, private val clickListener: (Int) -> Unit, private val longClickListener: (Client) -> Boolean): RecyclerView.Adapter<ClientsRVAdapter.ClientsViewHolder>() {
+class ClientsRVAdapter(private val clients: List<Client>, private val clickListener: (Int) -> Unit, private val longClickListener: (Client) -> Boolean): RecyclerView.Adapter<ClientsRVAdapter.ClientsViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClientsViewHolder {
         return ClientsViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.client_row, parent, false))

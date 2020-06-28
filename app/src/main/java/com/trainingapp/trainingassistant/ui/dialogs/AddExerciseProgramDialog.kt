@@ -16,8 +16,8 @@ import com.trainingapp.trainingassistant.ui.adapters.SearchForExerciseAutoComple
 class AddExerciseProgramDialog(private val  confirmListener: (AddExerciseProgramDialog) -> Boolean): DialogFragment() {
 
     private lateinit var databaseOperations: DatabaseOperations
-    var exercises = ArrayList<Exercise>()
-    var exerciseNames = ArrayList<String>()
+    lateinit var exercises: List<Exercise>
+    lateinit var exerciseNames: List<String>
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity.let {
@@ -37,7 +37,7 @@ class AddExerciseProgramDialog(private val  confirmListener: (AddExerciseProgram
         super.onAttach(context)
         databaseOperations = DatabaseOperations(context)
         exercises = databaseOperations.getAllExercises()
-        exercises.forEach{exerciseNames.add(it.name)}
+        exerciseNames = exercises.map { it.name }
     }
 
     override fun onStart() {

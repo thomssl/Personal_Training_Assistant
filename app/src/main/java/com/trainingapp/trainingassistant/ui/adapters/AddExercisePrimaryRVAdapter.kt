@@ -13,7 +13,10 @@ import com.trainingapp.trainingassistant.objects.MuscleJoint
  * @param muscleJoints List of all the possible muscles or joints the user can choose from
  * @param clickListener Function that handles the onClick event of an item within the AddEditExerciseActivity
  */
-class AddExercisePrimaryRVAdapter(val muscleJoints: ArrayList<MuscleJoint>, private val clickListener: (MuscleJoint) -> Unit): RecyclerView.Adapter<AddExercisePrimaryRVAdapter.AddExercisePrimaryViewHolder>() {
+class AddExercisePrimaryRVAdapter(
+    val muscleJoints: MutableList<MuscleJoint>,
+    private val clickListener: (MuscleJoint) -> Unit
+): RecyclerView.Adapter<AddExercisePrimaryRVAdapter.AddExercisePrimaryViewHolder>() {
 
     var selectedPosition: Int = -1//used to tell which item is selected, init as -1 to say no item is selected
 

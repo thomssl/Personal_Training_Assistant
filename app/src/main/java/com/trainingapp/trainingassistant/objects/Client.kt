@@ -1,5 +1,7 @@
 package com.trainingapp.trainingassistant.objects
 
+import com.trainingapp.trainingassistant.enumerators.ScheduleType
+
 /**
  * Object to hold information gathered about a client
  * @param id Unique key given to the client when a new client is inserted. Used to differentiate session data in the database
@@ -18,6 +20,21 @@ class Client (
     var startDate: String,
     var endDate: String
 ) {
+    companion object{
+        val empty = Client(
+            0,
+            "",
+            Schedule(
+                ScheduleType.NO_SCHEDULE,
+                0,
+                0,
+                mutableListOf(),
+                mutableListOf()
+            ),
+            "",
+            ""
+        )
+    }
 
     fun getDaysString(): String = schedule.getDays()
     fun getTimesString(): String = schedule.getTimes()

@@ -11,7 +11,6 @@ import com.trainingapp.trainingassistant.R
 import com.trainingapp.trainingassistant.enumerators.ExerciseType
 import com.trainingapp.trainingassistant.objects.Exercise
 import java.util.*
-import kotlin.collections.ArrayList
 
 /**
  * Custom array adapter for Adding an ExerciseSession to an exercise. Allows for search methods beyond text match
@@ -19,9 +18,13 @@ import kotlin.collections.ArrayList
  * @param resource Layout resource used for each list item
  * @param exercises Full list of exercises to search through
  */
-class SearchForExerciseAutoComplete(context: Context, private val resource: Int, val exercises: ArrayList<Exercise>) : ArrayAdapter<String>(context, resource) {
+class SearchForExerciseAutoComplete(
+    context: Context,
+    private val resource: Int,
+    val exercises: List<Exercise>
+) : ArrayAdapter<String>(context, resource) {
 
-    var resultData = ArrayList<Exercise>()//used to fill the FilterResults object
+    var resultData = exercises.toMutableList()//used to fill the FilterResults object
 
     override fun getCount(): Int = resultData.size
 
@@ -50,13 +53,13 @@ class SearchForExerciseAutoComplete(context: Context, private val resource: Int,
             val filterResults = FilterResults()
             resultData.clear()
             if (input == null){//if input is null, fill the list with entire library of exercises
-                resultData = ArrayList(exercises.toList())
+                resultData = exercises.toMutableList()
                 filterResults.values = resultData
                 filterResults.count = resultData.size
                 return filterResults
             }
             if (input.isBlank()){//if input has no characters, fill the list with entire library of exercises
-                resultData = ArrayList(exercises.toList())
+                resultData = exercises.toMutableList()
                 filterResults.values = resultData
                 filterResults.count = resultData.size
             } else {

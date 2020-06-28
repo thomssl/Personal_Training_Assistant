@@ -15,9 +15,10 @@ import com.trainingapp.trainingassistant.objects.Program
  * @param clickListener Function from AddEditProgramActivity to handle the onClick event of an item
  * @param longClickListener Function from AddEditProgramActivity to handle the onLongClick event of an item
  */
-class ProgramExercisesRVAdapter(var program: Program,
-                                private val clickListener: (ExerciseProgram, Int) -> Unit,
-                                private val longClickListener: (ExerciseProgram) -> Boolean
+class ProgramExercisesRVAdapter(
+    var program: Program,
+    private val clickListener: (ExerciseProgram, Int) -> Unit,
+    private val longClickListener: (ExerciseProgram) -> Boolean
 ) : RecyclerView.Adapter<ProgramExercisesRVAdapter.ProgramExercisesViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProgramExercisesViewHolder {

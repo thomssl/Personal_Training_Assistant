@@ -16,10 +16,14 @@ class Schedule (
     var scheduleType: ScheduleType,
     var days: Int,
     var duration: Int,
-    var daysList: ArrayList<Int>,
-    var durationsList: ArrayList<Int>
+    var daysList: MutableList<Int>,
+    var durationsList: MutableList<Int>
 ) {
 
+    val sessionDays: List<ClientConflictData>
+        get() = daysList.mapIndexed { index, it ->
+            ClientConflictData(index,it until it + durationsList[index])
+        }.filter { it.range.first != 0 }
     /**
      * Method to get the clients days for UI or database operations. Output accounts for ScheduleType
      * @return String value representing the days attribute of the client
@@ -28,8 +32,8 @@ class Schedule (
         return when (scheduleType){
             ScheduleType.WEEKLY_CONSTANT -> {
                 val builder = StringBuilder()
-                daysList.forEachIndexed { index, i ->
-                    if (i > 0)
+                daysList.forEachIndexed { index, it ->
+                    if (it > 0)
                         builder.append("${StaticFunctions.NumToDay[index+1]}\n")
                 }
                 if (builder.isNotBlank())

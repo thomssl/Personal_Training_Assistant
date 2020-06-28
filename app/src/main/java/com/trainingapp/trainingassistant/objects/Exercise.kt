@@ -16,7 +16,7 @@ class Exercise(
     var name: String,
     var type: ExerciseType,
     var primaryMover: MuscleJoint,
-    private val secondaryMovers: ArrayList<MuscleJoint>
+    private val secondaryMovers: MutableList<MuscleJoint>
 ) {
     /**
      * Method to get the names of all the secondary movers as a joined string
@@ -46,7 +46,7 @@ class Exercise(
     /**
      * Method to get a copy of the secondary movers list
      */
-    fun getLstSecondaryMovers(): ArrayList<MuscleJoint> = ArrayList(secondaryMovers.toList())
+    fun getLstSecondaryMovers(): MutableList<MuscleJoint> = secondaryMovers.toMutableList()
 
     //secondary movers operations
     fun addSecondaryMover(muscleJoint: MuscleJoint) = secondaryMovers.add(muscleJoint)

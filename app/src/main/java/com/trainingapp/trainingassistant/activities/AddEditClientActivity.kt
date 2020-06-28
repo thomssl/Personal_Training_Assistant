@@ -5,9 +5,7 @@ import android.app.TimePickerDialog
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
-import android.widget.EditText
 import android.widget.RadioGroup
-import android.widget.Switch
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.isDigitsOnly
 import com.google.android.material.snackbar.Snackbar
@@ -23,7 +21,6 @@ import kotlinx.android.synthetic.main.no_schedule.*
 import kotlinx.android.synthetic.main.weekly_constant.*
 import kotlinx.android.synthetic.main.weekly_variable.*
 import java.util.*
-import kotlin.collections.ArrayList
 
 /**
  * Activity to Add a new client or edit an existing client. A client id is sent to the activity through the intent and is used to get a client object.
@@ -34,7 +31,7 @@ import kotlin.collections.ArrayList
 class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeListener {
 
     private lateinit var databaseOperations: DatabaseOperations
-    private var userSettings = ArrayList<Int>()
+    private lateinit var userSettings: List<Int>
     private var isNew = false
     private lateinit var intentClient: Client
 
@@ -159,9 +156,9 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
                     radGrpAddEditClient.check(R.id.radIsNoSchedule)
                 }
                 ScheduleType.WEEKLY_CONSTANT -> {//use list of views to set appropriate view properties for client
-                    val lstDays = ArrayList<Switch>(listOf(swWeeklyConstantIsSunday, swWeeklyConstantIsMonday, swWeeklyConstantIsTuesday, swWeeklyConstantIsWednesday, swWeeklyConstantIsThursday, swWeeklyConstantIsFriday, swWeeklyConstantIsSaturday))
-                    val lstTimes = ArrayList<Button>(listOf(btnWeeklyConstantSundayTime, btnWeeklyConstantMondayTime, btnWeeklyConstantTuesdayTime, btnWeeklyConstantWednesdayTime, btnWeeklyConstantThursdayTime, btnWeeklyConstantFridayTime, btnWeeklyConstantSaturdayTime))
-                    val lstDurations = ArrayList<EditText>(listOf(etxtWeeklyConstantSundayDuration, etxtWeeklyConstantMondayDuration, etxtWeeklyConstantTuesdayDuration, etxtWeeklyConstantWednesdayDuration, etxtWeeklyConstantThursdayDuration, etxtWeeklyConstantFridayDuration, etxtWeeklyConstantSaturdayDuration))
+                    val lstDays = listOf(swWeeklyConstantIsSunday, swWeeklyConstantIsMonday, swWeeklyConstantIsTuesday, swWeeklyConstantIsWednesday, swWeeklyConstantIsThursday, swWeeklyConstantIsFriday, swWeeklyConstantIsSaturday)
+                    val lstTimes = listOf(btnWeeklyConstantSundayTime, btnWeeklyConstantMondayTime, btnWeeklyConstantTuesdayTime, btnWeeklyConstantWednesdayTime, btnWeeklyConstantThursdayTime, btnWeeklyConstantFridayTime, btnWeeklyConstantSaturdayTime)
+                    val lstDurations = listOf(etxtWeeklyConstantSundayDuration, etxtWeeklyConstantMondayDuration, etxtWeeklyConstantTuesdayDuration, etxtWeeklyConstantWednesdayDuration, etxtWeeklyConstantThursdayDuration, etxtWeeklyConstantFridayDuration, etxtWeeklyConstantSaturdayDuration)
                     intentClient.schedule.daysList.forEachIndexed {//use (it - 1) because days are from 1-7 while indices is from 0-6
                         index, it ->
                         if (it > 0) {
@@ -300,11 +297,11 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
                         return//exit function. Do nothing
                     }
                     var hasDays = false
-                    val days = ArrayList<Int>(listOf(0,0,0,0,0,0,0))
-                    val durations = ArrayList<Int>(listOf(0,0,0,0,0,0,0))
-                    val lstDays = ArrayList<Switch>(listOf(swWeeklyConstantIsSunday, swWeeklyConstantIsMonday, swWeeklyConstantIsTuesday, swWeeklyConstantIsWednesday, swWeeklyConstantIsThursday, swWeeklyConstantIsFriday, swWeeklyConstantIsSaturday))
-                    val lstTimes = ArrayList<Button>(listOf( btnWeeklyConstantSundayTime, btnWeeklyConstantMondayTime, btnWeeklyConstantTuesdayTime, btnWeeklyConstantWednesdayTime, btnWeeklyConstantThursdayTime, btnWeeklyConstantFridayTime, btnWeeklyConstantSaturdayTime))
-                    val lstDurations = ArrayList<EditText>(listOf(etxtWeeklyConstantSundayDuration, etxtWeeklyConstantMondayDuration, etxtWeeklyConstantTuesdayDuration, etxtWeeklyConstantWednesdayDuration, etxtWeeklyConstantThursdayDuration, etxtWeeklyConstantFridayDuration, etxtWeeklyConstantSaturdayDuration))
+                    val days = mutableListOf(0,0,0,0,0,0,0)
+                    val durations = mutableListOf(0,0,0,0,0,0,0)
+                    val lstDays = listOf(swWeeklyConstantIsSunday, swWeeklyConstantIsMonday, swWeeklyConstantIsTuesday, swWeeklyConstantIsWednesday, swWeeklyConstantIsThursday, swWeeklyConstantIsFriday, swWeeklyConstantIsSaturday)
+                    val lstTimes = listOf( btnWeeklyConstantSundayTime, btnWeeklyConstantMondayTime, btnWeeklyConstantTuesdayTime, btnWeeklyConstantWednesdayTime, btnWeeklyConstantThursdayTime, btnWeeklyConstantFridayTime, btnWeeklyConstantSaturdayTime)
+                    val lstDurations = listOf(etxtWeeklyConstantSundayDuration, etxtWeeklyConstantMondayDuration, etxtWeeklyConstantTuesdayDuration, etxtWeeklyConstantWednesdayDuration, etxtWeeklyConstantThursdayDuration, etxtWeeklyConstantFridayDuration, etxtWeeklyConstantSaturdayDuration)
                     lstDays.forEachIndexed { index, switch ->  //loop through using the range of 0 -> length of lstDays (ie 0 -> 6)
                         if (switch.isChecked) {//if day is checked
                             hasDays = true
@@ -363,7 +360,7 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
                         return//exit function. Do nothing
                     }
                     //construct Client object with collected data. Times is set to "0" as default. if duration is set to 0 the default duration from the user settings is used
-                    Client(intentClient.id, name, Schedule(ScheduleType.WEEKLY_VARIABLE, sessions.toInt(), if (duration.toInt() == 0) userSettings[0] else duration.toInt(), ArrayList(), ArrayList()), startDate, endDate)
+                    Client(intentClient.id, name, Schedule(ScheduleType.WEEKLY_VARIABLE, sessions.toInt(), if (duration.toInt() == 0) userSettings[0] else duration.toInt(), mutableListOf(), mutableListOf()), startDate, endDate)
                 }
                 R.id.radIsMonthlyVar -> {
                     val startDate = btnAddEditClientStartDate.text.toString()
@@ -393,7 +390,7 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
                         return//exit function. Do nothing
                     }
                     //construct Client object with collected data. Times is set to "0" as default. if duration is set to 0 the default duration from the user settings is used
-                    Client(intentClient.id, name, Schedule(ScheduleType.MONTHLY_VARIABLE, sessions.toInt(), if (duration.toInt() == 0) userSettings[0] else duration.toInt(), ArrayList(), ArrayList()), startDate, endDate)
+                    Client(intentClient.id, name, Schedule(ScheduleType.MONTHLY_VARIABLE, sessions.toInt(), if (duration.toInt() == 0) userSettings[0] else duration.toInt(), mutableListOf(), mutableListOf()), startDate, endDate)
                 }
                 R.id.radIsNoSchedule -> {
                     val duration = etxtNoScheduleDuration.text.toString()
@@ -407,11 +404,11 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
                         return//exit function. Do nothing
                     }
                     //construct Client object with collected data. Days, Times, StartDate and EndDate are set to "0" as default. if duration is set to 0 the default duration from the user settings is used
-                    Client(intentClient.id, name, Schedule(ScheduleType.NO_SCHEDULE, 0, if (duration.toInt() == 0) userSettings[0] else duration.toInt(), ArrayList(), ArrayList()), "0", "0")
+                    Client(intentClient.id, name, Schedule(ScheduleType.NO_SCHEDULE, 0, if (duration.toInt() == 0) userSettings[0] else duration.toInt(), mutableListOf(), mutableListOf()), "0", "0")
                 }
                 else -> {
                     //if somehow no radio button is selected a blank client is passed forward
-                    Client(intentClient.id, "", Schedule(ScheduleType.NO_SCHEDULE, 0, 0, ArrayList(), ArrayList()), "", "")
+                    Client(intentClient.id, "", Schedule(ScheduleType.NO_SCHEDULE, 0, 0, mutableListOf(), mutableListOf()), "", "")
                 }
             }
             if (client.name != "") {//if the blank client has moved forward, it will be ignored

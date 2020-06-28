@@ -3,7 +3,6 @@ package com.trainingapp.trainingassistant
 import com.trainingapp.trainingassistant.enumerators.ExerciseType
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 /**
  * Static class to provide other classes and methods with the ability to perform operations common to multiple classes
@@ -11,17 +10,7 @@ import kotlin.collections.ArrayList
  */
 class StaticFunctions {
     companion object{
-        val NumToDay = ArrayList<String>()
-        init{
-            NumToDay.add("Empty")
-            NumToDay.add("Sun")
-            NumToDay.add("Mon")
-            NumToDay.add("Tue")
-            NumToDay.add("Wed")
-            NumToDay.add("Thu")
-            NumToDay.add("Fri")
-            NumToDay.add("Sat")
-        }
+        val NumToDay = listOf("Empty","Sun","Mon","Tue","Wed","Thu","Fri","Sat")
 
         /**
          * Method to return a calendar object representing a datetime formatted String
@@ -34,7 +23,7 @@ class StaticFunctions {
                 SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CANADA)
             else//if String passed to function does not contain the time
                 SimpleDateFormat("yyyy-MM-dd", Locale.CANADA)
-            cal.time = dateFormatter.parse(strDate)
+            cal.time = dateFormatter.parse(strDate)!!
             return cal
         }
 
@@ -58,7 +47,7 @@ class StaticFunctions {
          */
         fun getTimeInt(strTime: String): Int{
             val calendar = Calendar.getInstance()
-            calendar.time = SimpleDateFormat("hh:mm a", Locale.CANADA).parse(strTime)
+            calendar.time = SimpleDateFormat("hh:mm a", Locale.CANADA).parse(strTime)!!
             return (calendar[Calendar.HOUR_OF_DAY]*60) + calendar[Calendar.MINUTE]
         }
 
@@ -71,17 +60,12 @@ class StaticFunctions {
         }
 
         /**
-         * Method to convert csv string to ArrayList of Int
+         * Method to convert csv string to a List of Int. Can return null if input is empty
          */
-        fun toArrayListInt(str: String): ArrayList<Int>{
-            val lstInt = ArrayList<Int>()//empty list
+        fun toListInt(str: String): List<Int>{
             //if not empty string, proceed to separate by ','. if empty string, return empty list
-            if (str.isNotEmpty()) {
-                val lstStr = str.split(",")
-                for (entry in lstStr)
-                    lstInt.add(entry.toInt())
-            }
-            return lstInt
+            if (str.isEmpty()) return listOf()
+            return str.split(",").map { it.toInt() }
         }
 
         /**

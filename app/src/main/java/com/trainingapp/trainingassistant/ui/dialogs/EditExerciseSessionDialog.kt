@@ -16,8 +16,8 @@ import com.trainingapp.trainingassistant.objects.ExerciseSession
 class EditExerciseSessionDialog(val exerciseSession: ExerciseSession, private val position: Int, private val  confirmListener: (EditExerciseSessionDialog, Int) -> Boolean): DialogFragment() {
 
     private lateinit var databaseOperations: DatabaseOperations
-    var exercises = ArrayList<Exercise>()
-    private var exerciseNames = ArrayList<String>()
+    lateinit var exercises: List<Exercise>
+    private lateinit var exerciseNames: List<String>
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity.let {
@@ -41,7 +41,7 @@ class EditExerciseSessionDialog(val exerciseSession: ExerciseSession, private va
         super.onAttach(context)
         databaseOperations = DatabaseOperations(context)
         exercises = databaseOperations.getAllExercises()
-        exercises.forEach{exerciseNames.add(it.name)}
+        exerciseNames = exercises.map { it.name }
     }
 
     override fun onStart() {

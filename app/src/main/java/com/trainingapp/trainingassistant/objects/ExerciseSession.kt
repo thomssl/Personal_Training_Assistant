@@ -19,13 +19,22 @@ class ExerciseSession(
     var name: String,
     var type: ExerciseType,
     private val primaryMover: MuscleJoint,
-    private val secondaryMovers: ArrayList<MuscleJoint>,
+    private val secondaryMovers: MutableList<MuscleJoint>,
     var sets: String,
     var reps: String,
     var resistance: String,
     var order: Int
 ): Comparable<ExerciseSession>{
 
+    companion object {
+        fun empty(exercise: Exercise) = ExerciseSession(
+            exercise,
+            "",
+            "",
+            "",
+            0
+        )
+    }
     /**
      * Secondary constructor to populate an ExerciseSession with an Exercise, sets, reps, resistance and order instead of all the base data.
      * Used most often due to simplicity

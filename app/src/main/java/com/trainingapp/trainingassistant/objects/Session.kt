@@ -2,7 +2,6 @@ package com.trainingapp.trainingassistant.objects
 
 import com.trainingapp.trainingassistant.StaticFunctions
 import java.util.*
-import kotlin.collections.ArrayList
 
 /**
  * Object to hold the assigned and collected data about a client's session
@@ -20,7 +19,7 @@ class Session(
     dayTime: String,
     var notes: String,
     var duration: Int,
-    var exercises: ArrayList<ExerciseSession>
+    var exercises: MutableList<ExerciseSession>
 ): Comparable<Session> {
 
     // Used to ask a Session object for a certain SQL command
@@ -28,6 +27,16 @@ class Session(
         const val INSERT_COMMAND = 1
         const val UPDATE_COMMAND = 2
         const val DELETE_COMMAND = 3
+
+        fun empty(id: Int, name: String, dayTime: String) = Session(
+            0,
+            id,
+            name,
+            dayTime,
+            "",
+            0,
+            mutableListOf()
+        )
     }
 
     var date: Calendar = StaticFunctions.getDate(dayTime)
@@ -101,7 +110,7 @@ class Session(
      * For example, a new date can be used in the clone to check conflicts with the new theoretical Session without altering the original Session
      * @return copy of the original Session with the added parameters substituting the original Sessions attributes
      */
-    fun clone(dayTime: String = "", exercises: ArrayList<ExerciseSession> = ArrayList(), notes: String = "", duration: Int = 0): Session{
+    fun clone(dayTime: String = "", exercises: MutableList<ExerciseSession> = mutableListOf(), notes: String = "", duration: Int = 0): Session{
         return Session(
             sessionID,
             clientID,
@@ -114,8 +123,8 @@ class Session(
     }
     private fun getAllExerciseInserts(): String{
         val strSessionID = if (sessionID == 0)
-            "(Select program_id " +
-            "From Programs " +
+            "(Select session_id " +
+            "From Session_Log " +
             "Where client_id = $clientID " +
             "And datetime(dayTime) = datetime('${StaticFunctions.getStrDateTime(date)}'))"
         else
@@ -126,7 +135,7 @@ class Session(
     private fun getDeleteSessionLogCommand() = "Delete From Session_log Where session_id = $sessionID;"
     private fun getInsertExercisesCommand(): String {
         return if (hasExercises())
-            "Insert Into Program_Exercises(program_id, exercise_id, sets, reps, resistance, exercise_order) Values ${getAllExerciseInserts()}"
+            "Insert Into Session_Exercises(session_id, exercise_id, sets, reps, resistance, exercise_order) Values ${getAllExerciseInserts()}"
         else ""
     }
 

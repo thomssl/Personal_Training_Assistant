@@ -15,18 +15,17 @@ import com.trainingapp.trainingassistant.enumerators.ScheduleType
 import com.trainingapp.trainingassistant.objects.Client
 import com.trainingapp.trainingassistant.objects.Session
 import java.util.*
-import kotlin.collections.ArrayList
 
-class AddSessionDialog(private val clients: ArrayList<Client>, private val calendar: Calendar, private val confirmListener: (Session, ScheduleType) -> Boolean): DialogFragment() {
+class AddSessionDialog(private val clients: List<Client>, private val calendar: Calendar, private val confirmListener: (Session, ScheduleType) -> Boolean): DialogFragment() {
 
-    private val clientNames = ArrayList<String>()
+    private lateinit var clientNames: List<String>
     private lateinit var btnTime: Button
     private lateinit var spnNames: Spinner
     private lateinit var txtDuration: EditText
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        clients.forEach { clientNames.add("${it.name}${if (it.schedule.scheduleType == ScheduleType.WEEKLY_CONSTANT) " (makeup session)" else ""}") }
+        clientNames = clients.map { "${it.name}${if (it.schedule.scheduleType == ScheduleType.WEEKLY_CONSTANT) " (makeup session)" else ""}" }
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -54,7 +53,19 @@ class AddSessionDialog(private val clients: ArrayList<Client>, private val calen
                     val duration = strDuration.toInt()
                     val client = clients[spnNames.selectedItemPosition]
                     if (duration in 1..120) {
-                        if (confirmListener(Session(0, client.id, client.name, StaticFunctions.getStrDateTime(calendar), "", strDuration.toInt(), ArrayList()), client.schedule.scheduleType))
+                        if (confirmListener(
+                                Session(
+                                    0,
+                                    client.id,
+                                    client.name,
+                                    StaticFunctions.getStrDateTime(calendar),
+                                    "",
+                                    strDuration.toInt(),
+                                    mutableListOf()
+                                ),
+                                client.schedule.scheduleType
+                            )
+                        )
                             dismiss()
                     } else {
                         Toast.makeText(context, "Duration not valid. See Wiki 'Input Fields'", Toast.LENGTH_LONG).show()

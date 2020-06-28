@@ -6,7 +6,7 @@ import com.trainingapp.trainingassistant.StaticFunctions
  * Object to hold sessions for a single day
  * @param sessions List of Session objects for a given date, initially sorted by time of the session within the day
  */
-class Day (private var sessions: ArrayList<Session>) {
+class Day (private var sessions: MutableList<Session>) {
 
     init {
         sessions.sort()//sort sessions by time when object initialized
@@ -57,18 +57,17 @@ class Day (private var sessions: ArrayList<Session>) {
     fun checkConflict(session: Session, isSameDate: Boolean = false): Boolean{
         var result = false
         for(daySession in sessions){
-            //val isSameClient = session.clientID == daySession.clientID
-            result = if (session.clientID == daySession.clientID)
-                StaticFunctions.compareTimeRanges(daySession.getTimeRange(), session.getTimeRange())
-            else
-                !isSameDate
-            /*
-            if (session.clientID == daySession.clientID)//if the session being analyzed is not for the same client as the given session
-                result = StaticFunctions.compareTimeRanges(daySession.getTimeRange(), session.getTimeRange())//compare time ranges for the sessions to see if there is an overlap
-            else //if (isSameClient && !isSameDate)//if the session being analyzed is for the same client as the given session and the isSameDate flag is not set (ie if it breaks the rule of one session per day per client), set result as true
-                result = !isSameDate*/
+            val isSameClient = session.clientID == daySession.clientID
+            //if the session being analyzed is not for the same client as the given session
+            if (!isSameClient)
+                result = StaticFunctions.compareTimeRanges(daySession.getTimeRange(), session.getTimeRange())
+            //if the session being analyzed is for the same client as the given session and the isSameDate flag is not set (ie if it breaks the
+            //rule of one session per day per client), set result as true
+            else if (isSameClient && !isSameDate)
+                result = true
 
-            if (result)//if the analyzed session fails the tests, break the loop and return the result as true
+            //if the analyzed session fails the tests, break the loop and return the result as true
+            if (result)
                 break
             //if the analyzed session passes the tests keep going with the loop until the end or a session fails the tests
         }
@@ -81,8 +80,5 @@ class Day (private var sessions: ArrayList<Session>) {
      */
     fun getConflicts(): List<Int> {
         return sessions.filter { session ->  checkConflict(session, true) }.mapIndexed { index, _ ->  index}
-        /*val conflicts = ArrayList<Int>()
-        sessions.forEachIndexed { index, session2 -> if (checkConflict(session2, true)) conflicts.add(index) }
-        return conflicts*/
     }
 }

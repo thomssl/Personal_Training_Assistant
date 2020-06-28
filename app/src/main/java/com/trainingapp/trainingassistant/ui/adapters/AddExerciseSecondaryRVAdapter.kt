@@ -13,7 +13,10 @@ import com.trainingapp.trainingassistant.objects.MuscleJoint
  * @param muscleJoints List of all the possible muscles or joints the user can choose from
  * @param clickListener Function that handles the onClick event of an item within the AddEditExerciseActivity
  */
-class AddExerciseSecondaryRVAdapter(val muscleJoints: ArrayList<MuscleJoint>, private val clickListener: (MuscleJoint, Boolean) -> Unit): RecyclerView.Adapter<AddExerciseSecondaryRVAdapter.AddExerciseSecondaryViewHolder>() {
+class AddExerciseSecondaryRVAdapter(
+    val muscleJoints: List<MuscleJoint>,
+    private val clickListener: (MuscleJoint, Boolean) -> Unit
+): RecyclerView.Adapter<AddExerciseSecondaryRVAdapter.AddExerciseSecondaryViewHolder>() {
 
     val isSelected = Array(muscleJoints.size) {false}//running journal of which items are selected
 

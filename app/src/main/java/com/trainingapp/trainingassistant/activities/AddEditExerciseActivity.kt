@@ -27,8 +27,8 @@ import kotlinx.android.synthetic.main.activity_add_edit_exercise.*
 class AddEditExerciseActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
     private lateinit var databaseOperations: DatabaseOperations
-    private var muscles = ArrayList<MuscleJoint>()
-    private var joints = ArrayList<MuscleJoint>()
+    private lateinit var muscles: MutableList<MuscleJoint>
+    private lateinit var joints: MutableList<MuscleJoint>
     private lateinit var exercise: Exercise
     private var isNew = false
 
@@ -41,13 +41,13 @@ class AddEditExerciseActivity : AppCompatActivity(), AdapterView.OnItemSelectedL
         muscles = databaseOperations.getAllMuscles()
         joints = databaseOperations.getAllJoints()
         exercise = databaseOperations.getExercise(intent.getIntExtra("id", 0))//get Exercise from id. If no exercise is found (ie invalid id) a blank exercise is returned with an id of 0
-        val temp = ArrayList<MuscleJoint>()//used to hold the possible secondary movers with the primary mover chosen removed. Only used if editing an exercise
+        val temp = mutableListOf<MuscleJoint>()//used to hold the possible secondary movers with the primary mover chosen removed. Only used if editing an exercise
         isNew = exercise.id == 0//sets isNew flag based upon the id of the returned Exercise id
         if (isNew){//if creating a new exercise
             setTitle(R.string.add_exercise_activity)//change title of activity
             exercise.type = ExerciseType.STRENGTH//set Exercise object's exercise type as the default
         } else {//if editing an existing exercise
-            if (exercise.type == ExerciseType.STRENGTH)//fill the temp ArrayList depending upon the exercise type
+            if (exercise.type == ExerciseType.STRENGTH)//fill the temp list depending upon the exercise type
                 muscles.forEach { temp.add(it) }
             else
                 joints.forEach { temp.add(it) }
@@ -58,11 +58,11 @@ class AddEditExerciseActivity : AppCompatActivity(), AdapterView.OnItemSelectedL
         spnAddEditExerciseType.setSelection(exercise.type.num - 1)//the exercise type num corresponds to the spinner index + 1
         etxtAddEditExerciseName.setText(exercise.name)
         if (exercise.type == ExerciseType.STRENGTH){//if the exercise type is Strength, fill the adapter(s) with muscle information
-            if (!isNew)//if is edit exercise, populate secondary movers with temp ArrayList and send secondary movers already selected
+            if (!isNew)//if is edit exercise, populate secondary movers with temp list and send secondary movers already selected
                 rvAddEditExerciseSecondaryMover.adapter = EditExerciseSecondaryRVAdapter(temp, exercise.getLstSecondaryMovers()) { muscleJoint, isSelected -> onSecondaryItemClick(muscleJoint, isSelected) }
             rvAddEditExercisePrimeMover.adapter = EditExercisePrimaryRVAdapter(muscles, muscles.indexOf(exercise.primaryMover)) { muscleJoint -> onPrimaryItemClick(muscleJoint) }
         } else {//if the exercise type is Mobility or Stability, fill the adapter(s) with joint information
-            if (!isNew)//if it is edit exercise, populate secondary movers with temp ArrayList and send secondary movers already selected
+            if (!isNew)//if it is edit exercise, populate secondary movers with temp list and send secondary movers already selected
                 rvAddEditExerciseSecondaryMover.adapter = EditExerciseSecondaryRVAdapter(temp, exercise.getLstSecondaryMovers()) { muscleJoint, isSelected -> onSecondaryItemClick(muscleJoint, isSelected) }
             rvAddEditExercisePrimeMover.adapter = EditExercisePrimaryRVAdapter(joints, joints.indexOf(exercise.primaryMover)) { muscleJoint -> onPrimaryItemClick(muscleJoint) }
         }
@@ -118,7 +118,7 @@ class AddEditExerciseActivity : AppCompatActivity(), AdapterView.OnItemSelectedL
                     rvAddEditExercisePrimeMover.adapter = AddExercisePrimaryRVAdapter(joints) { muscleJoint -> onPrimaryItemClick(muscleJoint)}
                 }
             }
-            rvAddEditExerciseSecondaryMover.adapter = AddExerciseSecondaryRVAdapter(ArrayList()) { muscleJoint, isSelected -> onSecondaryItemClick(muscleJoint, isSelected) }//in all cases the secondary movers RecyclerView will be assigned to blank
+            rvAddEditExerciseSecondaryMover.adapter = AddExerciseSecondaryRVAdapter(listOf()) { muscleJoint, isSelected -> onSecondaryItemClick(muscleJoint, isSelected) }//in all cases the secondary movers RecyclerView will be assigned to blank
         }
     }
 
@@ -128,12 +128,11 @@ class AddEditExerciseActivity : AppCompatActivity(), AdapterView.OnItemSelectedL
      */
     private fun onPrimaryItemClick(muscleJoint: MuscleJoint){
         exercise.primaryMover = muscleJoint
-        val temp = ArrayList<MuscleJoint>()//temp ArrayList to be sent to the secondary movers RecyclerView. Will be populated with the muscle or joint data with respect to the exercise type
-        if (exercise.type == ExerciseType.STRENGTH)
-            muscles.forEach { temp.add(it) }
+        val temp = if (exercise.type == ExerciseType.STRENGTH)
+            muscles.filter { it != muscleJoint }
         else
-            joints.forEach { temp.add(it) }
-        temp.remove(muscleJoint)
+            joints.filter { it != muscleJoint }
+        //temp.remove(muscleJoint)
         rvAddEditExerciseSecondaryMover.adapter = AddExerciseSecondaryRVAdapter(temp) { muscleJointAdapter, isSelected -> onSecondaryItemClick(muscleJointAdapter, isSelected) }
     }
 

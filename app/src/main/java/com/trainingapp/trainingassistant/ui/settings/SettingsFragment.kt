@@ -20,7 +20,7 @@ import kotlinx.android.synthetic.main.fragment_settings.*
 class SettingsFragment: Fragment(), View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
     private lateinit var databaseOperations: DatabaseOperations
-    private var userSettings = ArrayList<Int>()
+    private lateinit var userSettings: MutableList<Int>
     private lateinit var iFragmentToActivity: IFragmentToActivity
 
     override fun onAttach(context: Context) {
@@ -32,7 +32,7 @@ class SettingsFragment: Fragment(), View.OnClickListener, CompoundButton.OnCheck
             Toast.makeText(context, "Could not cast context as IFragmentToActivity", Toast.LENGTH_LONG).show()
         }
         databaseOperations = DatabaseOperations(context)
-        userSettings = databaseOperations.getUserSettings()
+        userSettings = databaseOperations.getUserSettings().toMutableList()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

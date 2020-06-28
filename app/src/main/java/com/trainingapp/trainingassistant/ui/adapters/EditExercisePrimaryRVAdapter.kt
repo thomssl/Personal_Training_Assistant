@@ -14,7 +14,10 @@ import com.trainingapp.trainingassistant.objects.MuscleJoint
  * @param indexSelected index of the primary mover contained within the Exercise that need to be set as selected upon init
  * @param clickListener Function that handles the onClick event of an item within the AddEditExerciseActivity
  */
-class EditExercisePrimaryRVAdapter(val muscleJoints: ArrayList<MuscleJoint>, indexSelected: Int, private val clickListener: (MuscleJoint) -> Unit): RecyclerView.Adapter<EditExercisePrimaryRVAdapter.AddExercisePrimaryViewHolder>() {
+class EditExercisePrimaryRVAdapter(
+    val muscleJoints: MutableList<MuscleJoint>,
+    indexSelected: Int, private val clickListener: (MuscleJoint) -> Unit
+): RecyclerView.Adapter<EditExercisePrimaryRVAdapter.AddExercisePrimaryViewHolder>() {
 
     var selectedPosition: Int = if (indexSelected >= 0) indexSelected else -1//used to tell which item is selected. init as -1 if passed index is invalid, else set as invalid index
 

@@ -13,11 +13,15 @@ import com.trainingapp.trainingassistant.database.DatabaseOperations
 import com.trainingapp.trainingassistant.objects.Exercise
 import com.trainingapp.trainingassistant.objects.ExerciseProgram
 
-class EditExerciseProgramDialog(val exerciseProgram: ExerciseProgram, private val position: Int, private val  confirmListener: (EditExerciseProgramDialog, Int) -> Boolean): DialogFragment() {
+class EditExerciseProgramDialog(
+    private val exerciseProgram: ExerciseProgram,
+    private val position: Int,
+    private val  confirmListener: (EditExerciseProgramDialog, Int) -> Boolean
+): DialogFragment() {
 
     private lateinit var databaseOperations: DatabaseOperations
-    var exercises = ArrayList<Exercise>()
-    private var exerciseNames = ArrayList<String>()
+    lateinit var exercises: List<Exercise>
+    private lateinit var exerciseNames: List<String>
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity.let {
@@ -41,7 +45,7 @@ class EditExerciseProgramDialog(val exerciseProgram: ExerciseProgram, private va
         super.onAttach(context)
         databaseOperations = DatabaseOperations(context)
         exercises = databaseOperations.getAllExercises()
-        exercises.forEach{exerciseNames.add(it.name)}
+        exerciseNames = exercises.map { it.name }
     }
 
     override fun onStart() {

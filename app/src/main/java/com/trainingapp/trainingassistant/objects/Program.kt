@@ -5,9 +5,18 @@ class Program (
     var name: String,
     var days: Int,
     var desc: String,
-    var exercises: ArrayList<ExerciseProgram>
+    var exercises: MutableList<ExerciseProgram>
 ) {
 
+    companion object {
+        val empty = Program(
+            0,
+            "",
+            0,
+            "",
+            mutableListOf()
+        )
+    }
     //used to validate that a program has exercises
     // stops the user from removing all exercises from a session than updating or confirming a session that has never had any exercises
     private fun hasExercises(): Boolean = exercises.size > 0

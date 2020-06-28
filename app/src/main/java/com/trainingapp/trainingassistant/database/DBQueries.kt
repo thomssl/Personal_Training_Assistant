@@ -178,7 +178,7 @@ object DBQueries {
             fun getClientSessions(id: Int) =    "Select s.client_id," +
                                         "               c.client_name," +
                                         "               s.dayTime," +
-                                        "               s.program_id," +
+                                        "               s.session_id," +
                                         "               s.duration," +
                                         "               s.notes" +
                                         "        From Session_Log s" +
@@ -401,7 +401,7 @@ object DBQueries {
                                                             "               resistance," +
                                                             "               exercise_order" +
                                                             "        From Session_Exercises se" +
-                                                            "        Inner Join Session_Log s On se.program_id=s.program_id" +
+                                                            "        Inner Join Session_Log s On se.session_id=s.session_id" +
                                                             "        Where client_id = $clientID" +
                                                             "        And exercise_id = $exerciseID" +
                                                             "        Order By dayTime Desc" +
@@ -412,7 +412,7 @@ object DBQueries {
                                                             "               resistance," +
                                                             "               exercise_order" +
                                                             "        From Session_Exercises pe" +
-                                                            "        Inner Join Session_Log s On se.program_id=s.program_id" +
+                                                            "        Inner Join Session_Log s On se.session_id=s.session_id" +
                                                             "        Where client_id = $clientID" +
                                                             "        And exercise_id = $exerciseID" +
                                                             "        Order By dayTime Desc;"

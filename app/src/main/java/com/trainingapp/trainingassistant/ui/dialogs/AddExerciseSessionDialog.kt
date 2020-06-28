@@ -14,11 +14,14 @@ import com.trainingapp.trainingassistant.database.DatabaseOperations
 import com.trainingapp.trainingassistant.objects.Exercise
 import com.trainingapp.trainingassistant.ui.adapters.SearchForExerciseAutoComplete
 
-class AddExerciseSessionDialog(private val clientID: Int, private val  confirmListener: (AddExerciseSessionDialog) -> Boolean): DialogFragment() {
+class AddExerciseSessionDialog(
+    private val clientID: Int,
+    private val  confirmListener: (AddExerciseSessionDialog) -> Boolean
+): DialogFragment() {
 
     private lateinit var databaseOperations: DatabaseOperations
-    var exercises = ArrayList<Exercise>()
-    var exerciseNames = ArrayList<String>()
+    lateinit var exercises: List<Exercise>
+    lateinit var exerciseNames: List<String>
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity.let {
@@ -47,7 +50,7 @@ class AddExerciseSessionDialog(private val clientID: Int, private val  confirmLi
         super.onAttach(context)
         databaseOperations = DatabaseOperations(context)
         exercises = databaseOperations.getAllExercises()
-        exercises.forEach{exerciseNames.add(it.name)}
+        exerciseNames = exercises.map { it.name }
     }
 
     override fun onStart() {

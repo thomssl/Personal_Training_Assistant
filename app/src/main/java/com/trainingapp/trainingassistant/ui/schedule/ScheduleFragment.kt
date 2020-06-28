@@ -65,9 +65,9 @@ class ScheduleFragment : Fragment(), CalendarView.OnDateChangeListener, Coroutin
      * UI coroutine to get and set adapter for rvDailySchedule. If no sessions found in the Day, display lblScheduleEmpty
      */
     private fun setAdapter() = launch{
-        prgScheduleData.visibility = View.VISIBLE
+        prgScheduleData?.visibility = View.VISIBLE
         val adapter = getAdapter()
-        prgScheduleData.visibility = View.GONE
+        prgScheduleData?.visibility = View.GONE
         rvDailySchedule.adapter = adapter
         if (day.getSessionCount() > 0) {
             lblScheduleEmpty.visibility = View.INVISIBLE

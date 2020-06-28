@@ -19,7 +19,7 @@ class ExerciseProgram(
     var name: String,
     var type: ExerciseType,
     private val primaryMover: MuscleJoint,
-    private val secondaryMovers: ArrayList<MuscleJoint>,
+    private val secondaryMovers: MutableList<MuscleJoint>,
     var sets: String,
     var reps: String,
     var day: Int,
