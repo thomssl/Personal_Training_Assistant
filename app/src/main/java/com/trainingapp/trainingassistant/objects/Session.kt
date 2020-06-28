@@ -14,7 +14,7 @@ import java.util.*
  * @param duration duration of the session in minutes
  * @param exercises list of exercises performed during the session
  */
-class Session(
+class Session (
     val sessionID: Int,
     var clientID: Int,
     var clientName: String,

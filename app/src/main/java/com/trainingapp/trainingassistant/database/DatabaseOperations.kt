@@ -274,19 +274,6 @@ class DatabaseOperations(val context: Context) {
     fun updateClient(client: Client): Boolean = trySQLCommand(client.getUpdateCommand())
     fun deleteClient(client: Client): Boolean = trySQLCommand(client.getDeleteCommand())
 
-/*    *
-     * Private method to get the ExerciseType enum from an int obtained from the database
-     * @param type Int representation of the ExerciseType
-     * @return corresponding ExerciseType of the Int parameter*/
-/*    private fun getExerciseType(type: Int): ExerciseType {
-        return when(type){
-            1 -> ExerciseType.STRENGTH
-            2 -> ExerciseType.MOBILITY
-            3 -> ExerciseType.STABILITY
-            else -> ExerciseType.BLANK
-        }
-    }*/
-
     /**
      * Method to get an Exercises object given and exercise id
      * @param id id value of an exercise. See Exercises Table for more information
@@ -491,17 +478,8 @@ class DatabaseOperations(val context: Context) {
         //gets base Session class information, fills in the client_name with a join and finds only sessions for a given client
         var cursor = db.rawQuery(DBQueries.DBOperations.getClientSessions(client.id), null)
         val sessions = generateSequence { if (cursor.moveToNext()) cursor else null }
-            .map {
-                Session(
-                    it.getInt(it.getColumnIndex(DBInfo.SessionLogTable.SESSION_ID)),
-                    it.getInt(it.getColumnIndex(DBInfo.SessionLogTable.CLIENT_ID)),
-                    it.getString(it.getColumnIndex(DBInfo.ClientsTable.NAME)),
-                    it.getString(it.getColumnIndex(DBInfo.SessionLogTable.DAYTIME)),
-                    it.getString(it.getColumnIndex(DBInfo.SessionLogTable.NOTES)),
-                    it.getInt(it.getColumnIndex(DBInfo.SessionLogTable.DURATION)),
-                    mutableListOf()
-                )
-            }.toList()
+            .map { Session.withCursor(it) }
+            .toList()
         cursor.close()
         val sessionIDs = sessions.filter { it.sessionID != 0 }.joinToString(",")
         cursor = db.rawQuery(DBQueries.DBOperations.getMultiSessionsExercises(sessionIDs), null)
