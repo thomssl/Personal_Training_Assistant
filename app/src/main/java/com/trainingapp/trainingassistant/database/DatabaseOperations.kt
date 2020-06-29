@@ -4,7 +4,6 @@ import android.content.Context
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
 import com.trainingapp.trainingassistant.StaticFunctions
-import com.trainingapp.trainingassistant.enumerators.ExerciseType
 import com.trainingapp.trainingassistant.enumerators.ScheduleType
 import com.trainingapp.trainingassistant.objects.*
 import java.util.*
@@ -282,27 +281,10 @@ class DatabaseOperations(val context: Context) {
     fun getExercise(id: Int): Exercise {
         //gets base Exercise class information and fills in the ExerciseType using a join and Case clause to get the appropriate data (ie if strength, muscle_name and if mobility or stability, joint_name)
         val cursor = db.rawQuery(DBQueries.DBOperations.getExercise(id), null)
-        val exercise = if (cursor.moveToFirst()) {
-            val exerciseID = cursor.getInt(cursor.getColumnIndex(DBInfo.ExercisesTable.ID))
-            val primaryMover = MuscleJoint(
-                cursor.getInt(cursor.getColumnIndex(DBInfo.ExercisesTable.PRIMARY_MOVER)),
-                cursor.getString(cursor.getColumnIndex(DBInfo.AliasesUsed.PRIMARY_MOVER_NAME))
-            )
-            Exercise(
-                exerciseID,
-                cursor.getString(cursor.getColumnIndex(DBInfo.ExercisesTable.NAME)),
-                Exercise.getExerciseType(cursor.getInt(cursor.getColumnIndex(DBInfo.ExercisesTable.TYPE))),
-                primaryMover,
-                getSecondaryMoversFromCSV(exerciseID, cursor.getString(cursor.getColumnIndex(DBInfo.AliasesUsed.SECONDARY_MOVERS_IDS)), cursor.getString(cursor.getColumnIndex(DBInfo.AliasesUsed.SECONDARY_MOVERS_NAMES)))
-            )
-        }
-        else Exercise(
-            0,
-            "",
-            ExerciseType.BLANK,
-            MuscleJoint(0,""),
-            mutableListOf()
-        )
+        val exercise = if (cursor.moveToFirst())
+            Exercise.withCursor(cursor)
+        else
+            Exercise.empty
         cursor.close()
         return exercise
     }
@@ -316,24 +298,8 @@ class DatabaseOperations(val context: Context) {
         //gets base Exercise class information and fills in the ExerciseType using a join and Case clause to get the appropriate data (ie if strength, muscle_name and if mobility or stability, joint_name)
         val cursor = db.rawQuery(DBQueries.DBOperations.getAllExercises(), null)
         val exercises = generateSequence { if (cursor.moveToNext()) cursor else null }
-            .map {
-                val exerciseID = it.getInt(it.getColumnIndex(DBInfo.ExercisesTable.ID))
-                val primaryMover = MuscleJoint(
-                    it.getInt(it.getColumnIndex(DBInfo.ExercisesTable.PRIMARY_MOVER)),
-                    it.getString(it.getColumnIndex(DBInfo.AliasesUsed.PRIMARY_MOVER_NAME))
-                )
-                Exercise(
-                    exerciseID,
-                    it.getString(it.getColumnIndex(DBInfo.ExercisesTable.NAME)),
-                    Exercise.getExerciseType(it.getInt(it.getColumnIndex(DBInfo.ExercisesTable.TYPE))),
-                    primaryMover,
-                    getSecondaryMoversFromCSV(
-                        exerciseID,
-                        it.getString(it.getColumnIndex(DBInfo.AliasesUsed.SECONDARY_MOVERS_IDS)),
-                        it.getString(cursor.getColumnIndex(DBInfo.AliasesUsed.SECONDARY_MOVERS_NAMES))
-                    )
-                )
-            }.toList()
+            .map {Exercise.withCursor(it) }
+            .toList()
         cursor.close()
         return exercises
     }

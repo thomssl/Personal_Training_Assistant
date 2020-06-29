@@ -1,6 +1,8 @@
 package com.trainingapp.trainingassistant.objects
 
+import android.database.Cursor
 import com.trainingapp.trainingassistant.StaticFunctions
+import com.trainingapp.trainingassistant.database.DBInfo
 import com.trainingapp.trainingassistant.enumerators.ExerciseType
 
 /**
@@ -21,6 +23,14 @@ class Exercise(
 ) {
 
     companion object {
+        val empty = Exercise(
+            0,
+            "",
+            ExerciseType.BLANK,
+            MuscleJoint.empty,
+            mutableListOf()
+        )
+
         /**
          * Static method to get the ExerciseType enum from an int obtained from the database
          * @param type Int representation of the ExerciseType
@@ -50,6 +60,25 @@ class Exercise(
             val lstSecondaryMoversIDs = StaticFunctions.toListInt(csvSecondaryMoversIDs)
             val lstSecondaryMoversNames = csvSecondaryMoversNames.split(",")
             return lstSecondaryMoversIDs.mapIndexed { index, s -> MuscleJoint(s, lstSecondaryMoversNames[index]) }.toMutableList()
+        }
+
+        fun withCursor(it: Cursor): Exercise {
+            val exerciseID = it.getInt(it.getColumnIndex(DBInfo.ExercisesTable.ID))
+            val primaryMover = MuscleJoint(
+                it.getInt(it.getColumnIndex(DBInfo.ExercisesTable.PRIMARY_MOVER)),
+                it.getString(it.getColumnIndex(DBInfo.AliasesUsed.PRIMARY_MOVER_NAME))
+            )
+            return Exercise(
+                exerciseID,
+                it.getString(it.getColumnIndex(DBInfo.ExercisesTable.NAME)),
+                getExerciseType(it.getInt(it.getColumnIndex(DBInfo.ExercisesTable.TYPE))),
+                primaryMover,
+                getSecondaryMoversFromCSV(
+                    exerciseID,
+                    it.getString(it.getColumnIndex(DBInfo.AliasesUsed.SECONDARY_MOVERS_IDS)),
+                    it.getString(it.getColumnIndex(DBInfo.AliasesUsed.SECONDARY_MOVERS_NAMES))
+                )
+            )
         }
     }
     /**
