@@ -105,7 +105,7 @@ object DBQueries {
 
             fun getExerciseConflict(name: String, id: Int) =    "Select exercise_name" +
                                                         "        From Exercises" +
-                                                        "        Where exercise_name = '$name'" +
+                                                        "        Where upper(exercise_name) = upper('$name')" +
                                                         "        And exercise_id <> $id;"
 
             fun getMuscle(id: Int) =    "Select muscle_id," +
@@ -126,7 +126,7 @@ object DBQueries {
 
             fun getMuscleConflict(name: String, id: Int) =  "Select muscle_name" +
                                                     "        From Muscles" +
-                                                    "        Where muscle_name = '$name'" +
+                                                    "        Where upper(muscle_name) = upper('$name')" +
                                                     "        And muscle_id <> $id"
 
             fun insertMuscle(name: String) =    "Insert Into Muscles(muscle_name)" +
