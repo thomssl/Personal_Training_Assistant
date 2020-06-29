@@ -88,10 +88,10 @@ class Exercise(
     fun clearSecondaryMovers() = secondaryMovers.clear()
 
     //database operations
-    fun getInsertCommand(): String = "Insert Into Exercises(exercise_name, exercise_type, primary_mover) " +
+    fun getInsertCommand(): String = "Insert Into Exercises(exercise_name, exercise_type, primary_mover_id) " +
                                      "Values('$name', ${type.num}, ${primaryMover.id});${getDatabaseSecondaryMovers()}"
     fun getUpdateCommand(): String = "Update Exercises " +
-                                     "Set exercise_name = '$name', exercise_type = ${type.num}, primary_mover = ${primaryMover.id} " +
+                                     "Set exercise_name = '$name', exercise_type = ${type.num}, primary_mover_id = ${primaryMover.id} " +
                                      "Where exercise_id = $id;" +
                                      "Delete From Secondary_Movers Where exercise_id = $id;" +
                                      getDatabaseSecondaryMovers()

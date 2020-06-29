@@ -15,16 +15,18 @@ import com.trainingapp.trainingassistant.objects.MuscleJoint
  * @param clickListener Function that handles the onClick event of an item within the AddEditExerciseActivity
  */
 class EditExerciseSecondaryRVAdapter(
-    val muscleJoints: MutableList<MuscleJoint>,
+    val muscleJoints: List<MuscleJoint>,
     private val secondaryMovers: MutableList<MuscleJoint>,
     private val clickListener: (MuscleJoint, Boolean) -> Unit
 ): RecyclerView.Adapter<EditExerciseSecondaryRVAdapter.AddExerciseSecondaryViewHolder>() {
 
-    val isSelected = Array(muscleJoints.size) {false}
+    lateinit var isSelected: MutableList<Boolean>
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AddExerciseSecondaryViewHolder {
-        if (secondaryMovers.isNotEmpty())//check to make sure the list has items
-            muscleJoints.forEach { isSelected[muscleJoints.indexOf(it)] = secondaryMovers.contains(it) }//for each possible MuscleJoint, check to see if that item should be selected
+        //check to make sure the list has items
+        if (secondaryMovers.isNotEmpty())
+            //for each possible MuscleJoint, check to see if that item should be selected
+            isSelected = muscleJoints.map { secondaryMovers.contains(it) }.toMutableList()
         return AddExerciseSecondaryViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.mover_row, parent, false))
     }
 
@@ -38,7 +40,8 @@ class EditExerciseSecondaryRVAdapter(
 
         fun onBindItems(muscleJoint: MuscleJoint, position: Int){
             itemView.findViewById<TextView>(R.id.txtExerciseMoverName).text = muscleJoint.name
-            itemView.setOnClickListener(this)//used to internally handle the onClick event and use passed function
+            //used to internally handle the onClick event and use passed function
+            itemView.setOnClickListener(this)
             itemView.isSelected = isSelected[position]
         }
 
@@ -46,8 +49,10 @@ class EditExerciseSecondaryRVAdapter(
             val position = adapterPosition
             isSelected[position] = !isSelected[position]
             itemView.isSelected = !itemView.isSelected
-            clickListener(muscleJoints[position], isSelected[position])//sends selected/deselected item to activity to add/remove the secondary mover
-            notifyItemChanged(position)//notify adapter that item state has changed
+            //sends selected/deselected item to activity to add/remove the secondary mover
+            clickListener(muscleJoints[position], isSelected[position])
+            //notify adapter that item state has changed
+            notifyItemChanged(position)
         }
     }
 }
