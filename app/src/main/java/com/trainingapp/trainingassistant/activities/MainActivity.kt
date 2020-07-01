@@ -37,11 +37,13 @@ import java.util.*
  * Activity that holds the NavigationDrawer. When the drawer items are selected the appropriate Fragment is loaded and displayed
  * A common FloatingActionButton is displayed over some Fragments and depending upon the open Fragment, an add process is started
  */
-class MainActivity : AppCompatActivity(),
-                        View.OnClickListener,
-                        NavController.OnDestinationChangedListener,
-                        SettingsFragment.IFragmentToActivity,
-                        ScheduleFragment.IFragmentToActivity {
+class MainActivity :
+    AppCompatActivity(),
+    View.OnClickListener,
+    NavController.OnDestinationChangedListener,
+    SettingsFragment.IFragmentToActivity,
+    ScheduleFragment.IFragmentToActivity
+{
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var navController: NavController
@@ -102,7 +104,8 @@ class MainActivity : AppCompatActivity(),
     }
 
     /**
-     * Method used to save a prebuilt database to the applications data folder. This includes base information and does nothing if the database file already exists in the data folder
+     * Method used to save a prebuilt database to the applications data folder
+     * This includes base information and does nothing if the database file already exists in the data folder
      */
     private fun loadPreBuiltDatabase() {
         val file = File(getString(R.string.filePath))
@@ -127,21 +130,27 @@ class MainActivity : AppCompatActivity(),
     }
 
     /**
-     * Method to handle the FloatingActionButton's onClick event. Proceeds with the appropriate add process depending upon the current NavigationController destination
-     * @param view FloatingActionButton view used to create Snackbars
+     * Method to handle the FloatingActionButton's onClick event.
+     * Proceeds with the appropriate add process depending upon the current NavigationController destination
+     * @param view FloatingActionButton view
      */
     override fun onClick(view: View) {
         when (navController.currentDestination!!.id){
-            R.id.nav_schedule -> {//uses updated date from CalendarView and creates an AddSessionDialog to insert the new session
-                val dialog = AddSessionDialog(databaseOperations.getAddSessionsClientsByDay(calendar), calendar) { session, scheduleType -> addSessionConfirm(session,scheduleType) }
+            //uses updated date from CalendarView and creates an AddSessionDialog to insert the new session
+            R.id.nav_schedule -> {
+                val dialog = AddSessionDialog(databaseOperations.getAddSessionsClientsByDay(calendar), calendar) {
+                        session, scheduleType -> addSessionConfirm(session,scheduleType)
+                }
                 dialog.show(supportFragmentManager, "Add Session")
             }
-            R.id.nav_clients -> {//creates and uses Intent to start an AddEditClientActivity. Sends an invalid id to tell the activity it is a new Client
+            //creates and uses Intent to start an AddEditClientActivity. Sends an invalid id to tell the activity it is a new Client
+            R.id.nav_clients -> {
                 val intent = Intent(this, AddEditClientActivity::class.java)
                 intent.putExtra("id", 0)
                 startActivity(intent)
             }
-            R.id.nav_exercises -> {//creates and uses Intent to start an AddEditExerciseActivity. Sends an invalid id to tell the activity it is a new Exercise
+            //creates and uses Intent to start an AddEditExerciseActivity. Sends an invalid id to tell the activity it is a new Exercise
+            R.id.nav_exercises -> {
                 val intent = Intent(this, AddEditExerciseActivity::class.java)
                 intent.putExtra("id", 0)
                 startActivity(intent)
@@ -149,7 +158,8 @@ class MainActivity : AppCompatActivity(),
             R.id.nav_camera -> {
                 Snackbar.make(view,"Name: Camera", Snackbar.LENGTH_LONG).show()
             }
-            R.id.nav_muscles -> {//creates an AddEditMuscleDialog and sends a blank MuscleJoint object to denote a new Muscle
+            //creates an AddEditMuscleDialog and sends a blank MuscleJoint object to denote a new Muscle
+            R.id.nav_muscles -> {
                 val dialog = AddEditMuscleDialog(MuscleJoint(0, "")) {muscleJoint -> addConfirm(muscleJoint) }
                 dialog.show(supportFragmentManager, "Add Muscle")
             }
@@ -177,49 +187,59 @@ class MainActivity : AppCompatActivity(),
     }
 
     /**
-     * Method used by the SettingsFragment.IFragmentToActivity Interface within the SettingsFragment. Sets the NavigationController destination to Schedule to exit the Fragment
+     * Method used by the SettingsFragment.IFragmentToActivity Interface within the SettingsFragment.
+     * Sets the NavigationController destination to Schedule to exit the Fragment
      */
     override fun returnToSchedule() {
         navController.navigate(R.id.nav_schedule)
     }
 
     /**
-     * Method used by the ScheduleFragment.IFragmentToActivity Interface within the ScheduleFragment. Sets the calendar's date when the CalendarView's date is changed.
+     * Method used by the ScheduleFragment.IFragmentToActivity Interface within the ScheduleFragment.
+     * Sets the calendar's date when the CalendarView's date is changed.
      */
     override fun setCalendarDate(year: Int, month: Int, day: Int) {
         calendar.set(year, month, day)
     }
 
     /**
-     * Method used to handle the AddSessionDialog output. Checks for conflicts, checks if a makeup session needs to be used and attempts to insert the new session
+     * Method used to handle the AddSessionDialog output
+     * Checks for conflicts, checks if a makeup session needs to be used and attempts to insert the new session
      * @param session Session object of the session that the user intends to add to their schedule
      * @param scheduleType ScheduleType of the session owner. Used to check if a makeup session needs to be used
      * @return true if no errors occurred, false if something goes wrong
      */
     private fun addSessionConfirm(session: Session, scheduleType: ScheduleType): Boolean{
-        return if (!databaseOperations.checkSessionConflict(session, false)) {//checks if the new session conflicts an existing session
+        //checks if the new session conflicts an existing session
+        return if (!databaseOperations.checkSessionConflict(session, false)) {
             if (scheduleType != ScheduleType.NO_SCHEDULE) {
-                if (!databaseOperations.decClientBank(session.clientID)){//if the client's schedule is no schedule, attempt to remove from client's bank
+                //if the client's schedule is no schedule, attempt to remove from client's bank
+                if (!databaseOperations.decClientBank(session.clientID)) {
                     Snackbar.make(fab,"SQL error removing canceled session from Session_Changes", Snackbar.LENGTH_LONG).show()
-                    return false//exit with false if an error occurred. Don't add session
+                    //exit with false if an error occurred. Don't add session
+                    return false
                 }
             }
-            if (databaseOperations.insertSession(session)){//if inserting the session is successful, prompt user, navigate to ScheduleFragment and return true
+            //if inserting the session is successful, prompt user, navigate to ScheduleFragment and return true
+            if (databaseOperations.insertSession(session)) {
                 Snackbar.make(fab,"Successfully inserted new session", Snackbar.LENGTH_LONG).show()
                 navController.navigate(R.id.nav_schedule)
                 true
             } else {
                 Snackbar.make(fab,"SQL error inserting new session", Snackbar.LENGTH_LONG).show()
-                false//exit with false if error occurred while inserting
+                //exit with false if error occurred while inserting
+                false
             }
         } else {
             Toast.makeText(this,"Session conflict found", Toast.LENGTH_LONG).show()
-            false//exit with false if conflict found
+            //exit with false if conflict found
+            false
         }
     }
 
     /**
-     * Method used to handle AddEditMuscleDialog output. Checks for conflicts with existing muscles and attempts to add muscle
+     * Method used to handle AddEditMuscleDialog output
+     * Checks for conflicts with existing muscles and attempts to add muscle
      * @param muscle MuscleJoint object containing the data collected from the user
      * @return true if no errors or conflicts found
      */
