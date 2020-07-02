@@ -1,5 +1,7 @@
 package com.trainingapp.trainingassistant.objects
 
+import android.database.Cursor
+import com.trainingapp.trainingassistant.database.DBInfo
 import com.trainingapp.trainingassistant.enumerators.ExerciseType
 
 /**
@@ -25,6 +27,38 @@ class ExerciseProgram(
     var day: Int,
     var order: Int
 ): Comparable<ExerciseProgram>{
+
+    companion object {
+        fun empty(exercise: Exercise) = ExerciseProgram(
+            exercise,
+            "",
+            "",
+            0,
+            0
+        )
+
+        fun withCursor(it: Cursor): ExerciseProgram {
+            val exerciseID = it.getInt(it.getColumnIndex(DBInfo.ExercisesTable.ID))
+            return ExerciseProgram(
+                exerciseID,
+                it.getString(it.getColumnIndex(DBInfo.ExercisesTable.NAME)),
+                Exercise.getExerciseType(it.getInt(it.getColumnIndex(DBInfo.ExercisesTable.TYPE))),
+                MuscleJoint(
+                    it.getInt(it.getColumnIndex(DBInfo.ExercisesTable.PRIMARY_MOVER)),
+                    it.getString(it.getColumnIndex(DBInfo.AliasesUsed.PRIMARY_MOVER_NAME))
+                ),
+                Exercise.getSecondaryMoversFromCSV(
+                    exerciseID,
+                    it.getString(it.getColumnIndex(DBInfo.AliasesUsed.SECONDARY_MOVERS_IDS)),
+                    it.getString(it.getColumnIndex(DBInfo.AliasesUsed.SECONDARY_MOVERS_NAMES))
+                ),
+                it.getString(it.getColumnIndex(DBInfo.ProgramExercisesTable.SETS)),
+                it.getString(it.getColumnIndex(DBInfo.ProgramExercisesTable.REPS)),
+                it.getInt(it.getColumnIndex(DBInfo.ProgramExercisesTable.DAY)),
+                it.getInt(it.getColumnIndex(DBInfo.ProgramExercisesTable.EXERCISE_ORDER))
+            )
+        }
+    }
 
     /**
      * Secondary constructor to populate an ExerciseProgram with an Exercise, sets, reps, day and order instead of all the base data.

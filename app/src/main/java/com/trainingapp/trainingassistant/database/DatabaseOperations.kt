@@ -641,25 +641,7 @@ class DatabaseOperations(val context: Context) {
             generateSequence { if (cursor.moveToNext()) cursor else null }
                 .forEach {
                     val programID = it.getInt(it.getColumnIndex(DBInfo.ProgramExercisesTable.PROGRAM_ID))
-                    val exerciseID = it.getInt(it.getColumnIndex(DBInfo.ExercisesTable.ID))
-                    val exerciseProgram = ExerciseProgram(
-                        exerciseID,
-                        it.getString(it.getColumnIndex(DBInfo.ExercisesTable.NAME)),
-                        Exercise.getExerciseType(it.getInt(it.getColumnIndex(DBInfo.ExercisesTable.TYPE))),
-                        MuscleJoint(
-                            it.getInt(it.getColumnIndex(DBInfo.ExercisesTable.PRIMARY_MOVER)),
-                            it.getString(it.getColumnIndex(DBInfo.AliasesUsed.PRIMARY_MOVER_NAME))
-                        ),
-                        getSecondaryMoversFromCSV(
-                            exerciseID,
-                            it.getString(it.getColumnIndex(DBInfo.AliasesUsed.SECONDARY_MOVERS_IDS)),
-                            it.getString(it.getColumnIndex(DBInfo.AliasesUsed.SECONDARY_MOVERS_NAMES))
-                        ),
-                        it.getString(it.getColumnIndex(DBInfo.ProgramExercisesTable.SETS)),
-                        it.getString(it.getColumnIndex(DBInfo.ProgramExercisesTable.REPS)),
-                        it.getInt(it.getColumnIndex(DBInfo.ProgramExercisesTable.DAY)),
-                        it.getInt(it.getColumnIndex(DBInfo.ProgramExercisesTable.EXERCISE_ORDER))
-                    )
+                    val exerciseProgram = ExerciseProgram.withCursor(it)
                     programs.find { p -> p.id == programID }.let { p -> p?.addExercise(exerciseProgram) }
                 }
             cursor.close()
@@ -684,28 +666,7 @@ class DatabaseOperations(val context: Context) {
         if (program.id > 0) {
             cursor = db.rawQuery(DBQueries.DBOperations.getMultiProgramsExercises(program.id.toString()), null)
             generateSequence { if (cursor.moveToNext()) cursor else null }
-                .forEach {
-                    val exerciseID = it.getInt(it.getColumnIndex(DBInfo.ExercisesTable.ID))
-                    val exerciseProgram = ExerciseProgram(
-                        exerciseID,
-                        it.getString(it.getColumnIndex(DBInfo.ExercisesTable.NAME)),
-                        Exercise.getExerciseType(it.getInt(it.getColumnIndex(DBInfo.ExercisesTable.TYPE))),
-                        MuscleJoint(
-                            it.getInt(it.getColumnIndex(DBInfo.ExercisesTable.PRIMARY_MOVER)),
-                            it.getString(it.getColumnIndex(DBInfo.AliasesUsed.PRIMARY_MOVER_NAME))
-                        ),
-                        getSecondaryMoversFromCSV(
-                            exerciseID,
-                            it.getString(it.getColumnIndex(DBInfo.AliasesUsed.SECONDARY_MOVERS_IDS)),
-                            it.getString(it.getColumnIndex(DBInfo.AliasesUsed.SECONDARY_MOVERS_NAMES))
-                        ),
-                        it.getString(it.getColumnIndex(DBInfo.ProgramExercisesTable.SETS)),
-                        it.getString(it.getColumnIndex(DBInfo.ProgramExercisesTable.REPS)),
-                        it.getInt(it.getColumnIndex(DBInfo.ProgramExercisesTable.DAY)),
-                        it.getInt(it.getColumnIndex(DBInfo.ProgramExercisesTable.EXERCISE_ORDER))
-                    )
-                    program.addExercise(exerciseProgram)
-                }
+                .forEach { program.addExercise(ExerciseProgram.withCursor(it)) }
             cursor.close()
         }
         return program
