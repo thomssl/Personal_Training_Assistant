@@ -215,7 +215,7 @@ class DatabaseOperations(val context: Context) {
      * @param clientID client id value. See Clients Table
      * @return Int value representing the schedule type that a given client follows
      */
-    private fun getClientType(clientID: Int): ScheduleType {
+    fun getClientType(clientID: Int): ScheduleType {
         val cursor = db.rawQuery(DBQueries.DBOperations.getClientType(clientID), null)
         val result: ScheduleType = if (cursor.moveToFirst())
             //if record found with given client id, return corresponding ScheduleType

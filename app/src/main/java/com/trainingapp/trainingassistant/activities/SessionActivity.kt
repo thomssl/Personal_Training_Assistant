@@ -13,6 +13,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.trainingapp.trainingassistant.R
 import com.trainingapp.trainingassistant.StaticFunctions
 import com.trainingapp.trainingassistant.database.DatabaseOperations
+import com.trainingapp.trainingassistant.enumerators.ScheduleType
 import com.trainingapp.trainingassistant.objects.ExerciseSession
 import com.trainingapp.trainingassistant.objects.Session
 import com.trainingapp.trainingassistant.ui.adapters.SessionExercisesRVAdapter
@@ -41,7 +42,8 @@ import kotlin.coroutines.CoroutineContext
  */
 class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.OnTimeSetListener, DatePickerDialog.OnDateSetListener {
 
-    private val calendar = Calendar.getInstance() //used to hold the users intended new date & time when choosing a new date/time
+    //used to hold the users intended new date & time when choosing a new date/time
+    private val calendar = Calendar.getInstance()
     private var duration = 0
     private var changeDate = false
     private var changeTime = false
@@ -87,7 +89,8 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
         val sessionID = intent.getIntExtra("session_id", 0)
         val clientID = intent.getIntExtra("client_id", 0)
         val dayTime = intent.getStringExtra("dayTime")
-        if (clientID > 0)//checks to make sure the client id is valid
+        //checks to make sure the client id is valid
+        if (clientID > 0)
             setupData(sessionID,clientID, dayTime)
     }
 
@@ -187,21 +190,12 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
     private fun setTime() { txtSessionTime.text = StaticFunctions.getStrTimeAMPM(calendar) }
     private fun setDuration() { txtSessionDuration.text = getString(R.string.txtSessionDuration, duration)}
     private fun setAdapter(){
-        if (session.getExerciseCount() > 0){
-            rvSessionExercises.adapter = SessionExercisesRVAdapter(session, { exerciseSession, position ->
-                onItemClick(exerciseSession, position)
-            }, { exerciseSession ->
-                onItemLongClick(exerciseSession)
-            })
-            rvSessionExercises.visibility = View.VISIBLE
-        }  else {
-            rvSessionExercises.adapter = SessionExercisesRVAdapter(session, { exerciseSession, position ->
-                onItemClick(exerciseSession, position)
-            }, { exerciseSession ->
-                onItemLongClick(exerciseSession)
-            })
-            rvSessionExercises.visibility = View.INVISIBLE
-        }
+        rvSessionExercises.adapter = SessionExercisesRVAdapter(session, {
+                exerciseSession, position -> onItemClick(exerciseSession, position)
+        }, {
+                exerciseSession -> onItemLongClick(exerciseSession)
+        })
+        rvSessionExercises.visibility = if (session.getExerciseCount() > 0) View.VISIBLE else View.INVISIBLE
     }
 
     /**
@@ -212,34 +206,55 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
         else Snackbar.make(view, "Error confirming changes", Snackbar.LENGTH_LONG).show()
     }
 
+    /**
+     * Method to handle updating session bases upon flags that show what aspects of the session have changed
+     */
     private fun confirmSessionChanges(): Boolean{
         val result = when (true){
+            // If the session date, duration or time has changed
             changeDate || changeDuration || changeTime -> {
+                // Create a temp session object to represent the new changes
                 val newSession = session.clone(dayTime = StaticFunctions.getStrDateTime(calendar), duration = duration)
+                // If the session already has a record in Session_log, update the record. If not insert the new session
                 if (databaseOperations.checkSessionLog(session)) {
                     if (!databaseOperations.updateSession(newSession))
+                        // If updating returns an error flag, exit function with error flag
                         return false
                 }
                 else {
-                    if (!databaseOperations.insertSession(session))
+                    if (!databaseOperations.insertSession(newSession))
+                        // If inserting returns an error flag, exit function with error flag
                         return false
                 }
-                if (databaseOperations.checkChange(session)) databaseOperations.updateChange(session, newSession)
-                else databaseOperations.insertChange(session, newSession)
+                when (true){
+                    // If change exists in DB for old session, update the change
+                    databaseOperations.checkChange(session) -> databaseOperations.updateChange(session, newSession)
+                    // If client type is WEEKLY_CONSTANT but change does not exist, create the change record
+                    databaseOperations.getClientType(session.clientID) == ScheduleType.WEEKLY_CONSTANT ->
+                        databaseOperations.insertChange(session, newSession)
+                    // No change record needed, set result to true
+                    else -> true
+                }
             }
+            // If no date, duration or time changes happened, update the session record with the current Session object
+            // ie only update the exercises information
             !changeDate && !changeDuration && !changeTime && changeExercise -> {
+                // If Session exists update the session, if not insert a new session record into Session_Log
                 if (databaseOperations.checkSessionLog(session)) databaseOperations.updateSession(session)
                 else databaseOperations.insertSession(session)
             }
+            // If no changed logged, do nothing
             else -> {
                 false
             }
         }
+        // If updates/inserts were successful and the session date, duration or time was changed, update the current session object
         if (result && (changeDate || changeDuration || changeTime)) {
             session.date.time = calendar.time
             session.duration = duration
         }
-        if (result){
+        // If update was successful, reset all the change flags
+        if (result) {
             changeDate = false
             changeDuration = false
             changeTime = false
