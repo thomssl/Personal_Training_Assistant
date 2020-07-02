@@ -123,7 +123,7 @@
     <string name="alert_dialog_confirm_removal">Confirm Removal</string>
     <string name="program_days">Days</string>
     <string name="program_day">Day</string>
-    <string name="program_days_bold"><b>Days</b></string>
+    <string name="program_days_bold"><b>Day(s)</b></string>
     <string name="program_exercises"># Exercises</string>
     <string name="program_desc">Description</string>
     <string-array name="days">
