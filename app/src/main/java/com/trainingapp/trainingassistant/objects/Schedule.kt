@@ -112,12 +112,12 @@ class Schedule (
     }
 
     fun getCheckClientConflictDays(): String {
-        val builder = StringBuilder()
+        val builder = StringBuilder("(")
         daysList.forEachIndexed { index, i ->
             if (i > 0)
-                builder.append("${StaticFunctions.NumToDay[index+1].toLowerCase(Locale.ROOT)} > 0 And ")
+                builder.append("${StaticFunctions.NumToDay[index+1].toLowerCase(Locale.ROOT)} > 0 Or ")
         }
-        return builder.toString()
+        return "${builder.substring(0..(builder.length - 3))})"
     }
 
     private fun getUpdateDays(): String{

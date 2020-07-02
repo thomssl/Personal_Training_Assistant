@@ -49,49 +49,49 @@ object DBQueries {
                                 "        left join Joints j on e.primary_mover_id=j.joint_id" +
                                 "        Where e.exercise_id = $id;"
 
-            fun getAllExercises() = "Select e.exercise_id," +
-                            "               e.exercise_name," +
-                            "               e.exercise_type," +
-                            "               e.primary_mover_id," +
-                            "               (" +
-                            "                    Case" +
-                            "                        When e.exercise_type = 1 then m.muscle_name" +
-                            "                        When e.exercise_type = 2 or e.exercise_type = 3 then j.joint_name" +
-                            "                    End" +
-                            "                ) as 'primary_mover_name'," +
-                            "               ifnull" +
-                            "                (" +
-                            "                    (" +
-                            "                        Select group_concat(s.secondary_mover_id)" +
-                            "                        From secondary_movers s" +
-                            "                        Where s.exercise_id = e.exercise_id" +
-                            "                        Group By s.exercise_id" +
-                            "                    )," +
-                            "                    '0'" +
-                            "                ) as 'secondary_movers_ids'," +
-                            "               ifnull" +
-                            "                (" +
-                            "                    (" +
-                            "                        Select group_concat" +
-                            "                        (" +
-                            "                            (" +
-                            "                                Case" +
-                            "                                    When e.exercise_type = 1 then m.muscle_name" +
-                            "                                    When e.exercise_type = 2 or e.exercise_type = 3 then j.joint_name" +
-                            "                                End" +
-                            "                            )" +
-                            "                        )" +
-                            "                        From secondary_movers s" +
-                            "                        left join Muscles m on s.secondary_mover_id=m.muscle_id" +
-                            "                        left join Joints j on s.secondary_mover_id=j.joint_id" +
-                            "                        Where s.exercise_id = e.exercise_id" +
-                            "                        Group By s.exercise_id" +
-                            "                    )," +
-                            "                    '0'" +
-                            "                ) as 'secondary_movers_names'" +
-                            "        From Exercises e" +
-                            "        left join Muscles m on e.primary_mover_id=m.muscle_id" +
-                            "        left join Joints j on e.primary_mover_id=j.joint_id;"
+            const val getAllExercises = "Select e.exercise_id," +
+                                "               e.exercise_name," +
+                                "               e.exercise_type," +
+                                "               e.primary_mover_id," +
+                                "               (" +
+                                "                    Case" +
+                                "                        When e.exercise_type = 1 then m.muscle_name" +
+                                "                        When e.exercise_type = 2 or e.exercise_type = 3 then j.joint_name" +
+                                "                    End" +
+                                "                ) as 'primary_mover_name'," +
+                                "               ifnull" +
+                                "                (" +
+                                "                    (" +
+                                "                        Select group_concat(s.secondary_mover_id)" +
+                                "                        From secondary_movers s" +
+                                "                        Where s.exercise_id = e.exercise_id" +
+                                "                        Group By s.exercise_id" +
+                                "                    )," +
+                                "                    '0'" +
+                                "                ) as 'secondary_movers_ids'," +
+                                "               ifnull" +
+                                "                (" +
+                                "                    (" +
+                                "                        Select group_concat" +
+                                "                        (" +
+                                "                            (" +
+                                "                                Case" +
+                                "                                    When e.exercise_type = 1 then m.muscle_name" +
+                                "                                    When e.exercise_type = 2 or e.exercise_type = 3 then j.joint_name" +
+                                "                                End" +
+                                "                            )" +
+                                "                        )" +
+                                "                        From secondary_movers s" +
+                                "                        left join Muscles m on s.secondary_mover_id=m.muscle_id" +
+                                "                        left join Joints j on s.secondary_mover_id=j.joint_id" +
+                                "                        Where s.exercise_id = e.exercise_id" +
+                                "                        Group By s.exercise_id" +
+                                "                    )," +
+                                "                    '0'" +
+                                "                ) as 'secondary_movers_names'" +
+                                "        From Exercises e" +
+                                "        left join Muscles m on e.primary_mover_id=m.muscle_id" +
+                                "        left join Joints j on e.primary_mover_id=j.joint_id;"
 
             fun getExerciseUsage(id: Int) = "Select *" +
                                     "        From (Select *" +
@@ -113,10 +113,10 @@ object DBQueries {
                                 "        From Muscles" +
                                 "        Where muscle_id = $id;"
 
-            fun getAllMuscles() =   "Select muscle_id," +
-                            "               muscle_name" +
-                            "        From Muscles" +
-                            "        Order By muscle_name;"
+            const val getAllMuscles =   "Select muscle_id," +
+                                "               muscle_name" +
+                                "        From Muscles" +
+                                "        Order By muscle_name;"
 
             fun getMuscleUsage(id: Int) =   "Select DISTINCT e.exercise_id" +
                                     "        From Exercises e" +
@@ -144,16 +144,16 @@ object DBQueries {
                             "        From Joints" +
                             "        Where joint_id = $id;"
 
-            fun getAllJoints() =    "Select joint_id," +
-                            "               joint_name" +
-                            "        From Joints;"
+            const val getAllJoints =    "Select joint_id," +
+                                "               joint_name" +
+                                "        From Joints;"
 
             fun getClient(id: Int) =    "Select *" +
                                 "        From Clients c" +
                                 "        Where c.client_id = $id;"
 
-            fun getAllClients() =   "Select *" +
-                            "        From Clients c;"
+            const val getAllClients =   "Select *" +
+                                "        From Clients c;"
 
             fun getClientType(id: Int) =    "Select schedule_type" +
                                     "        From Schedules" +
@@ -170,7 +170,7 @@ object DBQueries {
             fun getClientConflict(conflictDays: String, id: Int) =  "Select *" +
                                                             "        From Clients c" +
                                                             "        Where $conflictDays" +
-                                                            "        c.start_date <= date('now')" +
+                                                            "        And c.start_date <= date('now')" +
                                                             "        And c.end_date >= date('now')" +
                                                             "        And c.schedule_type = 1" +
                                                             "        And c.client_id <> $id;"
