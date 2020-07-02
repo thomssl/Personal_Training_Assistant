@@ -1,5 +1,8 @@
 package com.trainingapp.trainingassistant.objects
 
+import android.database.Cursor
+import com.trainingapp.trainingassistant.database.DBInfo
+
 class Program (
     var id: Int,
     var name: String,
@@ -16,6 +19,16 @@ class Program (
             "",
             mutableListOf()
         )
+
+        fun withCursor(it: Cursor): Program {
+            return Program(
+                it.getInt(it.getColumnIndex(DBInfo.ProgramsTable.ID)),
+                it.getString(it.getColumnIndex(DBInfo.ProgramsTable.NAME)),
+                it.getInt(it.getColumnIndex(DBInfo.ProgramsTable.DAYS)),
+                it.getString(it.getColumnIndex(DBInfo.ProgramsTable.DESC)),
+                mutableListOf()
+            )
+        }
     }
     //used to validate that a program has exercises
     // stops the user from removing all exercises from a session than updating or confirming a session that has never had any exercises

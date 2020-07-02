@@ -625,15 +625,8 @@ class DatabaseOperations(val context: Context) {
     fun getAllPrograms(): List<Program> {
         var cursor = db.rawQuery(DBQueries.DBOperations.getAllPrograms, null)
         val programs = generateSequence { if (cursor.moveToNext()) cursor else null }
-            .map {
-                Program(
-                    cursor.getInt(cursor.getColumnIndex(DBInfo.ProgramsTable.ID)),
-                    cursor.getString(cursor.getColumnIndex(DBInfo.ProgramsTable.NAME)),
-                    cursor.getInt(cursor.getColumnIndex(DBInfo.ProgramsTable.DAYS)),
-                    cursor.getString(cursor.getColumnIndex(DBInfo.ProgramsTable.DESC)),
-                    mutableListOf()
-                )
-            }.toMutableList()
+            .map { Program.withCursor(it) }
+            .toMutableList()
         cursor.close()
         if (programs.size > 0 ) {
             val programIDS = programs.filter { it.id != 0 }.joinToString(",") { it.id.toString()}
