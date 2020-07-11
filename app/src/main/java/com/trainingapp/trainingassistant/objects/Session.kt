@@ -26,10 +26,6 @@ class Session (
 
     // Used to ask a Session object for a certain SQL command
     companion object {
-        const val INSERT_COMMAND = 1
-        const val UPDATE_COMMAND = 2
-        const val DELETE_COMMAND = 3
-
         fun empty(id: Int, name: String, dayTime: String) = Session(
             0,
             id,
