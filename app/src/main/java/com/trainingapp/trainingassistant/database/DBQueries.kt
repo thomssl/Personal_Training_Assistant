@@ -2,7 +2,7 @@ package com.trainingapp.trainingassistant.database
 
 object DBQueries {
     fun getExercise(id: Int) =
-        """"
+        """
         Select e.exercise_id, 
                e.exercise_name, 
                e.exercise_type, 
@@ -49,7 +49,7 @@ object DBQueries {
         Where e.exercise_id = $id;""".trimIndent()
 
     val getAllExercises =
-        """"
+        """
         Select e.exercise_id, 
                e.exercise_name, 
                e.exercise_type, 
@@ -95,7 +95,7 @@ object DBQueries {
         left join Joints j on e.primary_mover_id=j.joint_id;""".trimIndent()
 
     fun getExerciseUsage(id: Int) =
-        """"
+        """
         Select * 
         From (Select pe.exercise_id
               From   Program_Exercises pe 
@@ -107,21 +107,21 @@ object DBQueries {
              );""".trimIndent()
 
     fun getExerciseConflict(name: String, id: Int) =
-        """"
+        """
         Select exercise_name 
         From   Exercises 
         Where  upper(exercise_name) = upper('$name') 
         And    exercise_id <> $id;""".trimIndent()
 
     fun getMuscle(id: Int) =
-        """"
+        """
         Select muscle_id, 
                muscle_name 
         From Muscles 
         Where muscle_id = $id;""".trimIndent()
 
     val getAllMuscles =
-        """"
+        """
         Select muscle_id, 
                muscle_name 
         From Muscles 
@@ -303,7 +303,7 @@ object DBQueries {
         And    datetime(change_dayTime) = datetime('$dayTime');""".trimIndent()
 
     fun getSessionExercises(id: Int) =
-        """"
+        """
         Select dat.exercise_id as exercise_id, 
                dat.exercise_name as exercise_name, 
                dat.exercise_type as exercise_type, 

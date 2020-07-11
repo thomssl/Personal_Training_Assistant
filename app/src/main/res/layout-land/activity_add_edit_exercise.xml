@@ -10,7 +10,7 @@
         android:id="@+id/glAddEditExercise"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         app:layout_constraintGuide_percent="0.5"/>
 
     <!-- Used to draw focus from the editText-->
@@ -30,9 +30,9 @@
         android:imeOptions="flagNoFullscreen"
         android:importantForAutofill="no"
         android:inputType="text"
+        app:layout_constraintEnd_toStartOf="@id/glAddEditExercise"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/btnAddEditExerciseConfirm"
@@ -49,15 +49,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/lblExercisesSecondaryMovers"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/glAddEditExercise"/>
+        app:layout_constraintStart_toEndOf="@id/glAddEditExercise"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvAddEditExerciseSecondaryMover"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/glAddEditExercise"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/lblAddEditExerciseSecondaryMovers"
         app:layout_constraintBottom_toTopOf="@id/btnAddEditExerciseConfirm" />
@@ -76,7 +77,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/lblAddEditExerciseType"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toStartOf="@id/glAddEditExercise"/>
 
     <TextView
         android:id="@+id/lblAddEditExercisePrimeMover"
@@ -84,6 +85,7 @@
         android:layout_height="wrap_content"
         android:text="@string/lblExercisesPrimeMover"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/glAddEditExercise"
         app:layout_constraintTop_toBottomOf="@id/spnAddEditExerciseType" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -92,8 +94,8 @@
         android:layout_height="0dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintTop_toBottomOf="@id/lblAddEditExercisePrimeMover"
-        app:layout_constraintBottom_toTopOf="@id/glAddEditExercise"
+        app:layout_constraintBottom_toTopOf="@id/btnAddEditExerciseConfirm"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toStartOf="@id/glAddEditExercise"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
