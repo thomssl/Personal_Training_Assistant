@@ -8,43 +8,43 @@
         android:id="@+id/glWeeklyConstant1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.16"/>
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.1429"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/glWeeklyConstant2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.30"/>
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.2857"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/glWeeklyConstant3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.44"/>
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.4286"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/glWeeklyConstant4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.58"/>
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5714"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/glWeeklyConstant5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.72"/>
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.7143"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/glWeeklyConstant6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.86"/>
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.8571"/>
 
     <Switch
         android:id="@+id/swWeeklyConstantIsMonday"
@@ -53,9 +53,10 @@
         android:text="@string/weekly_const_mon"
         android:textAlignment="center"
         android:textSize="@dimen/text_size_small"
+        android:layout_marginBottom="@dimen/base_pad"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/glWeeklyConstant1"/>
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant1"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <Switch
         android:id="@+id/swWeeklyConstantIsTuesday"
@@ -65,9 +66,9 @@
         android:textAlignment="center"
         android:textSize="@dimen/text_size_small"
         android:layout_marginBottom="@dimen/base_pad"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/glWeeklyConstant1"
-        app:layout_constraintBottom_toTopOf="@id/glWeeklyConstant2"/>
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant1"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant2"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <Switch
         android:id="@+id/swWeeklyConstantIsWednesday"
@@ -76,9 +77,10 @@
         android:text="@string/weekly_const_wed"
         android:textAlignment="center"
         android:textSize="@dimen/text_size_small"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/glWeeklyConstant2"
-        app:layout_constraintBottom_toTopOf="@id/glWeeklyConstant3"/>
+        android:layout_marginBottom="@dimen/base_pad"
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant2"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant3"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <Switch
         android:id="@+id/swWeeklyConstantIsThursday"
@@ -87,9 +89,10 @@
         android:text="@string/weekly_const_thu"
         android:textAlignment="center"
         android:textSize="@dimen/text_size_small"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/glWeeklyConstant3"
-        app:layout_constraintBottom_toTopOf="@id/glWeeklyConstant4"/>
+        android:layout_marginBottom="@dimen/base_pad"
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant3"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant4"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <Switch
         android:id="@+id/swWeeklyConstantIsFriday"
@@ -98,9 +101,10 @@
         android:text="@string/weekly_const_fri"
         android:textAlignment="center"
         android:textSize="@dimen/text_size_small"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/glWeeklyConstant4"
-        app:layout_constraintBottom_toTopOf="@id/glWeeklyConstant5"/>
+        android:layout_marginBottom="@dimen/base_pad"
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant4"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant5"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <Switch
         android:id="@+id/swWeeklyConstantIsSaturday"
@@ -109,9 +113,10 @@
         android:text="@string/weekly_const_sat"
         android:textAlignment="center"
         android:textSize="@dimen/text_size_small"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/glWeeklyConstant5"
-        app:layout_constraintBottom_toTopOf="@id/glWeeklyConstant6"/>
+        android:layout_marginBottom="@dimen/base_pad"
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant5"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant6"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <Switch
         android:id="@+id/swWeeklyConstantIsSunday"
@@ -120,9 +125,10 @@
         android:text="@string/weekly_const_sun"
         android:textAlignment="center"
         android:textSize="@dimen/text_size_small"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/glWeeklyConstant6"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        android:layout_marginBottom="@dimen/base_pad"
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant6"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
 
     <Button
@@ -132,9 +138,9 @@
         android:onClick="onTimeClick"
         android:text="@string/time_format"
         android:visibility="invisible"
-        app:layout_constraintStart_toStartOf="@id/btnWeeklyConstantWednesdayTime"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/glWeeklyConstant1"/>
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/swWeeklyConstantIsMonday" />
 
 
     <Button
@@ -144,9 +150,9 @@
         android:onClick="onTimeClick"
         android:text="@string/time_format"
         android:visibility="invisible"
-        app:layout_constraintStart_toStartOf="@id/btnWeeklyConstantWednesdayTime"
-        app:layout_constraintTop_toBottomOf="@id/glWeeklyConstant1"
-        app:layout_constraintBottom_toTopOf="@id/glWeeklyConstant2" />
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant2"
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant1"
+        app:layout_constraintTop_toBottomOf="@id/swWeeklyConstantIsMonday" />
 
 
     <Button
@@ -156,9 +162,9 @@
         android:onClick="onTimeClick"
         android:text="@string/time_format"
         android:visibility="invisible"
-        app:layout_constraintStart_toEndOf="@id/swWeeklyConstantIsWednesday"
-        app:layout_constraintTop_toBottomOf="@id/glWeeklyConstant2"
-        app:layout_constraintBottom_toTopOf="@id/glWeeklyConstant3"/>
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant3"
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant2"
+        app:layout_constraintTop_toBottomOf="@id/swWeeklyConstantIsMonday" />
 
 
     <Button
@@ -168,9 +174,9 @@
         android:onClick="onTimeClick"
         android:text="@string/time_format"
         android:visibility="invisible"
-        app:layout_constraintStart_toEndOf="@id/swWeeklyConstantIsWednesday"
-        app:layout_constraintTop_toBottomOf="@id/glWeeklyConstant3"
-        app:layout_constraintBottom_toTopOf="@id/glWeeklyConstant4" />
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant4"
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant3"
+        app:layout_constraintTop_toBottomOf="@id/swWeeklyConstantIsMonday" />
 
 
     <Button
@@ -180,9 +186,9 @@
         android:onClick="onTimeClick"
         android:text="@string/time_format"
         android:visibility="invisible"
-        app:layout_constraintStart_toEndOf="@id/swWeeklyConstantIsWednesday"
-        app:layout_constraintTop_toBottomOf="@id/glWeeklyConstant4"
-        app:layout_constraintBottom_toTopOf="@id/glWeeklyConstant5" />
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant5"
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant4"
+        app:layout_constraintTop_toBottomOf="@id/swWeeklyConstantIsMonday" />
 
 
     <Button
@@ -192,9 +198,9 @@
         android:onClick="onTimeClick"
         android:text="@string/time_format"
         android:visibility="invisible"
-        app:layout_constraintStart_toEndOf="@id/swWeeklyConstantIsWednesday"
-        app:layout_constraintTop_toBottomOf="@id/glWeeklyConstant5"
-        app:layout_constraintBottom_toTopOf="@id/glWeeklyConstant6" />
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant6"
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant5"
+        app:layout_constraintTop_toBottomOf="@id/swWeeklyConstantIsMonday" />
 
 
     <Button
@@ -204,21 +210,21 @@
         android:onClick="onTimeClick"
         android:text="@string/time_format"
         android:visibility="invisible"
-        app:layout_constraintStart_toEndOf="@id/swWeeklyConstantIsWednesday"
-        app:layout_constraintTop_toBottomOf="@id/glWeeklyConstant6"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant6"
+        app:layout_constraintTop_toBottomOf="@id/swWeeklyConstantIsMonday" />
 
     <TextView
         android:id="@+id/lblWeeklyConstantMondayDuration"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/weekly_const_duration"
         android:textSize="@dimen/text_size_small"
         android:labelFor="@id/etxtWeeklyConstantMondayDuration"
         android:visibility="invisible"
-        android:layout_marginStart="10dp"
-        app:layout_constraintStart_toEndOf="@id/btnWeeklyConstantMondayTime"
-        app:layout_constraintBottom_toTopOf="@id/etxtWeeklyConstantMondayDuration"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant1"
+        app:layout_constraintTop_toBottomOf="@id/btnWeeklyConstantMondayTime"/>
 
     <TextView
         android:id="@+id/lblWeeklyConstantTuesdayDuration"
@@ -228,9 +234,9 @@
         android:textSize="@dimen/text_size_small"
         android:labelFor="@id/etxtWeeklyConstantTuesdayDuration"
         android:visibility="invisible"
-        android:layout_marginStart="10dp"
-        app:layout_constraintStart_toEndOf="@id/btnWeeklyConstantTuesdayTime"
-        app:layout_constraintBottom_toTopOf="@id/etxtWeeklyConstantTuesdayDuration"/>
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant1"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant2"
+        app:layout_constraintTop_toBottomOf="@id/btnWeeklyConstantMondayTime"/>
 
     <TextView
         android:id="@+id/lblWeeklyConstantWednesdayDuration"
@@ -240,9 +246,9 @@
         android:textSize="@dimen/text_size_small"
         android:labelFor="@id/etxtWeeklyConstantWednesdayDuration"
         android:visibility="invisible"
-        android:layout_marginStart="10dp"
-        app:layout_constraintStart_toEndOf="@id/btnWeeklyConstantWednesdayTime"
-        app:layout_constraintBottom_toTopOf="@id/etxtWeeklyConstantWednesdayDuration"/>
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant2"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant3"
+        app:layout_constraintTop_toBottomOf="@id/btnWeeklyConstantMondayTime"/>
 
     <TextView
         android:id="@+id/lblWeeklyConstantThursdayDuration"
@@ -252,9 +258,9 @@
         android:textSize="@dimen/text_size_small"
         android:labelFor="@id/etxtWeeklyConstantThursdayDuration"
         android:visibility="invisible"
-        android:layout_marginStart="10dp"
-        app:layout_constraintStart_toEndOf="@id/btnWeeklyConstantThursdayTime"
-        app:layout_constraintBottom_toTopOf="@id/etxtWeeklyConstantThursdayDuration"/>
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant3"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant4"
+        app:layout_constraintTop_toBottomOf="@id/btnWeeklyConstantMondayTime"/>
 
     <TextView
         android:id="@+id/lblWeeklyConstantFridayDuration"
@@ -264,9 +270,9 @@
         android:textSize="@dimen/text_size_small"
         android:labelFor="@id/etxtWeeklyConstantFridayDuration"
         android:visibility="invisible"
-        android:layout_marginStart="10dp"
-        app:layout_constraintStart_toEndOf="@id/btnWeeklyConstantFridayTime"
-        app:layout_constraintBottom_toTopOf="@id/etxtWeeklyConstantFridayDuration"/>
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant4"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant5"
+        app:layout_constraintTop_toBottomOf="@id/btnWeeklyConstantMondayTime"/>
 
     <TextView
         android:id="@+id/lblWeeklyConstantSaturdayDuration"
@@ -276,9 +282,9 @@
         android:textSize="@dimen/text_size_small"
         android:labelFor="@id/etxtWeeklyConstantSaturdayDuration"
         android:visibility="invisible"
-        android:layout_marginStart="10dp"
-        app:layout_constraintStart_toEndOf="@id/btnWeeklyConstantSaturdayTime"
-        app:layout_constraintBottom_toTopOf="@id/etxtWeeklyConstantSaturdayDuration"/>
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant5"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant6"
+        app:layout_constraintTop_toBottomOf="@id/btnWeeklyConstantMondayTime"/>
 
     <TextView
         android:id="@+id/lblWeeklyConstantSundayDuration"
@@ -288,9 +294,9 @@
         android:textSize="@dimen/text_size_small"
         android:labelFor="@id/etxtWeeklyConstantSundayDuration"
         android:visibility="invisible"
-        android:layout_marginStart="10dp"
-        app:layout_constraintStart_toEndOf="@id/btnWeeklyConstantSundayTime"
-        app:layout_constraintBottom_toTopOf="@id/etxtWeeklyConstantSundayDuration"/>
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant6"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnWeeklyConstantMondayTime"/>
 
     <EditText
         android:id="@+id/etxtWeeklyConstantMondayDuration"
@@ -300,10 +306,9 @@
         android:inputType="number"
         android:visibility="invisible"
         android:textSize="@dimen/text_size_small"
-        app:layout_constraintStart_toStartOf="@id/lblWeeklyConstantMondayDuration"
-        app:layout_constraintEnd_toEndOf="@id/lblWeeklyConstantMondayDuration"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/glWeeklyConstant1"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant1"
+        app:layout_constraintTop_toBottomOf="@id/lblWeeklyConstantMondayDuration"/>
 
     <EditText
         android:id="@+id/etxtWeeklyConstantTuesdayDuration"
@@ -313,10 +318,9 @@
         android:inputType="number"
         android:visibility="invisible"
         android:textSize="@dimen/text_size_small"
-        app:layout_constraintStart_toStartOf="@id/lblWeeklyConstantTuesdayDuration"
-        app:layout_constraintEnd_toEndOf="@id/lblWeeklyConstantTuesdayDuration"
-        app:layout_constraintTop_toBottomOf="@id/glWeeklyConstant1"
-        app:layout_constraintBottom_toTopOf="@id/glWeeklyConstant2"/>
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant1"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant2"
+        app:layout_constraintTop_toBottomOf="@id/lblWeeklyConstantTuesdayDuration"/>
 
     <EditText
         android:id="@+id/etxtWeeklyConstantWednesdayDuration"
@@ -326,10 +330,9 @@
         android:inputType="number"
         android:visibility="invisible"
         android:textSize="@dimen/text_size_small"
-        app:layout_constraintStart_toStartOf="@id/lblWeeklyConstantWednesdayDuration"
-        app:layout_constraintEnd_toEndOf="@id/lblWeeklyConstantWednesdayDuration"
-        app:layout_constraintTop_toBottomOf="@id/glWeeklyConstant2"
-        app:layout_constraintBottom_toTopOf="@id/glWeeklyConstant3"/>
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant2"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant3"
+        app:layout_constraintTop_toBottomOf="@id/lblWeeklyConstantWednesdayDuration"/>
 
     <EditText
         android:id="@+id/etxtWeeklyConstantThursdayDuration"
@@ -339,10 +342,9 @@
         android:inputType="number"
         android:visibility="invisible"
         android:textSize="@dimen/text_size_small"
-        app:layout_constraintStart_toStartOf="@id/lblWeeklyConstantThursdayDuration"
-        app:layout_constraintEnd_toEndOf="@id/lblWeeklyConstantThursdayDuration"
-        app:layout_constraintTop_toBottomOf="@id/glWeeklyConstant3"
-        app:layout_constraintBottom_toTopOf="@id/glWeeklyConstant4"/>
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant3"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant4"
+        app:layout_constraintTop_toBottomOf="@id/lblWeeklyConstantThursdayDuration"/>
 
     <EditText
         android:id="@+id/etxtWeeklyConstantFridayDuration"
@@ -352,10 +354,9 @@
         android:inputType="number"
         android:visibility="invisible"
         android:textSize="@dimen/text_size_small"
-        app:layout_constraintStart_toStartOf="@id/lblWeeklyConstantFridayDuration"
-        app:layout_constraintEnd_toEndOf="@id/lblWeeklyConstantFridayDuration"
-        app:layout_constraintTop_toBottomOf="@id/glWeeklyConstant4"
-        app:layout_constraintBottom_toTopOf="@id/glWeeklyConstant5"/>
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant4"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant5"
+        app:layout_constraintTop_toBottomOf="@id/lblWeeklyConstantFridayDuration"/>
 
     <EditText
         android:id="@+id/etxtWeeklyConstantSaturdayDuration"
@@ -365,10 +366,9 @@
         android:inputType="number"
         android:visibility="invisible"
         android:textSize="@dimen/text_size_small"
-        app:layout_constraintStart_toStartOf="@id/lblWeeklyConstantSaturdayDuration"
-        app:layout_constraintEnd_toEndOf="@id/lblWeeklyConstantSaturdayDuration"
-        app:layout_constraintTop_toBottomOf="@id/glWeeklyConstant5"
-        app:layout_constraintBottom_toTopOf="@id/glWeeklyConstant6"/>
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant5"
+        app:layout_constraintEnd_toStartOf="@id/glWeeklyConstant6"
+        app:layout_constraintTop_toBottomOf="@id/lblWeeklyConstantSaturdayDuration"/>
 
     <EditText
         android:id="@+id/etxtWeeklyConstantSundayDuration"
@@ -378,9 +378,8 @@
         android:inputType="number"
         android:visibility="invisible"
         android:textSize="@dimen/text_size_small"
-        app:layout_constraintStart_toStartOf="@id/lblWeeklyConstantSundayDuration"
-        app:layout_constraintEnd_toEndOf="@id/lblWeeklyConstantSundayDuration"
-        app:layout_constraintTop_toBottomOf="@id/glWeeklyConstant6"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintStart_toEndOf="@id/glWeeklyConstant6"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lblWeeklyConstantSundayDuration"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

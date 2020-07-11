@@ -65,7 +65,7 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
             lblWeeklyConstantWednesdayDuration,
             lblWeeklyConstantThursdayDuration,
             lblWeeklyConstantFridayDuration,
-            lblWeeklyConstantSundayDuration
+            lblWeeklyConstantSaturdayDuration
         )
         lstTimes = listOf(
             btnWeeklyConstantSundayTime,

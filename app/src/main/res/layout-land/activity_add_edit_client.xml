@@ -46,29 +46,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="@string/add_client_is_weekly_const"
-            android:textSize="@dimen/text_size_small"/>
+            android:text="@string/add_client_is_weekly_const"/>
 
         <RadioButton
             android:id="@+id/radIsWeeklyVar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/add_client_is_weekly_var"
-            android:textSize="@dimen/text_size_small"/>
+            android:text="@string/add_client_is_weekly_var"/>
 
         <RadioButton
             android:id="@+id/radIsMonthlyVar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/add_client_is_monthly_var"
-            android:textSize="@dimen/text_size_small"/>
+            android:text="@string/add_client_is_monthly_var"/>
 
         <RadioButton
             android:id="@+id/radIsNoSchedule"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/add_client_is_no_schedule"
-            android:textSize="@dimen/text_size_small"/>
+            android:text="@string/add_client_is_no_schedule"/>
 
     </RadioGroup>
 
@@ -116,7 +112,7 @@
         android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/btnAddEditClientConfirm"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btnAddEditClientStartDate"/>
 
     <include
@@ -127,7 +123,7 @@
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/btnAddEditClientConfirm"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btnAddEditClientStartDate"/>
 
     <include
@@ -138,7 +134,7 @@
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/btnAddEditClientConfirm"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btnAddEditClientStartDate"/>
 
     <include
@@ -149,7 +145,7 @@
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/btnAddEditClientConfirm"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btnAddEditClientStartDate"/>
 
     <Button
@@ -159,8 +155,7 @@
         android:layout_marginBottom="@dimen/base_pad"
         android:onClick="onClientConfirm"
         android:text="@string/confirm"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintTop_toTopOf="@id/btnAddEditClientEndDate"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

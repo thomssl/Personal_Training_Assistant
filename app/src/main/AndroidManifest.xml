@@ -13,9 +13,7 @@
             android:screenOrientation="landscape"
             tools:ignore="LockedOrientationActivity"/>
         <activity
-            android:name=".activities.AddEditClientActivity"
-            android:screenOrientation="landscape"
-            tools:ignore="LockedOrientationActivity" />
+            android:name=".activities.AddEditClientActivity"/>
         <activity
             android:name=".activities.AddEditExerciseActivity"
             android:screenOrientation="landscape"

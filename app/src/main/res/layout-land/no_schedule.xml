@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glNoSchedule"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:labelFor="@id/etxtNoScheduleDuration"
+        android:text="@string/weekly_const_duration"
+        app:layout_constraintBottom_toBottomOf="@id/etxtNoScheduleDuration"
+        app:layout_constraintEnd_toStartOf="@id/glNoSchedule"
+        app:layout_constraintTop_toTopOf="@id/etxtNoScheduleDuration" />
+
+    <EditText
+        android:id="@+id/etxtNoScheduleDuration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:importantForAutofill="no"
+        android:inputType="number"
+        android:layout_marginBottom="@dimen/base_pad"
+        app:layout_constraintStart_toEndOf="@id/glNoSchedule"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
