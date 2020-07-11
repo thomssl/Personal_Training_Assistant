@@ -44,7 +44,7 @@ class Day (private val sessions: MutableList<Session>) {
             val isSameClient = session.clientID == daySession.clientID
             //if the session being analyzed is not for the same client as the given session
             if (!isSameClient)
-                result = StaticFunctions.compareTimeRanges(daySession.getTimeRange(), session.getTimeRange())
+                result = StaticFunctions.compareTimeRanges(daySession.timeRange, session.timeRange)
             //if the session being analyzed is for the same client as the given session and the isSameDate flag is not set (ie if it breaks the
             //rule of one session per day per client), set result as true
             else if (isSameClient && !isSameDate)

@@ -401,9 +401,9 @@ class DatabaseOperations(val context: Context) {
         return result
     }
 
-    fun insertSession(session: Session): Boolean = trySQLCommands(session.getSQLCommands(Session.INSERT_COMMAND))
-    fun updateSession(session: Session): Boolean = trySQLCommands(session.getSQLCommands(Session.UPDATE_COMMAND))
-    private fun deleteSession(session: Session): Boolean = trySQLCommands(session.getSQLCommands(Session.DELETE_COMMAND))
+    fun insertSession(session: Session): Boolean = trySQLCommands(session.insertCommands)
+    fun updateSession(session: Session): Boolean = trySQLCommands(session.updateCommands)
+    private fun deleteSession(session: Session): Boolean = trySQLCommands(session.deleteCommands)
 
     /**
      * Method to cancel a given session. Course of action is dependent on the client's session_type

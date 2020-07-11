@@ -25,7 +25,7 @@ class SessionExercisesRVAdapter(
         return SessionExercisesViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.session_exercise_row, parent, false))
     }
 
-    override fun getItemCount(): Int = session.getExerciseCount()
+    override fun getItemCount(): Int = session.exerciseCount
 
     override fun onBindViewHolder(vh: SessionExercisesViewHolder, position: Int) {
         vh.onBindItems(session.getExercise(position), clickListener, position, longClickListener)

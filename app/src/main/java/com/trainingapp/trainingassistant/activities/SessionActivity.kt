@@ -195,7 +195,7 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
         }, {
                 exerciseSession -> onItemLongClick(exerciseSession)
         })
-        rvSessionExercises.visibility = if (session.getExerciseCount() > 0) View.VISIBLE else View.INVISIBLE
+        rvSessionExercises.visibility = if (session.exerciseCount > 0) View.VISIBLE else View.INVISIBLE
     }
 
     /**
