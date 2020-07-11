@@ -30,12 +30,12 @@ class ClientsRVAdapter(private val clients: List<Client>, private val clickListe
 
         fun onBindItems(client: Client, clickListener: (Int) -> Unit, longClickListener: (Client) -> Boolean){
             itemView.findViewById<TextView>(R.id.txtClientsName).text = client.name
-            itemView.findViewById<TextView>(R.id.txtClientsSessionType).text = client.getStrSessionType()
+            itemView.findViewById<TextView>(R.id.txtClientsSessionType).text = client.strScheduleType
             //if client has constant/variable session show start and end date, if no schedule blank
             val strStartEndDate = if (client.startDate != "0") "${client.startDate}  -  ${client.endDate}" else ""
             itemView.findViewById<TextView>(R.id.txtClientsStartEndDate).text = strStartEndDate
-            itemView.findViewById<TextView>(R.id.txtClientsDays).text = client.getDaysString()
-            itemView.findViewById<TextView>(R.id.txtClientsTimes).text = client.getTimesString()
+            itemView.findViewById<TextView>(R.id.txtClientsDays).text = client.strDays
+            itemView.findViewById<TextView>(R.id.txtClientsTimes).text = client.strTimes
             itemView.setOnClickListener { clickListener(client.id) }
             itemView.setOnLongClickListener { longClickListener(client) }
         }

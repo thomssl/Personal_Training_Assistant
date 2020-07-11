@@ -192,11 +192,11 @@ class DatabaseOperations(val context: Context) {
      * Method to get all clients currently in the Clients Table
      * @return MutableList of Client objects for all defined clients
      */
-    fun getAllClients(): MutableList<Client> {
+    fun getAllClients(): List<Client> {
         val cursor = db.rawQuery(DBQueries.getAllClients, null)
         val clients = generateSequence { if (cursor.moveToNext()) cursor else null }
             .map { Client.withCursor(it) }
-            .toMutableList()
+            .toList()
         cursor.close()
         return clients
     }
@@ -229,15 +229,15 @@ class DatabaseOperations(val context: Context) {
      */
     fun checkClientConflict(client: Client): String {
         // If the client passed does not have a WEEKLY_CONSTANT schedule return no conflict
-        if (client.schedule.scheduleType != ScheduleType.WEEKLY_CONSTANT) return ""
+        if (client.scheduleType != ScheduleType.WEEKLY_CONSTANT) return ""
         val conflicts = StringBuilder()
         // Get the schedule's sessionDays as a list of ClientConflictData (ie a list of days as 0-6 and the IntRange for the session time
-        val sessionDays = client.schedule.sessionDays
+        val sessionDays = client.sessionDays
         // Get all the day abbreviations (ie mon, tue, wed, etc) that appear in sessionDays. Used to get the possible conflict data for the cursor
         val days = StaticFunctions.NumToDay.slice(1 until 8).filterIndexed { index, _ ->
             sessionDays.any { data -> data.day == index }
         }
-        val cursor = db.rawQuery(DBQueries.getClientConflict(client.schedule.getCheckClientConflictDays(), client.id), null)
+        val cursor = db.rawQuery(DBQueries.getClientConflict(client.conflictDays, client.id), null)
         val posConflicts = generateSequence { if (cursor.moveToNext()) cursor else null }
             .map {
                 // Map the cursor data as pairs of name and a list of possible conflict ranges for each new client day
@@ -268,9 +268,9 @@ class DatabaseOperations(val context: Context) {
     }
 
 
-    fun insertClient(client: Client): Boolean = trySQLCommand(client.getInsertCommand())
-    fun updateClient(client: Client): Boolean = trySQLCommand(client.getUpdateCommand())
-    fun deleteClient(client: Client): Boolean = trySQLCommand(client.getDeleteCommand())
+    fun insertClient(client: Client): Boolean = trySQLCommand(client.insertCommand)
+    fun updateClient(client: Client): Boolean = trySQLCommand(client.updateCommand)
+    fun deleteClient(client: Client): Boolean = trySQLCommand(client.deleteCommand)
 
     /**
      * Method to get an Exercises object given and exercise id

@@ -18,7 +18,7 @@ import com.trainingapp.trainingassistant.enumerators.ScheduleType
 class Client (
     var id: Int,
     var name: String,
-    var schedule: Schedule,
+    private var schedule: Schedule,
     var startDate: String,
     var endDate: String
 ) {
@@ -85,26 +85,52 @@ class Client (
         }
     }
 
-    fun getDaysString(): String = schedule.getDays()
-    fun getTimesString(): String = schedule.getTimes()
     fun getDuration(dateTime: String): Int = schedule.getDuration(dateTime)
-    fun getStrSessionType(): String = schedule.scheduleType.text
-    fun getStrTime(index: Int): String = schedule.getStrTime(index)
+    val strDays: String
+        get() = schedule.getDays()
+    val strTimes: String
+        get() = schedule.getTimes()
+    val strScheduleType: String
+        get() = schedule.scheduleType.text
+    val scheduleType: ScheduleType
+        get() = schedule.scheduleType
+    val duration: String
+        get() = schedule.duration.toString()
+    val days: String
+        get() = schedule.days.toString()
+    val conflictDays: String
+        get() = schedule.getCheckClientConflictDays()
+    val sessionDays: List<ClientConflictData>
+        get() = schedule.sessionDays
+    val daysInfo: List<ClientDaysInfo>
+        get() = schedule.daysList.mapIndexedNotNull { index, it ->
+            if (it > 0)
+                ClientDaysInfo(index, schedule.getStrTime(index), schedule.durationsList[index].toString())
+            else
+                null
+        }
 
     //Database operations
-    fun getInsertCommand(): String {
-        return "Insert Into Clients(client_name, start_date, end_date, schedule_type, days, duration, sun, mon, tue, wed, thu, fri, sat, " +
-                "sun_duration, mon_duration, tue_duration, wed_duration, thu_duration, fri_duration, sat_duration) " +
-                "Values('$name', '$startDate', '$endDate',${schedule.getInsertCommand()});"
-    }
-    fun getUpdateCommand(): String {
-        return  "Update Clients " +
-                "Set client_name='$name',start_date='$startDate',end_date='$endDate',${schedule.getUpdateCommand()} " +
-                "Where client_id=$id;"
-    }
-    fun getDeleteCommand():String {
-        return  "Delete From Clients         Where client_id = $id; " +
-                "Delete From Session_Changes Where client_id = $id; " +
-                "Delete From Session_log     Where client_id = $id;"
-    }
+    val insertCommand: String
+        get() =
+            """
+            Insert Into Clients(client_name, start_date, end_date, schedule_type, days, duration,
+                                sun, mon, tue, wed, thu, fri, sat
+                                sun_duration, mon_duration, tue_duration, wed_duration, thu_duration, fri_duration, sat_duration)
+            Values('$name', '$startDate', '$endDate',${schedule.getInsertCommand()});""".trimIndent()
+    val updateCommand: String
+        get() =
+            """
+            Update Clients
+            Set    client_name='$name',
+                   start_date='$startDate',
+                   end_date='$endDate',
+                   ${schedule.getUpdateCommand()}
+            Where  client_id=$id;""".trimIndent()
+    val deleteCommand: String
+        get() =
+            """
+            Delete From Clients         Where client_id = $id;
+            Delete From Session_Changes Where client_id = $id;
+            Delete From Session_log     Where client_id = $id;""".trimIndent()
 }

@@ -25,7 +25,7 @@ class AddSessionDialog(private val clients: List<Client>, private val calendar: 
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        clientNames = clients.map { "${it.name}${if (it.schedule.scheduleType == ScheduleType.WEEKLY_CONSTANT) " (makeup session)" else ""}" }
+        clientNames = clients.map { "${it.name}${if (it.scheduleType == ScheduleType.WEEKLY_CONSTANT) " (makeup session)" else ""}" }
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -63,7 +63,7 @@ class AddSessionDialog(private val clients: List<Client>, private val calendar: 
                                     strDuration.toInt(),
                                     mutableListOf()
                                 ),
-                                client.schedule.scheduleType
+                                client.scheduleType
                             )
                         )
                             dismiss()

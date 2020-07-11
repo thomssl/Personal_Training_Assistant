@@ -113,31 +113,29 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
             btnAddEditClientEndDate.text = intentClient.endDate
             etxtAddEditClientName.setText(intentClient.name)
             // Populate layout depending upon client parameters
-            when (intentClient.schedule.scheduleType) {
+            when (intentClient.scheduleType) {
                 ScheduleType.NO_SCHEDULE -> {
                     // Load default duration to field
-                    etxtNoScheduleDuration.setText(intentClient.schedule.duration.toString())
+                    etxtNoScheduleDuration.setText(intentClient.duration)
                     radGrpAddEditClient.check(R.id.radIsNoSchedule)
                 }
                 // Use list of views to set appropriate view properties for client
                 ScheduleType.WEEKLY_CONSTANT -> {
-                    intentClient.schedule.daysList.forEachIndexed { index, it ->
-                        if (it > 0) {
-                            lstDays[index].isChecked = true
-                            lstTimes[index].text = intentClient.getStrTime(index)
-                            lstDurations[index].setText(intentClient.schedule.durationsList[index].toString())
-                        }
+                    intentClient.daysInfo.forEach {
+                        lstDays[it.index].isChecked = true
+                        lstTimes[it.index].text = it.strTime
+                        lstDurations[it.index].setText(it.strDuration)
                     }
                     radGrpAddEditClient.check(R.id.radIsWeeklyConst)
                 }
                 ScheduleType.WEEKLY_VARIABLE -> {
-                    etxtWeeklyVariableNumSessions.setText(intentClient.schedule.days.toString())
-                    etxtWeeklyVariableDuration.setText(intentClient.schedule.duration.toString())
+                    etxtWeeklyVariableNumSessions.setText(intentClient.days)
+                    etxtWeeklyVariableDuration.setText(intentClient.duration)
                     radGrpAddEditClient.check(R.id.radIsWeeklyVar)
                 }
                 ScheduleType.MONTHLY_VARIABLE -> {
-                    etxtMonthlyVariableNumSessions.setText(intentClient.schedule.days.toString())
-                    etxtMonthlyVariableDuration.setText(intentClient.schedule.duration.toString())
+                    etxtMonthlyVariableNumSessions.setText(intentClient.days)
+                    etxtMonthlyVariableDuration.setText(intentClient.duration)
                     radGrpAddEditClient.check(R.id.radIsMonthlyVar)
                 }
                 ScheduleType.BLANK -> finish()// Close activity is ScheduleType is invalid

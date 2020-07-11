@@ -112,6 +112,7 @@ class Schedule (
     }
 
     fun getCheckClientConflictDays(): String {
+        if (scheduleType != ScheduleType.WEEKLY_CONSTANT) return ""
         val builder = StringBuilder("(")
         daysList.forEachIndexed { index, i ->
             if (i > 0)
