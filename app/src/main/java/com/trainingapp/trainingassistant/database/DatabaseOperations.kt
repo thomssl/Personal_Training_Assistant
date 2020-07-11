@@ -65,7 +65,7 @@ class DatabaseOperations(val context: Context) {
      * @return List of the user settings as Ints
      */
     fun getUserSettings(): List<Int>{
-        val cursor = db.rawQuery(DBQueries.DBOperations.getUserSettings(), null)
+        val cursor = db.rawQuery(DBQueries.getUserSettings(), null)
         val result = if (cursor.moveToFirst())
             listOf(
                 cursor.getInt(cursor.getColumnIndex(DBInfo.UserSettingsTable.DEFAULT_DURATION)),
@@ -77,7 +77,7 @@ class DatabaseOperations(val context: Context) {
         return result
     }
 
-    fun setUserSettings(settings: MutableList<Int>): Boolean = trySQLCommand(DBQueries.DBOperations.setUserSettings(settings[0],settings[1]))
+    fun setUserSettings(settings: MutableList<Int>): Boolean = trySQLCommand(DBQueries.setUserSettings(settings[0],settings[1]))
 
 /*
     *
@@ -86,7 +86,7 @@ class DatabaseOperations(val context: Context) {
      * @return joint name corresponding with the given id
 */
 /*    fun getJoint(id: Int): MuscleJoint {
-        val cursor = db.rawQuery(DBQueries.DBOperations.getJoint(id), null)
+        val cursor = db.rawQuery(DBQueries.getJoint(id), null)
         val result = if (cursor.moveToFirst())
             MuscleJoint.withCursor(cursor, isMuscle = false)
         else
@@ -100,7 +100,7 @@ class DatabaseOperations(val context: Context) {
      * @return MutableList of MuscleJoint data objects for all the joints defined
      */
     fun getAllJoints(): MutableList<MuscleJoint> {
-        val cursor = db.rawQuery(DBQueries.DBOperations.getAllJoints, null)
+        val cursor = db.rawQuery(DBQueries.getAllJoints, null)
         val joints = generateSequence { if (cursor.moveToNext()) cursor else null }
             .map { MuscleJoint.withCursor(it, isMuscle = false) }
             .toMutableList()
@@ -115,7 +115,7 @@ class DatabaseOperations(val context: Context) {
      * @return MuscleJoint data object representing the desired muscle
 */
 /*    fun getMuscle(id: Int): MuscleJoint {
-        val cursor = db.rawQuery(DBQueries.DBOperations.getMuscle(id), null)
+        val cursor = db.rawQuery(DBQueries.getMuscle(id), null)
         val muscle = if (cursor.moveToFirst())
             MuscleJoint.withCursor(cursor, isMuscle = true)
         else
@@ -129,7 +129,7 @@ class DatabaseOperations(val context: Context) {
      * @return MutableList of MuscleJoint data objects representing all the defined muscles
      */
     fun getAllMuscles(): MutableList<MuscleJoint> {
-        val cursor = db.rawQuery(DBQueries.DBOperations.getAllMuscles, null)
+        val cursor = db.rawQuery(DBQueries.getAllMuscles, null)
         val muscles = generateSequence { if (cursor.moveToNext()) cursor else null }
             .map { MuscleJoint.withCursor(it, isMuscle = true) }
             .toMutableList()
@@ -144,7 +144,7 @@ class DatabaseOperations(val context: Context) {
      * @return if the muscle defines an exercise 2, if the deletion is handled with no error 1, if the deletion has an error 0
      */
     fun removeMuscle(muscle: MuscleJoint): Int{
-        val cursor = db.rawQuery(DBQueries.DBOperations.getMuscleUsage(muscle.id), null)
+        val cursor = db.rawQuery(DBQueries.getMuscleUsage(muscle.id), null)
         val result =  if (cursor.moveToFirst())
             2
         else {
@@ -160,15 +160,15 @@ class DatabaseOperations(val context: Context) {
      * @return true if there is a conflict, false if no conflict found
      */
     fun checkMuscleConflict(muscle: MuscleJoint): Boolean {
-        val cursor = db.rawQuery(DBQueries.DBOperations.getMuscleConflict(muscle.name, muscle.id), null)
+        val cursor = db.rawQuery(DBQueries.getMuscleConflict(muscle.name, muscle.id), null)
         val result = cursor.moveToFirst()
         cursor.close()
         return result
     }
 
-    fun insertMuscle(muscle: MuscleJoint): Boolean = trySQLCommand(DBQueries.DBOperations.insertMuscle(muscle.name))
-    fun updateMuscle(muscle: MuscleJoint): Boolean = trySQLCommand(DBQueries.DBOperations.updateMuscle(muscle.name, muscle.id))
-    private fun deleteMuscle(muscle: MuscleJoint): Boolean = trySQLCommand(DBQueries.DBOperations.deleteMuscle(muscle.id))
+    fun insertMuscle(muscle: MuscleJoint): Boolean = trySQLCommand(DBQueries.insertMuscle(muscle.name))
+    fun updateMuscle(muscle: MuscleJoint): Boolean = trySQLCommand(DBQueries.updateMuscle(muscle.name, muscle.id))
+    private fun deleteMuscle(muscle: MuscleJoint): Boolean = trySQLCommand(DBQueries.deleteMuscle(muscle.id))
 
     /**
      * Method to get a Client object given a client id by searching for that client's information
@@ -177,7 +177,7 @@ class DatabaseOperations(val context: Context) {
      * @return Client object for the given client id
      */
     fun getClient(id: Int): Client {
-        val cursor = db.rawQuery(DBQueries.DBOperations.getClient(id), null)
+        val cursor = db.rawQuery(DBQueries.getClient(id), null)
         // If a record is found, return a populated Client object
         val client: Client = if (cursor.moveToFirst())
             Client.withCursor(cursor)
@@ -193,7 +193,7 @@ class DatabaseOperations(val context: Context) {
      * @return MutableList of Client objects for all defined clients
      */
     fun getAllClients(): MutableList<Client> {
-        val cursor = db.rawQuery(DBQueries.DBOperations.getAllClients, null)
+        val cursor = db.rawQuery(DBQueries.getAllClients, null)
         val clients = generateSequence { if (cursor.moveToNext()) cursor else null }
             .map { Client.withCursor(it) }
             .toMutableList()
@@ -201,8 +201,8 @@ class DatabaseOperations(val context: Context) {
         return clients
     }
 
-    private fun addClientBank(clientID: Int): Boolean = trySQLCommand(DBQueries.DBOperations.addClientBank(clientID))
-    fun decClientBank(clientID: Int): Boolean = trySQLCommand(DBQueries.DBOperations.decClientBank(clientID))
+    private fun addClientBank(clientID: Int): Boolean = trySQLCommand(DBQueries.addClientBank(clientID))
+    fun decClientBank(clientID: Int): Boolean = trySQLCommand(DBQueries.decClientBank(clientID))
 
     /**
      * Method to get the client type
@@ -210,7 +210,7 @@ class DatabaseOperations(val context: Context) {
      * @return Enum value representing the schedule type that a given client follows
      */
     fun getClientType(clientID: Int): ScheduleType {
-        val cursor = db.rawQuery(DBQueries.DBOperations.getClientType(clientID), null)
+        val cursor = db.rawQuery(DBQueries.getClientType(clientID), null)
         // If record found with given client id, return corresponding ScheduleType
         val result: ScheduleType = if (cursor.moveToFirst())
             Client.getScheduleType(cursor.getInt(cursor.getColumnIndex(DBInfo.ClientsTable.SCHEDULE_TYPE)))
@@ -237,7 +237,7 @@ class DatabaseOperations(val context: Context) {
         val days = StaticFunctions.NumToDay.slice(1 until 8).filterIndexed { index, _ ->
             sessionDays.any { data -> data.day == index }
         }
-        val cursor = db.rawQuery(DBQueries.DBOperations.getClientConflict(client.schedule.getCheckClientConflictDays(), client.id), null)
+        val cursor = db.rawQuery(DBQueries.getClientConflict(client.schedule.getCheckClientConflictDays(), client.id), null)
         val posConflicts = generateSequence { if (cursor.moveToNext()) cursor else null }
             .map {
                 // Map the cursor data as pairs of name and a list of possible conflict ranges for each new client day
@@ -280,7 +280,7 @@ class DatabaseOperations(val context: Context) {
     fun getExercise(id: Int): Exercise {
         // Gets base Exercise class information and fills in the ExerciseType using a join and Case clause to get the appropriate data
         // ie if strength, muscle_name and if mobility or stability, joint_name
-        val cursor = db.rawQuery(DBQueries.DBOperations.getExercise(id), null)
+        val cursor = db.rawQuery(DBQueries.getExercise(id), null)
         val exercise = if (cursor.moveToFirst())
             Exercise.withCursor(cursor)
         else
@@ -296,7 +296,7 @@ class DatabaseOperations(val context: Context) {
     fun getAllExercises(): List<Exercise> {
         // Gets base Exercise class information and fills in the ExerciseType using a join and Case clause to get the appropriate data
         // ie if strength, muscle_name and if mobility or stability, joint_name
-        val cursor = db.rawQuery(DBQueries.DBOperations.getAllExercises, null)
+        val cursor = db.rawQuery(DBQueries.getAllExercises, null)
         val exercises = generateSequence { if (cursor.moveToNext()) cursor else null }
             .map {Exercise.withCursor(it) }
             .toList()
@@ -310,7 +310,7 @@ class DatabaseOperations(val context: Context) {
      * @return true if a conflict is found
      */
     fun checkExerciseConflict(exercise: Exercise): Boolean {
-        val cursor = db.rawQuery(DBQueries.DBOperations.getExerciseConflict(exercise.name,exercise.id), null)
+        val cursor = db.rawQuery(DBQueries.getExerciseConflict(exercise.name,exercise.id), null)
         val result = cursor.moveToFirst()
         cursor.close()
         return result
@@ -329,7 +329,7 @@ class DatabaseOperations(val context: Context) {
      */
     fun removeExercise(exercise: Exercise): Boolean {
         //gets base Session class information, fills in the client_name with a join and finds only sessions containing the given exercise.id
-        val cursor = db.rawQuery(DBQueries.DBOperations.getExerciseUsage(exercise.id), null)
+        val cursor = db.rawQuery(DBQueries.getExerciseUsage(exercise.id), null)
         val result = if (cursor.moveToFirst()) false else deleteExercise(exercise)
         cursor.close()
         return result
@@ -345,11 +345,11 @@ class DatabaseOperations(val context: Context) {
      */
     fun getSession(clientID: Int, dayTime: String,sessionID: Int): Session {
         // Gets base Session class information, fills in the client_name with a join and finds only sessions for a given client and dayTime
-        val cursor = db.rawQuery(DBQueries.DBOperations.getSession(sessionID), null)
+        val cursor = db.rawQuery(DBQueries.getSession(sessionID), null)
         // If a record is found, populate the Session object
         val session: Session = if (cursor.moveToFirst()){
             val session = Session.withCursor(cursor)
-            val cursor1 = db.rawQuery(DBQueries.DBOperations.getSessionExercises(session.sessionID), null)
+            val cursor1 = db.rawQuery(DBQueries.getSessionExercises(session.sessionID), null)
             generateSequence { if (cursor1.moveToNext()) cursor1 else null }
                 .forEach {
                     session.addExercise( ExerciseSession.withCursor(it) )
@@ -363,7 +363,7 @@ class DatabaseOperations(val context: Context) {
             val session = Session.empty(clientID, client.name, dayTime)
             // If a change for the given client and dayTime then use the corresponding duration
             if (checkChange(session)){
-                val cursor1 = db.rawQuery(DBQueries.DBOperations.getSessionSessionChanges(clientID, dayTime), null)
+                val cursor1 = db.rawQuery(DBQueries.getSessionSessionChanges(clientID, dayTime), null)
                 cursor1.moveToFirst()
                 session.duration = cursor1.getInt(0)
                 cursor1.close()
@@ -395,7 +395,7 @@ class DatabaseOperations(val context: Context) {
      * @return true if session found in log, false if not found
      */
     fun checkSessionLog(session: Session): Boolean {
-        val cursor = db.rawQuery(DBQueries.DBOperations.checkSessionLog(session.sessionID), null)
+        val cursor = db.rawQuery(DBQueries.checkSessionLog(session.sessionID), null)
         val result = cursor.moveToFirst()
         cursor.close()
         return result
@@ -444,13 +444,13 @@ class DatabaseOperations(val context: Context) {
      */
     fun getClientSessions(client: Client): List<Session> {
         //gets base Session class information, fills in the client_name with a join and finds only sessions for a given client
-        var cursor = db.rawQuery(DBQueries.DBOperations.getClientSessions(client.id), null)
+        var cursor = db.rawQuery(DBQueries.getClientSessions(client.id), null)
         val sessions = generateSequence { if (cursor.moveToNext()) cursor else null }
             .map { Session.withCursor(it) }
             .toList()
         cursor.close()
         val sessionIDs = sessions.filter { it.sessionID != 0 }.joinToString(",")
-        cursor = db.rawQuery(DBQueries.DBOperations.getMultiSessionsExercises(sessionIDs), null)
+        cursor = db.rawQuery(DBQueries.getMultiSessionsExercises(sessionIDs), null)
         generateSequence { if (cursor.moveToNext()) cursor else null }
             .forEach {
                 val sessionID = it.getInt(it.getColumnIndex(DBInfo.SessionExercisesTable.SESSION_ID))
@@ -468,7 +468,7 @@ class DatabaseOperations(val context: Context) {
      */
     fun getAddSessionsClientsByDay(calendar: Calendar): List<Client> {
         val day = getScheduleByDay(calendar)
-        val cursor = db.rawQuery(DBQueries.DBOperations.getAddSessionClients(day.getStrIDs()), null)
+        val cursor = db.rawQuery(DBQueries.getAddSessionClients(day.getStrIDs()), null)
         val clients = generateSequence { if (cursor.moveToNext()) cursor else null }
             .map { Client.withCursor(it) }
             .toList()
@@ -492,7 +492,7 @@ class DatabaseOperations(val context: Context) {
         val chosenDate = (calendarChosen[Calendar.YEAR] * 365) + calendarChosen[Calendar.DAY_OF_YEAR]
 
         val date = StaticFunctions.getStrDateTime(calendarChosen)
-        var cursor = db.rawQuery(DBQueries.DBOperations.getScheduleByDaySessionLog(date), null)
+        var cursor = db.rawQuery(DBQueries.getScheduleByDaySessionLog(date), null)
         generateSequence { if (cursor.moveToNext()) cursor else null }
             .forEach {
                 sessions.add( Session.withCursor(it) )
@@ -500,7 +500,7 @@ class DatabaseOperations(val context: Context) {
         cursor.close()
         if (sessions.size > 0) {
             val sessionIDs = sessions.filter { it.sessionID != 0 }.joinToString(",") { it.sessionID.toString()}
-            cursor = db.rawQuery(DBQueries.DBOperations.getMultiSessionsExercises(sessionIDs), null)
+            cursor = db.rawQuery(DBQueries.getMultiSessionsExercises(sessionIDs), null)
             generateSequence { if (cursor.moveToNext()) cursor else null }
                 .forEach {
                     val sessionID = it.getInt(it.getColumnIndex(DBInfo.SessionExercisesTable.SESSION_ID))
@@ -510,7 +510,7 @@ class DatabaseOperations(val context: Context) {
         }
         if (chosenDate >= currentDate) {
             val dayOfWeek = StaticFunctions.NumToDay[calendarChosen[Calendar.DAY_OF_WEEK]].toLowerCase(Locale.ROOT)
-            cursor = db.rawQuery(DBQueries.DBOperations.getScheduleByDayClients(date, dayOfWeek), null)
+            cursor = db.rawQuery(DBQueries.getScheduleByDayClients(date, dayOfWeek), null)
             generateSequence { if (cursor.moveToNext()) cursor else null }
                 .forEach {
                     val time = it.getInt(it.getColumnIndex(dayOfWeek))
@@ -529,7 +529,7 @@ class DatabaseOperations(val context: Context) {
                     )
                 }
             cursor.close()
-            cursor = db.rawQuery(DBQueries.DBOperations.getScheduleByDaySessionChanges(date), null)
+            cursor = db.rawQuery(DBQueries.getScheduleByDaySessionChanges(date), null)
             generateSequence { if (cursor.moveToNext()) cursor else null }
                 .forEach {
                     val dayTime = it.getString(it.getColumnIndex(DBInfo.SessionChangesTable.CHANGE_DAYTIME))
@@ -556,26 +556,26 @@ class DatabaseOperations(val context: Context) {
      * @return true if session exists
      */
     fun checkChange(session: Session): Boolean {
-        val cursor = db.rawQuery(DBQueries.DBOperations.checkChange(session.clientID, StaticFunctions.getStrDateTime(session.date)), null)
+        val cursor = db.rawQuery(DBQueries.checkChange(session.clientID, StaticFunctions.getStrDateTime(session.date)), null)
         val result: Boolean = cursor.moveToFirst()
         cursor.close()
         return result
     }
 
     fun insertChange(oldSession: Session, newSession: Session): Boolean {
-        return trySQLCommand(DBQueries.DBOperations.insertChange(oldSession.clientID,
+        return trySQLCommand(DBQueries.insertChange(oldSession.clientID,
                                                             StaticFunctions.getStrDateTime(oldSession.date),
                                                             StaticFunctions.getStrDateTime(newSession.date),
                                                             newSession.duration))
     }
     fun updateChange(oldSession: Session, newSession: Session): Boolean {
-        return trySQLCommand(DBQueries.DBOperations.updateChange(newSession.clientID,
+        return trySQLCommand(DBQueries.updateChange(newSession.clientID,
                                                             StaticFunctions.getStrDateTime(newSession.date),
                                                             StaticFunctions.getStrDateTime(oldSession.date),
                                                             newSession.duration))
     }
     private fun deleteChange(session: Session): Boolean {
-        return trySQLCommand(DBQueries.DBOperations.deleteChange(session.clientID,
+        return trySQLCommand(DBQueries.deleteChange(session.clientID,
                                                             StaticFunctions.getStrDateTime(session.date)))
     }
 
@@ -587,7 +587,7 @@ class DatabaseOperations(val context: Context) {
      * All non-Exercise object fields are blank if the client has not already performed the exercise
      */
     fun getLastOccurrence(exercise: Exercise, clientID: Int): ExerciseSession {
-        val cursor = db.rawQuery(DBQueries.DBOperations.getLastOccurrence(clientID, exercise.id), null)
+        val cursor = db.rawQuery(DBQueries.getLastOccurrence(clientID, exercise.id), null)
         val exerciseSession: ExerciseSession = if (cursor.moveToFirst()){
             ExerciseSession.withCursor(cursor)
         } else
@@ -604,7 +604,7 @@ class DatabaseOperations(val context: Context) {
      * Empty MutableList returned if the given exercise has been performed
      */
     fun getAllOccurrences(exercise: Exercise, clientID: Int): MutableList<ExerciseSession> {
-        val cursor = db.rawQuery(DBQueries.DBOperations.getAllOccurrences(clientID, exercise.id), null)
+        val cursor = db.rawQuery(DBQueries.getAllOccurrences(clientID, exercise.id), null)
         val exerciseSessions = generateSequence { if (cursor.moveToNext()) cursor else null }
             .map { ExerciseSession.withCursor(exercise, it) }
             .toMutableList()
@@ -614,18 +614,18 @@ class DatabaseOperations(val context: Context) {
 
     fun cleanSessionChanges(): Boolean {
         val date = StaticFunctions.getStrDate(Calendar.getInstance())
-        return trySQLCommand(DBQueries.DBOperations.cleanSessionChanges(date))
+        return trySQLCommand(DBQueries.cleanSessionChanges(date))
     }
 
     fun getAllPrograms(): List<Program> {
-        var cursor = db.rawQuery(DBQueries.DBOperations.getAllPrograms, null)
+        var cursor = db.rawQuery(DBQueries.getAllPrograms, null)
         val programs = generateSequence { if (cursor.moveToNext()) cursor else null }
             .map { Program.withCursor(it) }
             .toMutableList()
         cursor.close()
         if (programs.size > 0 ) {
             val programIDS = programs.filter { it.id != 0 }.joinToString(",") { it.id.toString()}
-            cursor = db.rawQuery(DBQueries.DBOperations.getMultiProgramsExercises(programIDS), null)
+            cursor = db.rawQuery(DBQueries.getMultiProgramsExercises(programIDS), null)
             generateSequence { if (cursor.moveToNext()) cursor else null }
                 .forEach {
                     val programID = it.getInt(it.getColumnIndex(DBInfo.ProgramExercisesTable.PROGRAM_ID))
@@ -638,7 +638,7 @@ class DatabaseOperations(val context: Context) {
     }
 
     fun getProgram(id: Int): Program {
-        var cursor = db.rawQuery(DBQueries.DBOperations.getProgram(id), null)
+        var cursor = db.rawQuery(DBQueries.getProgram(id), null)
         val program: Program = if (cursor.moveToFirst()){
             Program(
                 cursor.getInt(cursor.getColumnIndex(DBInfo.ProgramsTable.ID)),
@@ -652,7 +652,7 @@ class DatabaseOperations(val context: Context) {
         }
         cursor.close()
         if (program.id > 0) {
-            cursor = db.rawQuery(DBQueries.DBOperations.getMultiProgramsExercises(program.id.toString()), null)
+            cursor = db.rawQuery(DBQueries.getMultiProgramsExercises(program.id.toString()), null)
             generateSequence { if (cursor.moveToNext()) cursor else null }
                 .forEach { program.addExercise(ExerciseProgram.withCursor(it)) }
             cursor.close()
