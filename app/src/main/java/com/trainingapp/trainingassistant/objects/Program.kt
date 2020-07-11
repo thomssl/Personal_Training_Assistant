@@ -4,11 +4,11 @@ import android.database.Cursor
 import com.trainingapp.trainingassistant.database.DBInfo
 
 class Program (
-    var id: Int,
-    var name: String,
-    var days: Int,
-    var desc: String,
-    var exercises: MutableList<ExerciseProgram>
+    val id: Int,
+    val name: String,
+    val days: Int,
+    val desc: String,
+    val exercises: MutableList<ExerciseProgram>
 ) {
 
     companion object {
@@ -30,9 +30,11 @@ class Program (
             )
         }
     }
+
     //used to validate that a program has exercises
     // stops the user from removing all exercises from a session than updating or confirming a session that has never had any exercises
-    private fun hasExercises(): Boolean = exercises.size > 0
+    private val hasExercises: Boolean
+        get() = exercises.size > 0
 
     fun addExercise(ExerciseProgram: ExerciseProgram){
         exercises.add(ExerciseProgram)
@@ -87,42 +89,48 @@ class Program (
     }
 
     fun getExercise(index: Int): ExerciseProgram = exercises[index]
-    fun getExerciseCount(): Int = exercises.size
+    val exerciseCount: Int
+        get() = exercises.size
 
-    private fun getAllExerciseInserts(): String{
-        val strProgramID = if (id == 0)
-            "(Select program_id From Programs Where program_name = $name)"
-        else
-            id.toString()
-        return exercises.joinToString { "($strProgramID, ${it.id}, '${it.sets}', '${it.reps}', '${it.day}', ${it.order})" }
-    }
-    private fun getDeleteProgramCommand() = "Delete From Programs Where Where program_id = $id;"
-    private fun getDeleteProgramExercisesCommand() = "Delete From Program_Exercises Where program_id = $id;"
-    private fun getInsertProgramCommand() = "Insert Into Programs(program_name, program_desc, program_days) Values('$name', '$desc', $days);"
-    private fun getInsertProgramExercisesCommand(): String {
-        return if (hasExercises())
-            "Insert Into Program_Exercises(program_id, exercise_id, sets, reps, day, exercise_order) Values ${getAllExerciseInserts()}"
-        else ""
-    }
-    fun getInsertProgramCommands() : List<String>{
-        return listOf(
-            getInsertProgramCommand(),
-            getInsertProgramExercisesCommand()
-        )
-    }
-    fun getUpdateProgramCommands(): List<String> {
-        return listOf(
-            "Update Programs " +
-            "Set program_name = '$name', program_desc = '$desc', program_days = $days " +
-            "Where program_id = $id;",
-            getDeleteProgramExercisesCommand(),
-            getInsertProgramExercisesCommand()
+    private val allExerciseInserts: String
+        get() {
+            val strProgramID = if (id == 0)
+                "(Select program_id From Programs Where program_name = $name)"
+            else
+                id.toString()
+            return exercises.joinToString { "($strProgramID, ${it.id}, '${it.sets}', '${it.reps}', '${it.day}', ${it.order})" }
+        }
+    private val deleteProgramCommand get() = "Delete From Programs Where Where program_id = $id;"
+    private val deleteProgramExercisesCommand get() = "Delete From Program_Exercises Where program_id = $id;"
+    private val insertProgramCommand get() = "Insert Into Programs(program_name, program_desc, program_days) Values('$name', '$desc', $days);"
+    private val insertProgramExercisesCommand: String
+        get() {
+            return if (hasExercises)
+                "Insert Into Program_Exercises(program_id, exercise_id, sets, reps, day, exercise_order) Values $allExerciseInserts"
+            else ""
+        }
+    val insertProgramCommands: List<String>
+        get() {
+            return listOf(
+                insertProgramCommand,
+                insertProgramExercisesCommand
             )
-    }
-    fun getDeleteProgramCommands(): List<String> {
-        return listOf(
-            getDeleteProgramCommand(),
-            getDeleteProgramExercisesCommand()
-        )
-    }
+        }
+    val updateProgramCommands: List<String>
+        get() {
+            return listOf(
+                "Update Programs " +
+                        "Set program_name = '$name', program_desc = '$desc', program_days = $days " +
+                        "Where program_id = $id;",
+                deleteProgramExercisesCommand,
+                insertProgramExercisesCommand
+            )
+        }
+    val deleteProgramCommands: List<String>
+        get() {
+            return listOf(
+                deleteProgramCommand,
+                deleteProgramExercisesCommand
+            )
+        }
 }

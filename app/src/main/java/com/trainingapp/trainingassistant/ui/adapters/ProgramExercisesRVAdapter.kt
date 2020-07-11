@@ -25,7 +25,7 @@ class ProgramExercisesRVAdapter(
         return ProgramExercisesViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.program_exercise_row, parent, false))
     }
 
-    override fun getItemCount(): Int = program.getExerciseCount()
+    override fun getItemCount(): Int = program.exerciseCount
 
     override fun onBindViewHolder(vh: ProgramExercisesViewHolder, position: Int) {
         vh.onBindItems(program.getExercise(position), clickListener, position, longClickListener)

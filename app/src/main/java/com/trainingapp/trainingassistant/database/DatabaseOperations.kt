@@ -660,5 +660,5 @@ class DatabaseOperations(val context: Context) {
         return program
     }
 
-    fun removeProgram(program: Program) = trySQLCommands(program.getDeleteProgramCommands())
+    fun removeProgram(program: Program) = trySQLCommands(program.deleteProgramCommands)
 }
