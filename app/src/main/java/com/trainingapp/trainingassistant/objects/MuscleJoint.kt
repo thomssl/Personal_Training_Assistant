@@ -6,7 +6,7 @@ import com.trainingapp.trainingassistant.database.DBInfo
 /**
  * Data object to hold the id and name of a muscle or joint
  */
-data class MuscleJoint(var id: Int, var name: String){
+data class MuscleJoint(val id: Int, val name: String){
     companion object {
         val empty = MuscleJoint(0,"")
 

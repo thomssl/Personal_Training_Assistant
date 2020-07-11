@@ -443,7 +443,7 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
                 Toast.LENGTH_LONG
             ).show()
             else -> {//if the input passes all tests, get populate a new ExerciseSession object and add that object to the Session
-                val exerciseSession = ExerciseSession(sessionDialog.exerciseSession.getExercise(), sets, reps, resistance, order)
+                val exerciseSession = ExerciseSession(sessionDialog.exerciseSession.exercise, sets, reps, resistance, order)
                 session.updateExercise(exerciseSession, position)
                 changeExercise = true
                 setAdapter()

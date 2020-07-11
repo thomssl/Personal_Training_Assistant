@@ -17,15 +17,15 @@ import com.trainingapp.trainingassistant.enumerators.ExerciseType
  * @param order number of occurrence within the session, can repeat for concurrent sets
  */
 class ExerciseSession(
-    var id: Int,
-    var name: String,
-    var type: ExerciseType,
+    val id: Int,
+    val name: String,
+    val type: ExerciseType,
     private val primaryMover: MuscleJoint,
     private val secondaryMovers: MutableList<MuscleJoint>,
-    var sets: String,
-    var reps: String,
-    var resistance: String,
-    var order: Int
+    val sets: String,
+    val reps: String,
+    val resistance: String,
+    val order: Int
 ): Comparable<ExerciseSession> {
 
     companion object {
@@ -77,16 +77,18 @@ class ExerciseSession(
             this(exercise.id, exercise.name, exercise.type, exercise.primaryMover, exercise.lstSecondaryMovers, sets, reps, resistance, order)
 
     /**
-     * Method used to access if the object has been populated properly
+     * Property used to access if the object has been populated properly
      * @return true if sets contains data, false if no data for sets present
      */
-    fun hasData(): Boolean = sets.isNotBlank()
+    val hasData: Boolean
+        get() = sets.isNotBlank()
 
     /**
-     * Method to get the Exercise object used to initialize the object
+     * Property to get the Exercise object used to initialize the object
      * @return Exercise object contained within this object
      */
-    fun getExercise(): Exercise = Exercise(id, name, type, primaryMover, secondaryMovers)
+    val exercise: Exercise
+        get() = Exercise(id, name, type, primaryMover, secondaryMovers)
 
     override fun compareTo(other: ExerciseSession): Int = this.order - other.order
 }

@@ -30,7 +30,7 @@ class AddExerciseSessionDialog(
             txtNames.setAdapter(SearchForExerciseAutoComplete(context!!, R.layout.simple_autocomplete_item, exercises))
             txtNames.setOnItemClickListener{ _, _, _, _ ->
                 val exerciseSession = databaseOperations.getLastOccurrence(exercises[exerciseNames.indexOf(txtNames.text.toString())], clientID)
-                if (exerciseSession.hasData()) {
+                if (exerciseSession.hasData) {
                     view.findViewById<EditText>(R.id.etxtAddResistance).setText(exerciseSession.resistance)
                     view.findViewById<EditText>(R.id.etxtAddReps).setText(exerciseSession.reps)
                     view.findViewById<EditText>(R.id.etxtAddSets).setText(exerciseSession.sets)
