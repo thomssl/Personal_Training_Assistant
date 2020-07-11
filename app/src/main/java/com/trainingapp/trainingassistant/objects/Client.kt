@@ -16,11 +16,11 @@ import com.trainingapp.trainingassistant.enumerators.ScheduleType
  *                or '0' (for no schedule clients)
  */
 class Client (
-    var id: Int,
-    var name: String,
-    private var schedule: Schedule,
-    var startDate: String,
-    var endDate: String
+    val id: Int,
+    val name: String,
+    private val schedule: Schedule,
+    val startDate: String,
+    val endDate: String
 ) {
     companion object{
         val empty = Client(

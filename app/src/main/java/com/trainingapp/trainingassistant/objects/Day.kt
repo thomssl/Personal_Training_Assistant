@@ -6,7 +6,7 @@ import com.trainingapp.trainingassistant.StaticFunctions
  * Object to hold sessions for a single day
  * @param sessions List of Session objects for a given date, initially sorted by time of the session within the day
  */
-class Day (private var sessions: MutableList<Session>) {
+class Day (private val sessions: MutableList<Session>) {
 
     init {
         //sort sessions by time when object initialized
