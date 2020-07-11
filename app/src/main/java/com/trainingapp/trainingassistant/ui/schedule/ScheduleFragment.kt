@@ -69,7 +69,7 @@ class ScheduleFragment : Fragment(), CalendarView.OnDateChangeListener, Coroutin
         val adapter = getAdapter()
         prgScheduleData?.visibility = View.GONE
         rvDailySchedule.adapter = adapter
-        if (day.getSessionCount() > 0) {
+        if (day.sessionCount > 0) {
             lblScheduleEmpty.visibility = View.INVISIBLE
             rvDailySchedule.visibility = View.VISIBLE
         }

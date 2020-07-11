@@ -468,7 +468,7 @@ class DatabaseOperations(val context: Context) {
      */
     fun getAddSessionsClientsByDay(calendar: Calendar): List<Client> {
         val day = getScheduleByDay(calendar)
-        val cursor = db.rawQuery(DBQueries.getAddSessionClients(day.getStrIDs()), null)
+        val cursor = db.rawQuery(DBQueries.getAddSessionClients(day.strIDs), null)
         val clients = generateSequence { if (cursor.moveToNext()) cursor else null }
             .map { Client.withCursor(it) }
             .toList()

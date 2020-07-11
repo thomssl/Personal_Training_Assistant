@@ -9,43 +9,27 @@ import com.trainingapp.trainingassistant.StaticFunctions
 class Day (private var sessions: MutableList<Session>) {
 
     init {
-        sessions.sort()//sort sessions by time when object initialized
-    }
-
-    //Seemingly useless code
-    /*fun removeSession(index: Int){
-        sessions.removeAt(index)
+        //sort sessions by time when object initialized
         sessions.sort()
     }
-
-    fun removeSession(session: Session){
-        sessions.remove(session)
-        sessions.sort()
-    }
-
-    fun addSession(session: Session): Boolean{
-        return if (!checkConflict(session)) {
-            sessions.add(session)
-            sessions.sort()
-            true
-        } else false
-    }*/
 
     fun getSession(index: Int): Session = sessions[index]
 
     /**
      * Method to get all the client ids for sessions within the list. Used to figure out which clients cannot add a session to the day
      */
-    fun getStrIDs(): String{
-        return if (sessions.size > 0){
-            val builder = StringBuilder()
-            sessions.forEach { builder.append("${it.clientID},") }
-            builder.deleteCharAt(builder.lastIndex)
-            builder.toString()
-        } else ""
-    }
+    val strIDs: String
+        get() {
+            return if (sessions.size > 0) {
+                val builder = StringBuilder()
+                sessions.forEach { builder.append("${it.clientID},") }
+                builder.deleteCharAt(builder.lastIndex)
+                builder.toString()
+            } else ""
+        }
 
-    fun getSessionCount(): Int = sessions.size
+    val sessionCount: Int
+        get() = sessions.size
 
     /**
      * Method to check if a new session conflicts with existing sessions
@@ -78,7 +62,8 @@ class Day (private var sessions: MutableList<Session>) {
      * Method to get the indices of any session that conflict with another. Uses the above function to check sessions for conflicts.
      * @return List of indices that have a conflict. Used to highlight conflicting sessions in the ScheduleFragment
      */
-    fun getConflicts(): List<Int> {
-        return sessions.filter { session ->  checkConflict(session, true) }.mapIndexed { index, _ ->  index}
-    }
+    val conflicts: List<Int>
+        get() {
+            return sessions.filter { session -> checkConflict(session, true) }.mapIndexed { index, _ -> index }
+        }
 }

@@ -23,11 +23,11 @@ class ScheduleRVAdapter(private val context: Context?, private val day: Day, pri
     private lateinit var conflicts: List<Int>
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScheduleViewHolder {
-        conflicts = day.getConflicts()//fills list with sessions indices that have a conflict with another session
+        conflicts = day.conflicts//fills list with sessions indices that have a conflict with another session
         return ScheduleViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.schedule_row, parent, false))
     }
 
-    override fun getItemCount(): Int = day.getSessionCount()
+    override fun getItemCount(): Int = day.sessionCount
 
     override fun onBindViewHolder(vh: ScheduleViewHolder, position: Int) {
         vh.onBindItems(day.getSession(position), clickListener, position, longClickListener)
