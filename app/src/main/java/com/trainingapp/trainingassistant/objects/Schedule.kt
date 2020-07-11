@@ -24,50 +24,53 @@ class Schedule (
         get() = daysList.mapIndexed { index, it ->
             ClientConflictData(index,it until it + durationsList[index])
         }.filter { it.range.first != 0 }
+
     /**
      * Method to get the clients days for UI or database operations. Output accounts for ScheduleType
      * @return String value representing the days attribute of the client
      */
-    fun getDays(): String{
-        return when (scheduleType){
-            ScheduleType.WEEKLY_CONSTANT -> {
-                val builder = StringBuilder()
-                daysList.forEachIndexed { index, it ->
-                    if (it > 0)
-                        builder.append("${StaticFunctions.NumToDay[index+1]}\n")
+    val daysOutput: String
+        get() {
+            return when (scheduleType) {
+                ScheduleType.WEEKLY_CONSTANT -> {
+                    val builder = StringBuilder()
+                    daysList.forEachIndexed { index, it ->
+                        if (it > 0)
+                            builder.append("${StaticFunctions.NumToDay[index + 1]}\n")
+                    }
+                    if (builder.isNotBlank())
+                        builder.deleteCharAt(builder.lastIndex)
+                    builder.toString()
                 }
-                if (builder.isNotBlank())
-                    builder.deleteCharAt(builder.lastIndex)
-                builder.toString()
+                ScheduleType.WEEKLY_VARIABLE -> "$days/week"
+                ScheduleType.MONTHLY_VARIABLE -> "$days/month"
+                ScheduleType.NO_SCHEDULE -> ""
+                ScheduleType.BLANK -> "Error"
             }
-            ScheduleType.WEEKLY_VARIABLE -> "$days/week"
-            ScheduleType.MONTHLY_VARIABLE -> "$days/month"
-            ScheduleType.NO_SCHEDULE -> ""
-            ScheduleType.BLANK -> "Error"
         }
-    }
 
     /**
      * Method to get the clients times for UI or database operations. Output accounts for ScheduleType
      * @return String value representing the times attribute of the client
      */
-    fun getTimes(): String {
-        return when (scheduleType){
-            ScheduleType.WEEKLY_CONSTANT -> {
-                val builder = StringBuilder()
-                //shows the start and end time
-                daysList.forEachIndexed { index, i ->
-                    if (i > 0)
-                        builder.append("${getTime(i)}/${getTime(i+durationsList[index])}\n")
+    val timesOutput: String
+        get() {
+            return when (scheduleType) {
+                ScheduleType.WEEKLY_CONSTANT -> {
+                    val builder = StringBuilder()
+                    //shows the start and end time
+                    daysList.forEachIndexed { index, i ->
+                        if (i > 0)
+                            builder.append("${getTime(i)}/${getTime(i + durationsList[index])}\n")
+                    }
+                    if (builder.isNotBlank())
+                        builder.deleteCharAt(builder.lastIndex)
+                    return builder.toString()
                 }
-                if (builder.isNotBlank())
-                    builder.deleteCharAt(builder.lastIndex)
-                return builder.toString()
+                ScheduleType.WEEKLY_VARIABLE, ScheduleType.MONTHLY_VARIABLE, ScheduleType.NO_SCHEDULE -> ""
+                ScheduleType.BLANK -> "Error"
             }
-            ScheduleType.WEEKLY_VARIABLE ,ScheduleType.MONTHLY_VARIABLE,ScheduleType.NO_SCHEDULE -> ""
-            ScheduleType.BLANK -> "Error"
         }
-    }
 
     /**
      * Private Method to get the time as a formatted string given the time as an Int representation of the minutes in a day
@@ -111,34 +114,39 @@ class Schedule (
         return "${if(hour <= 12) hour else hour - 12}:${String.format(Locale.CANADA, "%02d", extra)} ${if(hour < 12) "am" else "pm"}"
     }
 
-    fun getCheckClientConflictDays(): String {
-        if (scheduleType != ScheduleType.WEEKLY_CONSTANT) return ""
-        val builder = StringBuilder("(")
-        daysList.forEachIndexed { index, i ->
-            if (i > 0)
-                builder.append("${StaticFunctions.NumToDay[index+1].toLowerCase(Locale.ROOT)} > 0 Or ")
+    val checkClientConflictDays: String
+        get() {
+            if (scheduleType != ScheduleType.WEEKLY_CONSTANT) return ""
+            val builder = StringBuilder("(")
+            daysList.forEachIndexed { index, i ->
+                if (i > 0)
+                    builder.append("${StaticFunctions.NumToDay[index + 1].toLowerCase(Locale.ROOT)} > 0 Or ")
+            }
+            return "${builder.substring(0..(builder.length - 3))})"
         }
-        return "${builder.substring(0..(builder.length - 3))})"
-    }
 
-    private fun getUpdateDays(): String{
-        val builder = StringBuilder()
-        daysList.forEachIndexed { index, i ->
-            builder.append("${StaticFunctions.NumToDay[index+1].toLowerCase(Locale.ROOT)}=$i,")
+    private val updateDays: String
+        get() {
+            val builder = StringBuilder()
+            daysList.forEachIndexed { index, i ->
+                builder.append("${StaticFunctions.NumToDay[index + 1].toLowerCase(Locale.ROOT)}=$i,")
+            }
+            if (builder.isNotBlank()) builder.deleteCharAt(builder.lastIndex)
+            return builder.toString()
         }
-        if (builder.isNotBlank()) builder.deleteCharAt(builder.lastIndex)
-        return builder.toString()
-    }
 
-    private fun getUpdateDurations(): String{
-        val builder = StringBuilder()
-        durationsList.forEachIndexed { index, i ->
-            builder.append("${StaticFunctions.NumToDay[index+1].toLowerCase(Locale.ROOT)}_duration=$i,")
+    private val updateDurations: String
+        get() {
+            val builder = StringBuilder()
+            durationsList.forEachIndexed { index, i ->
+                builder.append("${StaticFunctions.NumToDay[index + 1].toLowerCase(Locale.ROOT)}_duration=$i,")
+            }
+            if (builder.isNotBlank()) builder.deleteCharAt(builder.lastIndex)
+            return builder.toString()
         }
-        if (builder.isNotBlank()) builder.deleteCharAt(builder.lastIndex)
-        return builder.toString()
-    }
 
-    fun getInsertCommand(): String = "${scheduleType.value}, $days, $duration,${daysList.joinToString()},${durationsList.joinToString()}"
-    fun getUpdateCommand(): String = "schedule_type=${scheduleType.value},days=$days,duration=${duration},${getUpdateDays()},${getUpdateDurations()}"
+    val insertCommand: String
+        get() = "${scheduleType.value}, $days, $duration,${daysList.joinToString()},${durationsList.joinToString()}"
+    val updateCommand: String
+        get() = "schedule_type=${scheduleType.value},days=$days,duration=${duration},${updateDays},${updateDurations}"
 }

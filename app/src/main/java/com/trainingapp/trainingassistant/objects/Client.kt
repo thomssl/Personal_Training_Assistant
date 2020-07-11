@@ -87,9 +87,9 @@ class Client (
 
     fun getDuration(dateTime: String): Int = schedule.getDuration(dateTime)
     val strDays: String
-        get() = schedule.getDays()
+        get() = schedule.daysOutput
     val strTimes: String
-        get() = schedule.getTimes()
+        get() = schedule.timesOutput
     val strScheduleType: String
         get() = schedule.scheduleType.text
     val scheduleType: ScheduleType
@@ -99,7 +99,7 @@ class Client (
     val days: String
         get() = schedule.days.toString()
     val conflictDays: String
-        get() = schedule.getCheckClientConflictDays()
+        get() = schedule.checkClientConflictDays
     val sessionDays: List<ClientConflictData>
         get() = schedule.sessionDays
     val daysInfo: List<ClientDaysInfo>
@@ -117,7 +117,7 @@ class Client (
             Insert Into Clients(client_name, start_date, end_date, schedule_type, days, duration,
                                 sun, mon, tue, wed, thu, fri, sat
                                 sun_duration, mon_duration, tue_duration, wed_duration, thu_duration, fri_duration, sat_duration)
-            Values('$name', '$startDate', '$endDate',${schedule.getInsertCommand()});""".trimIndent()
+            Values('$name', '$startDate', '$endDate',${schedule.insertCommand});""".trimIndent()
     val updateCommand: String
         get() =
             """
@@ -125,7 +125,7 @@ class Client (
             Set    client_name='$name',
                    start_date='$startDate',
                    end_date='$endDate',
-                   ${schedule.getUpdateCommand()}
+                   ${schedule.updateCommand}
             Where  client_id=$id;""".trimIndent()
     val deleteCommand: String
         get() =
