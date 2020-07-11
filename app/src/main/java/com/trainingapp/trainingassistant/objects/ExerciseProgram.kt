@@ -65,7 +65,7 @@ class ExerciseProgram(
      * Used most often due to simplicity
      */
     constructor(exercise: Exercise, sets: String, reps: String, day: Int, order: Int):
-            this(exercise.id, exercise.name, exercise.type, exercise.primaryMover, exercise.getLstSecondaryMovers(), sets, reps, day, order)
+            this(exercise.id, exercise.name, exercise.type, exercise.primaryMover, exercise.lstSecondaryMovers, sets, reps, day, order)
 
     /**
      * Method used to access if the object has been populated properly

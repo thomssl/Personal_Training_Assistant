@@ -67,7 +67,7 @@ class AddEditExerciseActivity : AppCompatActivity(), AdapterView.OnItemSelectedL
             if (!isNew) {
                 // If is edit exercise, populate secondary movers with temp list and send secondary movers already selected
                 val temp = muscles.filter { it != exercise.primaryMover }
-                rvAddEditExerciseSecondaryMover.adapter = EditExerciseSecondaryRVAdapter(temp, exercise.getLstSecondaryMovers()) {
+                rvAddEditExerciseSecondaryMover.adapter = EditExerciseSecondaryRVAdapter(temp, exercise.lstSecondaryMovers) {
                         muscleJoint, isSelected -> onSecondaryItemClick( muscleJoint, isSelected )
                 }
             }
@@ -78,7 +78,7 @@ class AddEditExerciseActivity : AppCompatActivity(), AdapterView.OnItemSelectedL
             if (!isNew) {
                 // If it is edit exercise, populate secondary movers with temp list and send secondary movers already selected
                 val temp = joints.filter { it != exercise.primaryMover }
-                rvAddEditExerciseSecondaryMover.adapter = EditExerciseSecondaryRVAdapter(temp, exercise.getLstSecondaryMovers()) {
+                rvAddEditExerciseSecondaryMover.adapter = EditExerciseSecondaryRVAdapter(temp, exercise.lstSecondaryMovers) {
                         muscleJoint, isSelected -> onSecondaryItemClick(muscleJoint, isSelected)
                 }
             }

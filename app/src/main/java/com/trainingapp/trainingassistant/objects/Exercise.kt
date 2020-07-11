@@ -81,35 +81,39 @@ class Exercise(
             )
         }
     }
+
     /**
      * Method to get the names of all the secondary movers as a joined string
      */
-    fun getSecondaryMoversNames(): String{
-        val builder = StringBuilder()
-        if (secondaryMovers.size > 0) {
-            secondaryMovers.forEach { builder.append(it.name);builder.append("\n") }
-            builder.deleteCharAt(builder.lastIndex)
+    val secondaryMoversNames: String
+        get() {
+            val builder = StringBuilder()
+            if (secondaryMovers.size > 0) {
+                secondaryMovers.forEach { builder.append(it.name);builder.append("\n") }
+                builder.deleteCharAt(builder.lastIndex)
+            }
+            return builder.toString()
         }
-        return builder.toString()
-    }
 
     /**
      * Private method to get the ids of all the secondary movers as a joined string. Used for database operations
      */
-    private fun getDatabaseSecondaryMovers(): String{
-        return if (secondaryMovers.size > 0) {
-            val builder = StringBuilder()
-            builder.append(" Insert Into Secondary_Movers(exercise_id, secondary_mover_id) Values ")
-            secondaryMovers.forEach { builder.append("($id,${it.id}),") }
-            builder.deleteCharAt(builder.lastIndex)
-            builder.toString()
-        } else ""
-    }
+    private val databaseSecondaryMovers: String
+        get() {
+            return if (secondaryMovers.size > 0) {
+                val builder = StringBuilder()
+                builder.append(" Insert Into Secondary_Movers(exercise_id, secondary_mover_id) Values ")
+                secondaryMovers.forEach { builder.append("($id,${it.id}),") }
+                builder.deleteCharAt(builder.lastIndex)
+                builder.toString()
+            } else ""
+        }
 
     /**
      * Method to get a copy of the secondary movers list
      */
-    fun getLstSecondaryMovers(): MutableList<MuscleJoint> = secondaryMovers.toMutableList()
+    val lstSecondaryMovers: MutableList<MuscleJoint>
+        get() = secondaryMovers.toMutableList()
 
     //secondary movers operations
     fun addSecondaryMover(muscleJoint: MuscleJoint) = secondaryMovers.add(muscleJoint)
@@ -117,13 +121,27 @@ class Exercise(
     fun clearSecondaryMovers() = secondaryMovers.clear()
 
     //database operations
-    fun getInsertCommand(): String = "Insert Into Exercises(exercise_name, exercise_type, primary_mover_id) " +
-                                     "Values('$name', ${type.num}, ${primaryMover.id});${getDatabaseSecondaryMovers()}"
-    fun getUpdateCommand(): String = "Update Exercises " +
-                                     "Set exercise_name = '$name', exercise_type = ${type.num}, primary_mover_id = ${primaryMover.id} " +
-                                     "Where exercise_id = $id;" +
-                                     "Delete From Secondary_Movers Where exercise_id = $id;" +
-                                     getDatabaseSecondaryMovers()
-    fun getDeleteCommand(): String = "Delete From Exercises Where exercise_id = $id;" +
-                                     "Delete From Secondary_Movers Where exercise_id = $id"
+    val insertCommand: String
+        get() =
+            """
+            Insert Into Exercises(exercise_name, exercise_type, primary_mover_id)
+            Values('$name', ${type.num}, ${primaryMover.id});${databaseSecondaryMovers}""".trimIndent()
+    val updateCommand: String
+        get() =
+            """
+            Update Exercises
+            Set    exercise_name    = '$name',
+                   exercise_type    = ${type.num},
+                   primary_mover_id = ${primaryMover.id}
+            Where  exercise_id      = $id;
+            Delete From Secondary_Movers
+            Where  exercise_id = $id;
+            $databaseSecondaryMovers;""".trimIndent()
+    val deleteCommand: String
+        get() =
+            """
+            Delete From Exercises
+            Where  exercise_id = $id;
+            Delete From Secondary_Movers
+            Where  exercise_id = $id""".trimIndent()
 }

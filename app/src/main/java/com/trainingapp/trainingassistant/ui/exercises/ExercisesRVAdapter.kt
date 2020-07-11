@@ -32,7 +32,7 @@ class ExercisesRVAdapter(private val exercises: List<Exercise>, private val clic
             itemView.findViewById<TextView>(R.id.txtExercisesRowName).text = exercise.name
             itemView.findViewById<TextView>(R.id.txtExercisesRowType).text = exercise.type.text
             itemView.findViewById<TextView>(R.id.txtExercisesRowPrimaryMover).text = exercise.primaryMover.name
-            itemView.findViewById<TextView>(R.id.txtExercisesRowSecondaryMovers).text = exercise.getSecondaryMoversNames()
+            itemView.findViewById<TextView>(R.id.txtExercisesRowSecondaryMovers).text = exercise.secondaryMoversNames
             itemView.setOnClickListener { clickListener(exercise.id) }
             itemView.setOnLongClickListener { longClickListener(exercise) }
         }

@@ -316,9 +316,9 @@ class DatabaseOperations(val context: Context) {
         return result
     }
 
-    fun updateExercise(exercise: Exercise): Boolean = trySQLCommand(exercise.getUpdateCommand())
-    fun insertExercise(exercise: Exercise): Boolean = trySQLCommand(exercise.getInsertCommand())
-    private fun deleteExercise(exercise: Exercise): Boolean = trySQLCommand(exercise.getDeleteCommand())
+    fun updateExercise(exercise: Exercise): Boolean = trySQLCommand(exercise.updateCommand)
+    fun insertExercise(exercise: Exercise): Boolean = trySQLCommand(exercise.insertCommand)
+    private fun deleteExercise(exercise: Exercise): Boolean = trySQLCommand(exercise.deleteCommand)
 
     /**
      * Checked does not remove exercise from sessions. Needs to be added back later when more changes made
