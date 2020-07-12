@@ -8,14 +8,14 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:fullBackupContent="@xml/backup_descriptor"
+        android:allowBackup="true"
+        tools:ignore="AllowBackup">
         <activity android:name=".activities.AddEditProgramActivity"/>
         <activity android:name=".activities.AddEditClientActivity"/>
         <activity android:name=".activities.AddEditExerciseActivity"/>
-        <activity
-            android:name=".activities.SessionActivity"
-            android:screenOrientation="landscape"
-            tools:ignore="LockedOrientationActivity" />
+        <activity android:name=".activities.SessionActivity"/>
         <activity
             android:name=".activities.MainActivity"
             android:label="@string/app_name"
