@@ -22,16 +22,15 @@
         app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
-        android:id="@+id/lblDefaultSessionDuration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="20sp"
         android:layout_marginEnd="5dp"
         android:text="@string/settings_default_duration"
         android:labelFor="@id/etxtDefaultSessionDuration"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/swIs24Hour"/>
+        app:layout_constraintEnd_toStartOf="@id/glSettings"
+        app:layout_constraintTop_toTopOf="@id/etxtDefaultSessionDuration"
+        app:layout_constraintBottom_toBottomOf="@id/etxtDefaultSessionDuration"/>
 
     <EditText
         android:id="@+id/etxtDefaultSessionDuration"
@@ -41,9 +40,9 @@
         android:inputType="number"
         android:layout_marginStart="5dp"
         android:layout_marginTop="10dp"
-        app:layout_constraintStart_toStartOf="@id/lblDefaultSessionDuration"
-        app:layout_constraintEnd_toEndOf="@id/lblDefaultSessionDuration"
-        app:layout_constraintTop_toBottomOf="@id/lblDefaultSessionDuration"/>
+        app:layout_constraintStart_toEndOf="@id/glSettings"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/swIs24Hour"/>
 
     <Button
         android:id="@+id/btnConfirmUserSettings"

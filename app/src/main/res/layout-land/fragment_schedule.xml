@@ -9,8 +9,8 @@
         android:id="@+id/glSchedule"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.5"/>
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.6"/>
 
     <TextView
         android:id="@+id/lblScheduleEmpty"
@@ -21,7 +21,7 @@
         android:text="@string/emptyDay"
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/calSchedule"
         app:layout_constraintTop_toTopOf="@id/rvDailySchedule" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -29,10 +29,10 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/glSchedule"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/glSchedule"/>
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <CalendarView
         android:id="@+id/calSchedule"
@@ -41,8 +41,8 @@
         android:minDate="01/01/1999"
         android:dateTextAppearance="@android:style/TextAppearance.Large"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/glSchedule"
+        app:layout_constraintEnd_toStartOf="@id/glSchedule"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
     <ProgressBar
@@ -50,9 +50,9 @@
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/glSchedule"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/rvDailySchedule"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

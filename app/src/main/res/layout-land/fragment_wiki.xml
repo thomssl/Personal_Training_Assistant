@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ProgressBar
+        android:id="@+id/prgWikiData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <ScrollView
+        android:id="@+id/svWiki"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="invisible">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:paddingTop="@dimen/base_pad"
+                android:paddingBottom="@dimen/base_pad"
+                android:text="@string/wiki_title"
+                android:textSize="@dimen/wiki_title_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:paddingTop="@dimen/base_pad"
+                android:paddingBottom="@dimen/base_pad"
+                android:text="@string/wiki_introduction_header"
+                android:textAllCaps="false"
+                android:textSize="@dimen/wiki_main_heading_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/wikiIntroductionBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:paddingTop="@dimen/base_pad"
+                android:paddingBottom="@dimen/base_pad"
+                android:text="@string/wiki_introduction_body"
+                android:textSize="@dimen/wiki_body_size" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:paddingTop="@dimen/base_pad"
+                android:paddingBottom="@dimen/base_pad"
+                android:text="@string/wiki_input_fields_header"
+                android:textSize="@dimen/wiki_main_heading_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/wikiInputsFieldsBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:paddingTop="@dimen/base_pad"
+                android:paddingBottom="@dimen/base_pad"
+                android:text="@string/wiki_input_fields_body"
+                android:textSize="@dimen/wiki_body_size" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:paddingTop="@dimen/base_pad"
+                android:paddingBottom="@dimen/base_pad"
+                android:text="@string/wiki_clients_header"
+                android:textSize="@dimen/wiki_main_heading_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:paddingTop="@dimen/base_pad"
+                android:paddingBottom="@dimen/base_pad"
+                android:text="@string/wiki_overview"
+                android:textSize="@dimen/wiki_secondary_heading_size"
+                android:textStyle="bold" />
+
+
+            <TextView
+                android:id="@+id/wikiClientsOverviewBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:paddingTop="@dimen/base_pad"
+                android:paddingBottom="@dimen/base_pad"
+                android:text="@string/wiki_overview_body"
+                android:textSize="@dimen/wiki_body_size" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:paddingTop="@dimen/base_pad"
+                android:paddingBottom="@dimen/base_pad"
+                android:text="@string/wiki_classification"
+                android:textSize="@dimen/wiki_secondary_heading_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/wikiClientsClassificationBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:paddingTop="@dimen/base_pad"
+                android:paddingBottom="@dimen/base_pad"
+                android:text="@string/wiki_classification_body"
+                android:textSize="@dimen/wiki_body_size" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:paddingTop="@dimen/base_pad"
+                android:paddingBottom="@dimen/base_pad"
+                android:text="@string/wiki_creation"
+                android:textSize="@dimen/wiki_secondary_heading_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/wikiClientsCreationBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:paddingTop="@dimen/base_pad"
+                android:paddingBottom="@dimen/base_pad"
+                android:text="@string/wiki_creation_body"
+                android:textSize="@dimen/wiki_body_size" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:paddingTop="@dimen/base_pad"
+                android:paddingBottom="@dimen/base_pad"
+                android:text="@string/wiki_joints_header"
+                android:textSize="@dimen/wiki_main_heading_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/wikiJointsBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:paddingTop="@dimen/base_pad"
+                android:paddingBottom="@dimen/base_pad"
+                android:text="@string/wiki_joints_body"
+                android:textSize="@dimen/wiki_body_size" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:paddingTop="@dimen/base_pad"
+                android:paddingBottom="@dimen/base_pad"
+                android:text="@string/wiki_muscles_header"
+                android:textSize="@dimen/wiki_main_heading_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:paddingTop="@dimen/base_pad"
+                android:paddingBottom="@dimen/base_pad"
+                android:text="@string/wiki_overview"
+                android:textSize="@dimen/wiki_secondary_heading_size"
+                android:textStyle="bold" />
+
+
+            <TextView
+                android:id="@+id/wikiMusclesOverviewBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:paddingTop="@dimen/base_pad"
+                android:paddingBottom="@dimen/base_pad"
+                android:text="@string/wiki_overview_body"
+                android:textSize="@dimen/wiki_body_size" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:paddingTop="@dimen/base_pad"
+                android:paddingBottom="@dimen/base_pad"
+                android:text="@string/wiki_creation"
+                android:textSize="@dimen/wiki_secondary_heading_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/wikiMusclesCreationBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:paddingTop="@dimen/base_pad"
+                android:paddingBottom="@dimen/base_pad"
+                android:text="@string/wiki_creation_body"
+                android:textSize="@dimen/wiki_body_size" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:paddingTop="@dimen/base_pad"
+                android:paddingBottom="@dimen/base_pad"
+                android:text="@string/wiki_deletion"
+                android:textSize="@dimen/wiki_secondary_heading_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/wikiMusclesDeletionBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:paddingTop="@dimen/base_pad"
+                android:paddingBottom="@dimen/base_pad"
+                android:text="@string/wiki_deletion_body"
+                android:textSize="@dimen/wiki_body_size" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:paddingTop="@dimen/base_pad"
+                android:paddingBottom="@dimen/base_pad"
+                android:text="@string/wiki_exercises_header"
+                android:textSize="@dimen/wiki_main_heading_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:paddingTop="@dimen/base_pad"
+                android:paddingBottom="@dimen/base_pad"
+                android:text="@string/wiki_overview"
+                android:textSize="@dimen/wiki_secondary_heading_size"
+                android:textStyle="bold" />
+
+
+            <TextView
+                android:id="@+id/wikiExercisesOverviewBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:paddingTop="@dimen/base_pad"
+                android:paddingBottom="@dimen/base_pad"
+                android:text="@string/wiki_overview_body"
+                android:textSize="@dimen/wiki_body_size" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:paddingTop="@dimen/base_pad"
+                android:paddingBottom="@dimen/base_pad"
+                android:text="@string/wiki_classification"
+                android:textSize="@dimen/wiki_secondary_heading_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/wikiExercisesClassificationBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:paddingTop="@dimen/base_pad"
+                android:paddingBottom="@dimen/base_pad"
+                android:text="@string/wiki_classification_body"
+                android:textSize="@dimen/wiki_body_size" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:paddingTop="@dimen/base_pad"
+                android:paddingBottom="@dimen/base_pad"
+                android:text="@string/wiki_creation"
+                android:textSize="@dimen/wiki_secondary_heading_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/wikiExercisesCreationBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:paddingTop="@dimen/base_pad"
+                android:paddingBottom="@dimen/base_pad"
+                android:text="@string/wiki_creation_body"
+                android:textSize="@dimen/wiki_body_size" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:paddingTop="@dimen/base_pad"
+                android:paddingBottom="@dimen/base_pad"
+                android:text="@string/wiki_deletion"
+                android:textSize="@dimen/wiki_secondary_heading_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/wikiExercisesDeletionBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:paddingTop="@dimen/base_pad"
+                android:paddingBottom="@dimen/base_pad"
+                android:text="@string/wiki_deletion_body"
+                android:textSize="@dimen/wiki_body_size" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:paddingTop="@dimen/base_pad"
+                android:paddingBottom="@dimen/base_pad"
+                android:text="@string/wiki_sessions_header"
+                android:textSize="@dimen/wiki_main_heading_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:paddingTop="@dimen/base_pad"
+                android:paddingBottom="@dimen/base_pad"
+                android:text="@string/wiki_overview"
+                android:textSize="@dimen/wiki_secondary_heading_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/wikiSessionsOverviewBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:paddingTop="@dimen/base_pad"
+                android:paddingBottom="@dimen/base_pad"
+                android:text="@string/wiki_overview_body"
+                android:textSize="@dimen/wiki_body_size" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:paddingTop="@dimen/base_pad"
+                android:paddingBottom="@dimen/base_pad"
+                android:text="@string/wiki_sessions_limits_header"
+                android:textSize="@dimen/wiki_secondary_heading_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/wikiSessionsLimitsBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:paddingTop="@dimen/base_pad"
+                android:paddingBottom="@dimen/base_pad"
+                android:text="@string/wiki_sessions_limits_body"
+                android:textSize="@dimen/wiki_body_size" />
+
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
