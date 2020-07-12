@@ -54,10 +54,11 @@ object StaticFunctions {
     /**
      * Method to return list of ExerciseType names. Skips 'BLANK' ExerciseType
      */
-    fun getExerciseTypeNameArray(): Array<String>{
-        val types = ExerciseType.values()
-        return Array(types.size-1) { i -> types[i].text }
-    }
+    val exerciseTypeNameArray: Array<String>
+        get() {
+            val types = ExerciseType.values()
+            return Array(types.size - 1) { i -> types[i].text }
+        }
 
     /**
      * Method to convert csv string to a List of Int. Can return null if input is empty

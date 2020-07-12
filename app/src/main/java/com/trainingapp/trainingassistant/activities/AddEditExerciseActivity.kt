@@ -56,7 +56,7 @@ class AddEditExerciseActivity : AppCompatActivity(), AdapterView.OnItemSelectedL
         spnAddEditExerciseType.adapter = ArrayAdapter<String>(
             this,
             android.R.layout.simple_expandable_list_item_1,
-            StaticFunctions.getExerciseTypeNameArray()
+            StaticFunctions.exerciseTypeNameArray
         )
         spnAddEditExerciseType.onItemSelectedListener = this
         // The exercise type num corresponds to the spinner index + 1
