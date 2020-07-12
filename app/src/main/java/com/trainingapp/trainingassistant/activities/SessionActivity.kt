@@ -119,7 +119,7 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
             finish()
         val result = getData(sessionID, clientID, dayTime!!)
         session = result
-        calendar.time = session.date.time
+        calendar.time = session.time
         duration = session.duration
         datePickerDialog.updateDate(calendar[Calendar.YEAR], calendar[Calendar.MONTH], calendar[Calendar.DAY_OF_MONTH])
         timePickerDialog.updateTime(calendar[Calendar.HOUR_OF_DAY], calendar[Calendar.MINUTE])
@@ -151,7 +151,7 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
             tempCalendar.time = calendar.time
             tempCalendar[Calendar.HOUR_OF_DAY] = hour
             tempCalendar[Calendar.MINUTE] = minute
-            if (!databaseOperations.checkSessionConflict(session.clone(dayTime = StaticFunctions.getStrDateTime(tempCalendar)), true)) {
+            if (!databaseOperations.checkSessionConflict(session.clone(dayTime = StaticFunctions.getStrDateTime(tempCalendar.time)), true)) {
                 calendar.time = tempCalendar.time
                 setTime()
                 changeTime = true
@@ -175,7 +175,7 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
             tempCalendar[Calendar.YEAR] = year
             tempCalendar[Calendar.MONTH] = month
             tempCalendar[Calendar.DAY_OF_MONTH] = dayOfMonth
-            if (!databaseOperations.checkSessionConflict(session.clone(dayTime = StaticFunctions.getStrDateTime(tempCalendar)), false)) {
+            if (!databaseOperations.checkSessionConflict(session.clone(dayTime = StaticFunctions.getStrDateTime(tempCalendar.time)), false)) {
                 calendar.time = tempCalendar.time
                 setDate()
                 changeDate = true
@@ -186,8 +186,8 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
     }
 
     //UI update functions
-    private fun setDate() { txtSessionDate.text = StaticFunctions.getStrDate(calendar) }
-    private fun setTime() { txtSessionTime.text = StaticFunctions.getStrTimeAMPM(calendar) }
+    private fun setDate() { txtSessionDate.text = StaticFunctions.getStrDate(calendar.time) }
+    private fun setTime() { txtSessionTime.text = StaticFunctions.getStrTimeAMPM(calendar.time) }
     private fun setDuration() { txtSessionDuration.text = getString(R.string.txtSessionDuration, duration)}
     private fun setAdapter(){
         rvSessionExercises.adapter = SessionExercisesRVAdapter(session, {
@@ -214,7 +214,7 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
             // If the session date, duration or time has changed
             changeDate || changeDuration || changeTime -> {
                 // Create a temp session object to represent the new changes
-                val newSession = session.clone(dayTime = StaticFunctions.getStrDateTime(calendar), duration = duration)
+                val newSession = session.clone(dayTime = StaticFunctions.getStrDateTime(calendar.time), duration = duration)
                 // If the session already has a record in Session_log, update the record. If not insert the new session
                 if (databaseOperations.checkSessionLog(session)) {
                     if (!databaseOperations.updateSession(newSession))
@@ -250,7 +250,7 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
         }
         // If updates/inserts were successful and the session date, duration or time was changed, update the current session object
         if (result && (changeDate || changeDuration || changeTime)) {
-            session.date.time = calendar.time
+            session.time = calendar.time
             session.duration = duration
         }
         // If update was successful, reset all the change flags

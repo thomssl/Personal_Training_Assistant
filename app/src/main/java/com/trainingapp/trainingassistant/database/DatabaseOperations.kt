@@ -385,7 +385,7 @@ class DatabaseOperations(val context: Context) {
      * @return true if conflict found. false if no conflict found
      */
     fun checkSessionConflict(session: Session, isSameDate: Boolean): Boolean {
-        val day = getScheduleByDay(session.date)
+        val day = getScheduleByDay(session.time)
         return day.checkConflict(session, isSameDate)
     }
 
@@ -463,11 +463,11 @@ class DatabaseOperations(val context: Context) {
 
     /**
      * Method to get all clients that can add a session to a given date
-     * @param calendar Calendar object holding a given date to check
+     * @param time Date object holding a given date to check
      * @return List of clients as Clients objects representing all clients that can add a session to a date
      */
-    fun getAddSessionsClientsByDay(calendar: Calendar): List<Client> {
-        val day = getScheduleByDay(calendar)
+    fun getAddSessionsClientsByDay(time: Date): List<Client> {
+        val day = getScheduleByDay(time)
         val cursor = db.rawQuery(DBQueries.getAddSessionClients(day.strIDs), null)
         val clients = generateSequence { if (cursor.moveToNext()) cursor else null }
             .map { Client.withCursor(it) }
@@ -480,18 +480,18 @@ class DatabaseOperations(val context: Context) {
      * Method to get all the sessions corresponding to a given date. Hierarchy of data is Session Log, Normal Schedule from client info (excluding
      * clients who already have sessions logged or if changes have been made to the schedule) then the session changes made (excluding clients who
      * already have sessions logged). If the sessions are not obtained from Session_log, ExerciseSession's List and notes String are left empty
-     * @param calendar Calendar object representing a date to find the corresponding sessions
+     * @param dateTime Date object representing a date to find the corresponding sessions
      * @return Day object containing the MutableList of session objects obtained from session queries
      */
-    fun getScheduleByDay(calendar: Calendar): Day {
+    fun getScheduleByDay(dateTime: Date): Day {
         val sessions = mutableListOf<Session>()
         val calendarNow = Calendar.getInstance()
         val calendarChosen = Calendar.getInstance()
-        calendarChosen.time = calendar.time
+        calendarChosen.time = dateTime
         val currentDate = (calendarNow[Calendar.YEAR] * 365) + calendarNow[Calendar.DAY_OF_YEAR]
         val chosenDate = (calendarChosen[Calendar.YEAR] * 365) + calendarChosen[Calendar.DAY_OF_YEAR]
 
-        val date = StaticFunctions.getStrDateTime(calendarChosen)
+        val date = StaticFunctions.getStrDateTime(calendarChosen.time)
         var cursor = db.rawQuery(DBQueries.getScheduleByDaySessionLog(date), null)
         generateSequence { if (cursor.moveToNext()) cursor else null }
             .forEach {
@@ -522,7 +522,7 @@ class DatabaseOperations(val context: Context) {
                         Session.withCursor(
                             it,
                             sessionID = 0,
-                            dayTime = StaticFunctions.getStrDateTime(calendarChosen),
+                            dayTime = StaticFunctions.getStrDateTime(calendarChosen.time),
                             notes = "",
                             duration = duration
                         )
@@ -556,7 +556,7 @@ class DatabaseOperations(val context: Context) {
      * @return true if session exists
      */
     fun checkChange(session: Session): Boolean {
-        val cursor = db.rawQuery(DBQueries.checkChange(session.clientID, StaticFunctions.getStrDateTime(session.date)), null)
+        val cursor = db.rawQuery(DBQueries.checkChange(session.clientID, session.strDayTime), null)
         val result: Boolean = cursor.moveToFirst()
         cursor.close()
         return result
@@ -564,19 +564,23 @@ class DatabaseOperations(val context: Context) {
 
     fun insertChange(oldSession: Session, newSession: Session): Boolean {
         return trySQLCommand(DBQueries.insertChange(oldSession.clientID,
-                                                            StaticFunctions.getStrDateTime(oldSession.date),
-                                                            StaticFunctions.getStrDateTime(newSession.date),
+                                                            oldSession.strDayTime,
+                                                            newSession.strDayTime,
                                                             newSession.duration))
     }
     fun updateChange(oldSession: Session, newSession: Session): Boolean {
-        return trySQLCommand(DBQueries.updateChange(newSession.clientID,
-                                                            StaticFunctions.getStrDateTime(newSession.date),
-                                                            StaticFunctions.getStrDateTime(oldSession.date),
-                                                            newSession.duration))
+        return trySQLCommand(DBQueries.updateChange(
+            newSession.clientID,
+            newSession.strDayTime,
+            oldSession.strDayTime,
+            newSession.duration
+        ))
     }
     private fun deleteChange(session: Session): Boolean {
-        return trySQLCommand(DBQueries.deleteChange(session.clientID,
-                                                            StaticFunctions.getStrDateTime(session.date)))
+        return trySQLCommand(DBQueries.deleteChange(
+            session.clientID,
+            session.strDayTime
+        ))
     }
 
     /**
@@ -613,7 +617,7 @@ class DatabaseOperations(val context: Context) {
     }
 
     fun cleanSessionChanges(): Boolean {
-        val date = StaticFunctions.getStrDate(Calendar.getInstance())
+        val date = StaticFunctions.getStrDate(Calendar.getInstance().time)
         return trySQLCommand(DBQueries.cleanSessionChanges(date))
     }
 

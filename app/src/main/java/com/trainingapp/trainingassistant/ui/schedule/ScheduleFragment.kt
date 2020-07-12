@@ -11,7 +11,6 @@ import android.widget.CalendarView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.trainingapp.trainingassistant.R
-import com.trainingapp.trainingassistant.StaticFunctions
 import com.trainingapp.trainingassistant.activities.SessionActivity
 import com.trainingapp.trainingassistant.database.DatabaseOperations
 import com.trainingapp.trainingassistant.objects.Day
@@ -83,7 +82,7 @@ class ScheduleFragment : Fragment(), CalendarView.OnDateChangeListener, Coroutin
      * Suspendable IO coroutine to get the day and adapter for that day
      */
     private suspend fun getAdapter() = withContext(Dispatchers.IO){
-        day = databaseOperations.getScheduleByDay(calendar)
+        day = databaseOperations.getScheduleByDay(calendar.time)
         ScheduleRVAdapter(context, day,{position -> onItemClick(position)},{position -> onLongItemClick(position)})
     }
 
@@ -104,7 +103,7 @@ class ScheduleFragment : Fragment(), CalendarView.OnDateChangeListener, Coroutin
         val intent = Intent(context, SessionActivity::class.java)
         intent.putExtra("session_id", day.getSession(position).sessionID)
         intent.putExtra("client_id", day.getSession(position).clientID)
-        intent.putExtra("dayTime", StaticFunctions.getStrDateTime(day.getSession(position).date))
+        intent.putExtra("dayTime", day.getSession(position).strDayTime)
         startActivity(intent)
     }
 

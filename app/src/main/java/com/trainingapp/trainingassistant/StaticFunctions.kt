@@ -28,18 +28,19 @@ class StaticFunctions {
         }
 
         //date/time format format functions. Takes input and formats to desired date/time format
-        fun getStrDate(date: Calendar): String = SimpleDateFormat("yyyy-MM-dd", Locale.CANADA).format(date.time)
-        fun getStrDateTime(date: Calendar): String = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CANADA).format(date.time)
-        fun getStrDateTimeAMPM(date: Calendar): String = SimpleDateFormat("yyyy-MM-dd hh:mm a", Locale.CANADA).format(date.time)
-        fun getStrTime(date: Calendar): String = SimpleDateFormat("hh:mm", Locale.CANADA).format(date.time)
-        fun getStrTimeAMPM(date: Calendar, duration: Int = 0): String {
+        fun getStrDate(date: Date): String = SimpleDateFormat("yyyy-MM-dd", Locale.CANADA).format(date)
+        fun getStrDateTime(time: Date): String = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CANADA).format(time)
+        fun getStrDateTimeAMPM(date: Date): String = SimpleDateFormat("yyyy-MM-dd hh:mm a", Locale.CANADA).format(date)
+        fun getStrTime(date: Date): String = SimpleDateFormat("hh:mm", Locale.CANADA).format(date)
+        fun getStrTimeAMPM(time: Date, duration: Int = 0): String {
+            val df = SimpleDateFormat("hh:mm a", Locale.CANADA)
              return if (duration > 0){//if no duration has been specified, format as 'time am/pm -(time+duration) am/pm'
                  val cal = Calendar.getInstance()
-                 cal.time = date.time
+                 cal.time = time
                  cal[Calendar.MINUTE] = cal[Calendar.MINUTE] + duration
-                 "${SimpleDateFormat("hh:mm a", Locale.CANADA).format(date.time)} - ${SimpleDateFormat("hh:mm a", Locale.CANADA).format(cal.time)}"
+                 "${df.format(time)} - ${df.format(cal.time)}"
             } else//if optional parameter not set, return as 'time am/pm'
-                SimpleDateFormat("hh:mm a", Locale.CANADA).format(date.time)
+                 df.format(time)
         }
 
         /**

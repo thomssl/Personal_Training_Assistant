@@ -138,7 +138,7 @@ class MainActivity :
         when (navController.currentDestination!!.id){
             //uses updated date from CalendarView and creates an AddSessionDialog to insert the new session
             R.id.nav_schedule -> {
-                val dialog = AddSessionDialog(databaseOperations.getAddSessionsClientsByDay(calendar), calendar) {
+                val dialog = AddSessionDialog(databaseOperations.getAddSessionsClientsByDay(calendar.time), calendar.time) {
                         session, scheduleType -> addSessionConfirm(session,scheduleType)
                 }
                 dialog.show(supportFragmentManager, "Add Session")

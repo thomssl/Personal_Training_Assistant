@@ -18,7 +18,7 @@ class Session (
     val sessionID: Int,
     val clientID: Int,
     val clientName: String,
-    private val dayTime: String,
+    private var dayTime: String,
     val notes: String,
     var duration: Int,
     val exercises: MutableList<ExerciseSession>
@@ -49,10 +49,18 @@ class Session (
         }
     }
 
-    var date: Calendar = StaticFunctions.getDate(dayTime)
+    private val sessionDate: Calendar = StaticFunctions.getDate(dayTime)
+    var time: Date
+        get() = sessionDate.time
+        set(value) {
+            sessionDate.time = value
+            dayTime = StaticFunctions.getStrDateTime(time)
+        }
+    val strDayTime: String
+        get() = dayTime
 
-    //used to validate that a session has exercises
-    // stops the user from removing all exercises from a session than updating or confirming a session that has never had any exercises
+    // Used to validate that a session has exercises
+    // Stops the user from removing all exercises from a session than updating or confirming a session that has never had any exercises
     private val hasExercises: Boolean
         get() = exercises.size > 0
     fun addExercise(exerciseSession: ExerciseSession){
@@ -112,12 +120,12 @@ class Session (
         get() = exercises.size
 
     //gets time as minutes in the day
-    private val time: Int
-        get() = (date[Calendar.HOUR_OF_DAY] * 60) + date[Calendar.MINUTE]
+    private val timeInt: Int
+        get() = (sessionDate[Calendar.HOUR_OF_DAY] * 60) + sessionDate[Calendar.MINUTE]
 
     //gets an IntRange from the start to end time
     val timeRange: IntRange
-        get() = time until (time + duration)
+        get() = timeInt until (timeInt + duration)
 
     /**
      * Method used to check new values for time, date or duration within a Session
@@ -130,7 +138,7 @@ class Session (
             sessionID,
             clientID,
             clientName,
-            if (dayTime.isEmpty()) StaticFunctions.getStrDateTime(date) else dayTime,
+            if (dayTime.isEmpty()) StaticFunctions.getStrDateTime(time) else dayTime,
             if (notes.isEmpty()) this.notes else notes,
             if (duration == 0) this.duration else duration,
             if (exercises.size == 0) this.exercises else exercises
@@ -143,7 +151,7 @@ class Session (
                 "(Select session_id " +
                         "From Session_Log " +
                         "Where client_id = $clientID " +
-                        "And datetime(dayTime) = datetime('${StaticFunctions.getStrDateTime(date)}'))"
+                        "And datetime(dayTime) = datetime('${StaticFunctions.getStrDateTime(time)}'))"
             else
                 sessionID.toString()
             return exercises.joinToString { "($strSessionID, ${it.id}, '${it.sets}', '${it.reps}', '${it.resistance}', ${it.order})" }
@@ -173,6 +181,6 @@ class Session (
         )
 
     override fun compareTo(other: Session): Int {
-        return this.time - other.time
+        return this.timeInt - other.timeInt
     }
 }

@@ -216,7 +216,7 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
         calendar[Calendar.YEAR] = year
         calendar[Calendar.MONTH] = month
         calendar[Calendar.DAY_OF_MONTH] = day
-        view.text = StaticFunctions.getStrDate(calendar)
+        view.text = StaticFunctions.getStrDate(calendar.time)
     }
 
     /**
@@ -237,7 +237,7 @@ class AddEditClientActivity : AppCompatActivity(), RadioGroup.OnCheckedChangeLis
         val calendar = Calendar.getInstance()
         calendar[Calendar.HOUR_OF_DAY] = hour
         calendar[Calendar.MINUTE] = minute
-        view.text = StaticFunctions.getStrTimeAMPM(calendar)
+        view.text = StaticFunctions.getStrTimeAMPM(calendar.time)
     }
 
     /**

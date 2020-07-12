@@ -16,15 +16,22 @@ import com.trainingapp.trainingassistant.objects.Client
 import com.trainingapp.trainingassistant.objects.Session
 import java.util.*
 
-class AddSessionDialog(private val clients: List<Client>, private val calendar: Calendar, private val confirmListener: (Session, ScheduleType) -> Boolean): DialogFragment() {
+class AddSessionDialog(
+    private val clients: List<Client>,
+    private val time: Date,
+    private val confirmListener: (Session, ScheduleType) -> Boolean
+): DialogFragment() {
 
     private lateinit var clientNames: List<String>
     private lateinit var btnTime: Button
     private lateinit var spnNames: Spinner
     private lateinit var txtDuration: EditText
+    private lateinit var calendar: Calendar
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+        calendar = Calendar.getInstance()
+        calendar.time = time
         clientNames = clients.map { "${it.name}${if (it.scheduleType == ScheduleType.WEEKLY_CONSTANT) " (makeup session)" else ""}" }
     }
 
@@ -35,7 +42,20 @@ class AddSessionDialog(private val clients: List<Client>, private val calendar: 
             spnNames = view.findViewById(R.id.spnAddSessionClients)
             txtDuration = view.findViewById(R.id.etxtAddSessionDuration)
             spnNames.adapter = ArrayAdapter<String>(context!!, android.R.layout.simple_expandable_list_item_1, clientNames)
-            btnTime.setOnClickListener { TimePickerDialog(context, R.style.DialogTheme, {_: TimePicker, hour: Int, minute : Int -> calendar[Calendar.HOUR_OF_DAY] = hour; calendar[Calendar.MINUTE] = minute; btnTime.text = StaticFunctions.getStrTimeAMPM(calendar)}, 0, 0, false).show() }
+            btnTime.setOnClickListener {
+                TimePickerDialog(
+                    context,
+                    R.style.DialogTheme,
+                    {_: TimePicker, hour: Int, minute : Int ->
+                        calendar[Calendar.HOUR_OF_DAY] = hour
+                        calendar[Calendar.MINUTE] = minute
+                        btnTime.text = StaticFunctions.getStrTimeAMPM(calendar.time)
+                    },
+                    0,
+                    0,
+                    false
+                ).show()
+            }
             val builder = AlertDialog.Builder(it)
                 .setView(view)
                 .setPositiveButton(R.string.confirm) {_,_ -> }
@@ -58,7 +78,7 @@ class AddSessionDialog(private val clients: List<Client>, private val calendar: 
                                     0,
                                     client.id,
                                     client.name,
-                                    StaticFunctions.getStrDateTime(calendar),
+                                    StaticFunctions.getStrDateTime(calendar.time),
                                     "",
                                     strDuration.toInt(),
                                     mutableListOf()

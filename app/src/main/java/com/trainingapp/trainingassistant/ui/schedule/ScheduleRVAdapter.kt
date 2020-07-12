@@ -37,7 +37,7 @@ class ScheduleRVAdapter(private val context: Context?, private val day: Day, pri
 
         fun onBindItems(session: Session, clickListener: (Int) -> Unit, position: Int, longClickListener: (Int) -> Boolean){
             itemView.findViewById<TextView>(R.id.scheduleRowClientName).text = session.clientName
-            itemView.findViewById<TextView>(R.id.scheduleRowTime).text = StaticFunctions.getStrTimeAMPM(session.date, session.duration)
+            itemView.findViewById<TextView>(R.id.scheduleRowTime).text = StaticFunctions.getStrTimeAMPM(session.time, session.duration)
             itemView.setOnClickListener{clickListener(position)}
             itemView.setOnLongClickListener { longClickListener(position) }
             if (conflicts.contains(position))//if this session index was flagged as a conflict set background to be highlighted
