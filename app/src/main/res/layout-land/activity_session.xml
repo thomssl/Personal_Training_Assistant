@@ -11,28 +11,28 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.1"/>
+        app:layout_constraintGuide_percent="0.06"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/glSession2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.44"/>
+        app:layout_constraintGuide_percent="0.4"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/glSession3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.64"/>
+        app:layout_constraintGuide_percent="0.6"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/glSession4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.82"/>
+        app:layout_constraintGuide_percent="0.8"/>
 
     <TextView
         android:id="@+id/lblSessionClientName"
@@ -46,14 +46,11 @@
 
     <TextView
         android:id="@+id/txtSessionClientName"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/txtSessionClientName"
         app:layout_constraintStart_toEndOf="@id/lblSessionClientName"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/btnChangeTime"
-        android:ellipsize="marquee"
-        android:marqueeRepeatLimit="marquee_forever"
         android:paddingStart="@dimen/base_pad"
         android:paddingEnd="@dimen/base_pad"/>
 
@@ -122,20 +119,17 @@
         android:layout_height="wrap_content"
         android:onClick="clickBtnChangeDuration"
         android:text="@string/btnChangeSessionDuration"
-        android:textSize="@dimen/text_size_small"
-        app:layout_constraintTop_toBottomOf="@id/lblSessionDuration"
-        app:layout_constraintEnd_toStartOf="@id/btnAddExerciseSession"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="@id/btnAddExerciseSession"
+        app:layout_constraintEnd_toStartOf="@id/btnAddExerciseSession" />
 
     <Button
         android:id="@+id/btnChangeDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/btnChangeSessionDate"
-        android:textSize="@dimen/text_size_small"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/btnChangeSessionDuration"
-        app:layout_constraintStart_toEndOf="@id/btnAddExerciseSession"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/btnAddExerciseSession"
+        app:layout_constraintStart_toStartOf="@id/btnAddExerciseSession"
         android:onClick="clickBtnChangeDate"/>
 
     <Button
@@ -143,11 +137,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/btnChangeSessionTime"
-        android:textSize="@dimen/text_size_small"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/lblSessionDuration"
-        app:layout_constraintStart_toEndOf="@id/btnAddExerciseSession"
+        android:layout_marginEnd="@dimen/base_pad"
+        android:layout_marginStart="@dimen/base_pad"
         android:onClick="clickBtnChangeTime"/>
 
     <Button
@@ -155,20 +148,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/add_exercise"
-        android:textSize="@dimen/text_size_small"
-        app:layout_constraintTop_toTopOf="@id/btnChangeSessionDuration"
-        app:layout_constraintStart_toEndOf="@id/btnChangeSessionDuration"
-        app:layout_constraintEnd_toStartOf="@id/btnChangeDate"
+        app:layout_constraintTop_toTopOf="@id/btnConfirmSession"
+        app:layout_constraintEnd_toStartOf="@id/btnConfirmSession"
+        android:layout_marginEnd="@dimen/base_pad"
+        android:layout_marginStart="@dimen/base_pad"
         android:onClick="clickBtnAddExerciseSession"/>
 
     <Button
         android:id="@+id/btnConfirmSession"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/confirm"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/btnChangeTime"
+        app:layout_constraintTop_toBottomOf="@id/btnChangeTime"
+        app:layout_constraintStart_toStartOf="@id/btnChangeTime"
         android:onClick="clickBtnConfirmSession"/>
 
     <TextView
@@ -177,7 +170,7 @@
         android:layout_height="wrap_content"
         android:text="@string/lblExerciseOrderHeader"
         android:textAlignment="center"
-        app:layout_constraintTop_toBottomOf="@id/btnChangeSessionDuration"
+        app:layout_constraintTop_toBottomOf="@id/btnConfirmSession"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/glSession1"/>
 
@@ -238,7 +231,7 @@
         android:text="@string/lblNotes"
         android:labelFor="@id/etxtNotes"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/etxtNotes"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="@id/etxtNotes"/>
 
     <!-- Used to draw focus from the editText-->
@@ -258,7 +251,7 @@
         android:inputType="text"
         android:text=""
         android:lines="1"
-        app:layout_constraintBottom_toTopOf="@id/btnConfirmSession"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/lblNotes"
         app:layout_constraintEnd_toEndOf="parent"/>
 
