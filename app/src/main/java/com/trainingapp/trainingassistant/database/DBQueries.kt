@@ -185,7 +185,7 @@ object DBQueries {
     fun getClientType(id: Int) =
         """
         Select schedule_type
-        From   Schedules
+        From   Clients
         Where  client_id = $id;""".trimIndent()
 
     fun addClientBank(id: Int) =

@@ -47,7 +47,7 @@ class DatabaseOperations(val context: Context) {
         var result = true
         db.beginTransaction()
         try {
-            sql.forEach { db.execSQL(it) }
+            sql.forEach { if (it.isNotBlank()) db.execSQL(it) }
             db.setTransactionSuccessful()
         } catch (e:SQLException){
             e.printStackTrace()
@@ -362,16 +362,18 @@ class DatabaseOperations(val context: Context) {
             val client = getClient(clientID)
             val session = Session.empty(clientID, client.name, dayTime)
             // If a change for the given client and dayTime then use the corresponding duration
-            if (checkChange(session)){
+            val duration = if (checkChange(session)){
                 val cursor1 = db.rawQuery(DBQueries.getSessionSessionChanges(clientID, dayTime), null)
                 cursor1.moveToFirst()
-                session.duration = cursor1.getInt(0)
+                val temp = cursor1.getInt(0)//session.duration = cursor1.getInt(0)
                 cursor1.close()
+                temp
             } else
                 // If no change is found, use the duration found from the client with the given dayTime
                 // If the client is not Weekly_Constant, 0 will be returned
-                session.duration = client.getDuration(dayTime)
-            session
+                //session.duration = client.getDuration(dayTime)
+                client.getDuration(dayTime)
+            session.clone(duration = duration)
         }
         cursor.close()
         return session

@@ -5,4 +5,8 @@
     <color name="colorAccent">#D81B60</color>
     <color name="colorBorderSchedule">#000000</color>
     <color name="colorBorder2">#FFB91954</color>
+    <color name="unconfirmed">#E3AE0E</color>
+    <color name="confirmed">#488F38</color>
+    <color name="error">#AE1526</color>
+    <color name="nothing">#808080</color>
 </resources>

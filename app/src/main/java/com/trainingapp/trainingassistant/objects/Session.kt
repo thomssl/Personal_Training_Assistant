@@ -20,7 +20,7 @@ class Session (
     val clientName: String,
     private var dayTime: String,
     val notes: String,
-    var duration: Int,
+    val duration: Int,
     val exercises: MutableList<ExerciseSession>
 ): Comparable<Session> {
 
@@ -31,6 +31,16 @@ class Session (
             id,
             name,
             dayTime,
+            "",
+            0,
+            mutableListOf()
+        )
+
+        val empty = Session(
+            0,
+            0,
+            "",
+            "1970-01-01",
             "",
             0,
             mutableListOf()
@@ -133,7 +143,12 @@ class Session (
      * For example, a new date can be used in the clone to check conflicts with the new theoretical Session without altering the original Session
      * @return copy of the original Session with the added parameters substituting the original Sessions attributes
      */
-    fun clone(dayTime: String = "", exercises: MutableList<ExerciseSession> = mutableListOf(), notes: String = "", duration: Int = 0): Session{
+    fun clone(
+        dayTime: String = "",
+        exercises: MutableList<ExerciseSession> = mutableListOf(),
+        notes: String = "",
+        duration: Int = 0
+    ): Session{
         return Session(
             sessionID,
             clientID,
@@ -143,6 +158,18 @@ class Session (
             if (duration == 0) this.duration else duration,
             if (exercises.size == 0) this.exercises else exercises
         )
+    }
+
+    fun using (
+        dayTime: String = "",
+        exercises: MutableList<ExerciseSession> = mutableListOf(),
+        notes: String = "",
+        duration: Int = 0,
+        func: (session: Session) -> Boolean
+    ): Pair<Boolean,Session> {
+        val newSession = clone(dayTime, exercises, notes, duration)
+        val result = func(newSession)
+        return Pair(result, if (result) newSession else this)
     }
 
     private val allExerciseInserts: String

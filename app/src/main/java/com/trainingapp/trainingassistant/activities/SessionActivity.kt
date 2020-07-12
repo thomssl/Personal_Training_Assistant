@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.app.TimePickerDialog
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.*
@@ -13,6 +14,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.trainingapp.trainingassistant.R
 import com.trainingapp.trainingassistant.StaticFunctions
 import com.trainingapp.trainingassistant.database.DatabaseOperations
+import com.trainingapp.trainingassistant.enumerators.ChangeStatus
 import com.trainingapp.trainingassistant.enumerators.ScheduleType
 import com.trainingapp.trainingassistant.objects.ExerciseSession
 import com.trainingapp.trainingassistant.objects.Session
@@ -104,7 +106,10 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
                     Toast.makeText(this, "Session changes could not be successfully saved", Toast.LENGTH_LONG).show()
                 else super.onBackPressed()
             }
-            alertDialog.setNegativeButton(R.string.no_button) { dialog, _ -> dialog.dismiss()}
+            alertDialog.setNegativeButton(R.string.no_button) { dialog, _ ->
+                dialog.dismiss()
+                super.onBackPressed()
+            }
             alertDialog.show()
         } else super.onBackPressed()
     }
@@ -124,9 +129,9 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
         datePickerDialog.updateDate(calendar[Calendar.YEAR], calendar[Calendar.MONTH], calendar[Calendar.DAY_OF_MONTH])
         timePickerDialog.updateTime(calendar[Calendar.HOUR_OF_DAY], calendar[Calendar.MINUTE])
         txtSessionClientName.text = session.clientName
-        setDate()
-        setTime()
-        setDuration()
+        setDate(ChangeStatus.NOTHING)
+        setTime(ChangeStatus.NOTHING)
+        setDuration(ChangeStatus.NOTHING)
         if (session.notes.isNotEmpty())
             etxtNotes.setText(session.notes)
         setAdapter()
@@ -151,13 +156,24 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
             tempCalendar.time = calendar.time
             tempCalendar[Calendar.HOUR_OF_DAY] = hour
             tempCalendar[Calendar.MINUTE] = minute
-            if (!databaseOperations.checkSessionConflict(session.clone(dayTime = StaticFunctions.getStrDateTime(tempCalendar.time)), true)) {
+            session.using(dayTime = StaticFunctions.getStrDateTime(tempCalendar.time)) {
+                !databaseOperations.checkSessionConflict(it, true)
+            }.run {
+                if (first) {
+                    calendar.time = tempCalendar.time
+                    setTime(ChangeStatus.UNCONFIRMED)
+                    changeTime = true
+                }
+                else
+                    Snackbar.make(btnChangeTime, "Conflict with new time found. Please choose another time", Snackbar.LENGTH_LONG).show()
+            }
+/*            if (!databaseOperations.checkSessionConflict(session.clone(dayTime = StaticFunctions.getStrDateTime(tempCalendar.time)), true)) {
                 calendar.time = tempCalendar.time
                 setTime()
                 changeTime = true
             }
             else
-                Snackbar.make(btnChangeTime, "Conflict with new time found. Please choose another time", Snackbar.LENGTH_LONG).show()
+                Snackbar.make(btnChangeTime, "Conflict with new time found. Please choose another time", Snackbar.LENGTH_LONG).show()*/
         }
     }
 
@@ -175,20 +191,39 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
             tempCalendar[Calendar.YEAR] = year
             tempCalendar[Calendar.MONTH] = month
             tempCalendar[Calendar.DAY_OF_MONTH] = dayOfMonth
-            if (!databaseOperations.checkSessionConflict(session.clone(dayTime = StaticFunctions.getStrDateTime(tempCalendar.time)), false)) {
+            session.using(dayTime = StaticFunctions.getStrDateTime(tempCalendar.time)) {
+                !databaseOperations.checkSessionConflict(it, false)
+            }.run {
+                if (first){
+                    calendar.time = tempCalendar.time
+                    setDate(ChangeStatus.UNCONFIRMED)
+                    changeDate = true
+                } else
+                    Snackbar.make(btnChangeDate, "Conflict with new date found. Please choose another date", Snackbar.LENGTH_LONG).show()
+            }
+/*            if (!databaseOperations.checkSessionConflict(session.clone(dayTime = StaticFunctions.getStrDateTime(tempCalendar.time)), false)) {
                 calendar.time = tempCalendar.time
                 setDate()
                 changeDate = true
             }
             else
-                Snackbar.make(btnChangeDate, "Conflict with new date found. Please choose another date", Snackbar.LENGTH_LONG).show()
+                Snackbar.make(btnChangeDate, "Conflict with new date found. Please choose another date", Snackbar.LENGTH_LONG).show()*/
         }
     }
 
     //UI update functions
-    private fun setDate() { txtSessionDate.text = StaticFunctions.getStrDate(calendar.time) }
-    private fun setTime() { txtSessionTime.text = StaticFunctions.getStrTimeAMPM(calendar.time) }
-    private fun setDuration() { txtSessionDuration.text = getString(R.string.txtSessionDuration, duration)}
+    private fun setDate(changeStatus: ChangeStatus) {
+        txtSessionDate.text = StaticFunctions.getStrDate(calendar.time)
+        txtSessionDate.setTextColor(Color.parseColor(changeStatus.rgb))
+    }
+    private fun setTime(changeStatus: ChangeStatus) {
+        txtSessionTime.text = StaticFunctions.getStrTimeAMPM(calendar.time)
+        txtSessionTime.setTextColor(Color.parseColor(changeStatus.rgb))
+    }
+    private fun setDuration(changeStatus: ChangeStatus) {
+        txtSessionDuration.text = getString(R.string.txtSessionDuration, duration)
+        txtSessionDuration.setTextColor(Color.parseColor(changeStatus.rgb))
+    }
     private fun setAdapter(){
         rvSessionExercises.adapter = SessionExercisesRVAdapter(session, {
                 exerciseSession, position -> onItemClick(exerciseSession, position)
@@ -213,7 +248,28 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
         val result = when (true){
             // If the session date, duration or time has changed
             changeDate || changeDuration || changeTime -> {
-                // Create a temp session object to represent the new changes
+                session.using(dayTime = StaticFunctions.getStrDateTime(calendar.time), duration = duration) {
+                    if (databaseOperations.checkSessionLog(session)) {
+                        if (!databaseOperations.updateSession(it))
+                        // If updating returns an error flag, exit function with error flag
+                            return@using false
+                    }
+                    else {
+                        if (!databaseOperations.insertSession(it))
+                        // If inserting returns an error flag, exit function with error flag
+                            return@using false
+                    }
+                    when (true){
+                        // If change exists in DB for old session, update the change
+                        databaseOperations.checkChange(session) -> databaseOperations.updateChange(session, it)
+                        // If client type is WEEKLY_CONSTANT but change does not exist, create the change record
+                        databaseOperations.getClientType(session.clientID) == ScheduleType.WEEKLY_CONSTANT ->
+                            databaseOperations.insertChange(session, it)
+                        // No change record needed, set result to true
+                        else -> true
+                    }
+                }
+/*                // Create a temp session object to represent the new changes
                 val newSession = session.clone(dayTime = StaticFunctions.getStrDateTime(calendar.time), duration = duration)
                 // If the session already has a record in Session_log, update the record. If not insert the new session
                 if (databaseOperations.checkSessionLog(session)) {
@@ -234,33 +290,61 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
                         databaseOperations.insertChange(session, newSession)
                     // No change record needed, set result to true
                     else -> true
-                }
+                }*/
             }
             // If no date, duration or time changes happened, update the session record with the current Session object
             // ie only update the exercises information
             !changeDate && !changeDuration && !changeTime && changeExercise -> {
                 // If Session exists update the session, if not insert a new session record into Session_Log
-                if (databaseOperations.checkSessionLog(session)) databaseOperations.updateSession(session)
-                else databaseOperations.insertSession(session)
+                if (databaseOperations.checkSessionLog(session)) Pair(databaseOperations.updateSession(session), Session.empty)
+                else Pair(databaseOperations.insertSession(session), Session.empty)
             }
             // If no changed logged, do nothing
             else -> {
-                false
+                Pair(false, Session.empty)
             }
         }
         // If updates/inserts were successful and the session date, duration or time was changed, update the current session object
-        if (result && (changeDate || changeDuration || changeTime)) {
-            session.time = calendar.time
-            session.duration = duration
+        if (result.first && (result.second != Session.empty) && (changeDate || changeDuration || changeTime)) {
+            /*session.time = calendar.time
+            session.duration = duration*/
+            session = result.second
         }
         // If update was successful, reset all the change flags
-        if (result) {
+/*        if (result.first) {
             changeDate = false
             changeDuration = false
             changeTime = false
             changeExercise = false
+        }*/
+        result.first.let {
+            var status = when(true){
+                it && changeDate -> ChangeStatus.CONFIRMED
+                !changeDate ->  ChangeStatus.NOTHING
+                else -> ChangeStatus.ERROR
+            }
+            setDate(status)
+            status = when(true){
+                it && changeDuration -> ChangeStatus.CONFIRMED
+                !changeDuration ->  ChangeStatus.NOTHING
+                else -> ChangeStatus.ERROR
+            }
+            setDuration(status)
+            status = when(true){
+                it && changeTime -> ChangeStatus.CONFIRMED
+                !changeTime ->  ChangeStatus.NOTHING
+                else -> ChangeStatus.ERROR
+            }
+            setTime(status)
+            //setDate(if (it) ChangeStatus.CONFIRMED else ChangeStatus.ERROR)
+            if (it) {
+                changeDate = false
+                changeDuration = false
+                changeTime = false
+                changeExercise = false
+            }
         }
-        return result
+        return result.first
     }
 
     fun clickBtnChangeDate(@Suppress("UNUSED_PARAMETER") view: View) {
@@ -303,7 +387,21 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
                 Toast.makeText(this, "Duration outside of acceptable values. See Wiki for more information", Toast.LENGTH_LONG).show()
                 false
             } else {
-                if (databaseOperations.checkSessionConflict(session.clone(duration = tempDuration), true)) {
+                session.using (duration = tempDuration) {
+                    databaseOperations.checkSessionConflict(it, true)
+                }.let {
+                    if (it.first) {
+                        Toast.makeText(this, "Error: Session Conflict", Toast.LENGTH_LONG).show()
+                        false
+                    }
+                    else {
+                        changeDuration = true
+                        duration = tempDuration
+                        setDuration(ChangeStatus.UNCONFIRMED)
+                        true
+                    }
+                }
+/*                if (databaseOperations.checkSessionConflict(session.clone(duration = tempDuration), true)) {
                     Toast.makeText(this, "Error: Session Conflict", Toast.LENGTH_LONG).show()
                     false
                 } else {
@@ -311,7 +409,7 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
                     duration = tempDuration
                     setDuration()
                     true
-                }
+                }*/
             }
         } catch (e: NumberFormatException){
             e.printStackTrace()
