@@ -21,28 +21,35 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.11"/>
+        app:layout_constraintGuide_percent="0.8"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/glAddEditProgram1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.45"/>
+        app:layout_constraintGuide_percent="0.06"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/glAddEditProgram2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.65"/>
+        app:layout_constraintGuide_percent="0.4"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/glAddEditProgram3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.85"/>
+        app:layout_constraintGuide_percent="0.6"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glAddEditProgram4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.8"/>
 
     <TextView
         android:id="@+id/lblAddEditProgramName"
@@ -60,7 +67,7 @@
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
         app:layout_constraintStart_toEndOf="@id/lblAddEditProgramName"
-        app:layout_constraintEnd_toStartOf="@id/glAddEditProgram3"
+        app:layout_constraintEnd_toStartOf="@id/glAddEditProgram"
         app:layout_constraintTop_toTopOf="parent"
         android:importantForAutofill="no" />
 
@@ -70,10 +77,9 @@
         android:layout_height="wrap_content"
         android:text="@string/program_days"
         android:labelFor="@id/etxtAddEditProgramName"
-        android:layout_marginStart="20dp"
-        app:layout_constraintStart_toEndOf="@id/glAddEditProgram2"
-        app:layout_constraintTop_toTopOf="@id/btnAddEditProgramAddExercise"
-        app:layout_constraintBottom_toBottomOf="@id/btnAddEditProgramAddExercise"/>
+        app:layout_constraintStart_toEndOf="@id/glAddEditProgram"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/etxtAddEditProgramName"/>
 
     <Spinner
         android:id="@+id/spnAddEditProgramDays"
@@ -82,8 +88,8 @@
         tools:listitem="@layout/support_simple_spinner_dropdown_item"
         android:entries="@array/days"
         app:layout_constraintStart_toEndOf="@id/lblAddEditProgramDays"
-        app:layout_constraintTop_toBottomOf="@id/etxtAddEditProgramDesc"
-        app:layout_constraintBottom_toBottomOf="@id/btnAddEditProgramAddExercise"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/etxtAddEditProgramName"
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <TextView
@@ -102,7 +108,7 @@
         android:layout_height="wrap_content"
         android:inputType="text"
         app:layout_constraintStart_toEndOf="@id/lblAddEditProgramDesc"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/glAddEditProgram"
         app:layout_constraintTop_toBottomOf="@id/etxtAddEditProgramName"
         android:importantForAutofill="no" />
 
@@ -112,8 +118,10 @@
         android:layout_height="0dp"
         android:text="@string/add_exercise"
         android:onClick="onClickBtnAddExercise"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/etxtAddEditProgramDesc"/>
+        app:layout_constraintStart_toEndOf="@id/glAddEditProgram"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/etxtAddEditProgramDesc"
+        app:layout_constraintBottom_toBottomOf="@id/etxtAddEditProgramDesc"/>
 
     <TextView
         android:id="@+id/lblProgramExerciseOrderHeader"
@@ -121,9 +129,9 @@
         android:layout_height="wrap_content"
         android:text="@string/lblExerciseOrderHeader"
         android:textAlignment="center"
-        app:layout_constraintTop_toBottomOf="@id/btnAddEditProgramAddExercise"
+        app:layout_constraintTop_toBottomOf="@id/etxtAddEditProgramDesc"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/glAddEditProgram"/>
+        app:layout_constraintEnd_toStartOf="@id/glAddEditProgram1"/>
 
     <TextView
         android:id="@+id/lblProgramExerciseNameHeader"
@@ -131,8 +139,8 @@
         android:layout_height="wrap_content"
         android:text="@string/name_header_bold"
         android:textAlignment="center"
-        app:layout_constraintEnd_toStartOf="@id/glAddEditProgram1"
-        app:layout_constraintStart_toEndOf="@id/glAddEditProgram"
+        app:layout_constraintEnd_toStartOf="@id/glAddEditProgram2"
+        app:layout_constraintStart_toEndOf="@id/glAddEditProgram1"
         app:layout_constraintTop_toTopOf="@id/lblProgramExerciseOrderHeader" />
 
     <TextView
@@ -142,8 +150,8 @@
         android:text="@string/lblExerciseSetsHeader"
         android:textAlignment="center"
         app:layout_constraintTop_toTopOf="@id/lblProgramExerciseOrderHeader"
-        app:layout_constraintStart_toEndOf="@id/glAddEditProgram1"
-        app:layout_constraintEnd_toStartOf="@id/glAddEditProgram2"/>
+        app:layout_constraintStart_toEndOf="@id/glAddEditProgram2"
+        app:layout_constraintEnd_toStartOf="@id/glAddEditProgram3"/>
 
     <TextView
         android:id="@+id/lblProgramExerciseRepsHeader"
@@ -152,8 +160,8 @@
         android:text="@string/lblExerciseRepsHeader"
         android:textAlignment="center"
         app:layout_constraintTop_toTopOf="@id/lblProgramExerciseOrderHeader"
-        app:layout_constraintStart_toEndOf="@id/glAddEditProgram2"
-        app:layout_constraintEnd_toStartOf="@id/glAddEditProgram3"/>
+        app:layout_constraintStart_toEndOf="@id/glAddEditProgram3"
+        app:layout_constraintEnd_toStartOf="@id/glAddEditProgram4"/>
 
     <TextView
         android:id="@+id/lblProgramExerciseDaysHeader"
@@ -162,7 +170,7 @@
         android:text="@string/program_days_bold"
         android:textAlignment="center"
         app:layout_constraintTop_toTopOf="@id/lblProgramExerciseOrderHeader"
-        app:layout_constraintStart_toEndOf="@id/glAddEditProgram3"
+        app:layout_constraintStart_toEndOf="@id/glAddEditProgram4"
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <androidx.recyclerview.widget.RecyclerView

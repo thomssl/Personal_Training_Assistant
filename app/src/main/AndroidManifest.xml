@@ -9,13 +9,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.AddEditProgramActivity"
-            android:screenOrientation="landscape"
-            tools:ignore="LockedOrientationActivity"/>
-        <activity
-            android:name=".activities.AddEditClientActivity"/>
-        <activity
-            android:name=".activities.AddEditExerciseActivity"/>
+        <activity android:name=".activities.AddEditProgramActivity"/>
+        <activity android:name=".activities.AddEditClientActivity"/>
+        <activity android:name=".activities.AddEditExerciseActivity"/>
         <activity
             android:name=".activities.SessionActivity"
             android:screenOrientation="landscape"
