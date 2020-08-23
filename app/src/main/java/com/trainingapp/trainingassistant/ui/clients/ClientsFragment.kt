@@ -39,7 +39,8 @@ class ClientsFragment : Fragment(), CoroutineScope {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setAdapter()//calls UI coroutine to get ClientsRVAdapter
+        // Calls UI coroutine to get ClientsRVAdapter
+        setAdapter()
     }
 
     override fun onResume() {
@@ -51,9 +52,12 @@ class ClientsFragment : Fragment(), CoroutineScope {
      * UI coroutine to get and set rvClients adapter
      */
     private fun setAdapter() = launch{
-        val result = getAdapter()//awaits IO coroutine to get adapter
-        rvClients.adapter = result//displays adapter once coroutine has finished
-        prgClientsData.visibility = View.GONE//makes progress bar disappear once data received
+        // Awaits IO coroutine to get adapter
+        val result = getAdapter()
+        // Displays adapter once coroutine has finished
+        rvClients.adapter = result
+        // Makes progress bar disappear once data received
+        prgClientsData.visibility = View.GONE
     }
 
     /**
