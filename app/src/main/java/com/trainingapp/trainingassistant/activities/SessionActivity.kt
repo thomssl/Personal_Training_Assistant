@@ -159,7 +159,7 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
             session.using(dayTime = StaticFunctions.getStrDateTime(tempCalendar.time)) {
                 !databaseOperations.checkSessionConflict(it, true)
             }.run {
-                if (first) {
+                if (this) {
                     calendar.time = tempCalendar.time
                     setTime(ChangeStatus.UNCONFIRMED)
                     changeTime = true
@@ -194,7 +194,7 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
             session.using(dayTime = StaticFunctions.getStrDateTime(tempCalendar.time)) {
                 !databaseOperations.checkSessionConflict(it, false)
             }.run {
-                if (first){
+                if (this){
                     calendar.time = tempCalendar.time
                     setDate(ChangeStatus.UNCONFIRMED)
                     changeDate = true
@@ -245,19 +245,19 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
      * Method to handle updating session bases upon flags that show what aspects of the session have changed
      */
     private fun confirmSessionChanges(): Boolean{
-        val result = when (true){
+        val result = when {
             // If the session date, duration or time has changed
             changeDate || changeDuration || changeTime -> {
-                session.using(dayTime = StaticFunctions.getStrDateTime(calendar.time), duration = duration) {
+                session.usingReturn(dayTime = StaticFunctions.getStrDateTime(calendar.time), duration = duration) {
                     if (databaseOperations.checkSessionLog(session)) {
                         if (!databaseOperations.updateSession(it))
                         // If updating returns an error flag, exit function with error flag
-                            return@using false
+                            return@usingReturn false
                     }
                     else {
                         if (!databaseOperations.insertSession(it))
                         // If inserting returns an error flag, exit function with error flag
-                            return@using false
+                            return@usingReturn false
                     }
                     when (true){
                         // If change exists in DB for old session, update the change
@@ -390,7 +390,7 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
                 session.using (duration = tempDuration) {
                     databaseOperations.checkSessionConflict(it, true)
                 }.let {
-                    if (it.first) {
+                    if (it) {
                         Toast.makeText(this, "Error: Session Conflict", Toast.LENGTH_LONG).show()
                         false
                     }

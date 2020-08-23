@@ -166,6 +166,17 @@ class Session (
         notes: String = "",
         duration: Int = 0,
         func: (session: Session) -> Boolean
+    ): Boolean {
+        val newSession = clone(dayTime, exercises, notes, duration)
+        return func(newSession)
+    }
+
+    fun usingReturn (
+        dayTime: String = "",
+        exercises: MutableList<ExerciseSession> = mutableListOf(),
+        notes: String = "",
+        duration: Int = 0,
+        func: (session: Session) -> Boolean
     ): Pair<Boolean,Session> {
         val newSession = clone(dayTime, exercises, notes, duration)
         val result = func(newSession)
