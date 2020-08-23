@@ -50,7 +50,8 @@ class WikiFragment : Fragment(), CoroutineScope  {
      * UI coroutine used to fill scroll view fields with the proper text for the wiki
      */
     private fun populateView(view: View) = launch {
-        val result = loadWiki()//await loadWiki. true if no IOError, false if error occurred
+        // Await loadWiki. true if no IOError, false if error occurred
+        val result = loadWiki()
         prgWikiData.visibility = View.INVISIBLE
         if (result){
             wikiIntroductionBody.text = introduction
@@ -74,7 +75,8 @@ class WikiFragment : Fragment(), CoroutineScope  {
     }
 
     /**
-     * Suspendable IO coroutine to load text from Wiki txt file. Finds the index for the line to start each section. Collects the text as needed for each section.
+     * Suspendable IO coroutine to load text from Wiki txt file. Finds the index for the line to start each section. Collects the text as needed for
+     * each section.
      * Hard coded for now. Might change to accept any wiki txt file formatted to specific conditions
      * @return true if no error occurs, false if error occurs
      */
@@ -98,25 +100,48 @@ class WikiFragment : Fragment(), CoroutineScope  {
             val indexSessionsOverview = lines.indexOf("Session Overview")
             val indexSessionsLimits = lines.indexOf("Session Limits")
             introduction = lines[1]
-            //takes each sublist of lines and joins with new line character. Replaces tab and new line characters that have not been read properly with the proper notation
-            inputFields = lines.subList(indexInputFields+1, indexInputFields+7).joinToString("\n").replace("\\t","\t").replace("\\n", "\n")
-            clientsOverview = lines.subList(indexClientsOverview+1, indexClientsOverview + 10).joinToString("\n").replace("\\t","\t").replace("\\n", "\n")
-            clientsClassification = lines.subList(indexClientsClassification+1, indexClientsClassification + 7).joinToString("\n").replace("\\t","\t").replace("\\n", "\n")
+            // Takes each sublist of lines and joins with new line character. Replaces tab and new line characters with escaped \ to the white space
+            // character
+            inputFields = lines
+                .sliceFor(indexInputFields + 1, 6)
+                .joinToString("\n") { removeEscapes(it) }
+            clientsOverview = lines
+                .sliceFor(indexClientsOverview + 1, 9)
+                .joinToString("\n") { removeEscapes(it) }
+            clientsClassification = lines
+                .sliceFor(indexClientsClassification + 1, 6)
+                .joinToString("\n") { removeEscapes(it) }
             clientsCreation = lines[indexClientsCreation+1].replace("\\n","\n")
-            joints = lines.subList(indexJoints+1, indexJoints+11).joinToString("\n").replace("\\t","\t").replace("\\n", "\n")
-            musclesOverview = lines.subList(indexMusclesOverview+1, indexMusclesOverview+4).joinToString("\n").replace("\\t","\t").replace("\\n", "\n")
-            musclesCreation = lines[indexMusclesCreation+1].replace("\\n","\n")
-            musclesDeletion = lines[indexMusclesDeletion+1].replace("\\n","\n")
-            exercisesOverview = lines.subList(indexExercisesOverview+1, indexExercisesOverview+7).joinToString("\n").replace("\\t","\t").replace("\\n", "\n")
-            exercisesClassification = lines.subList(indexExercisesClassification+1, indexExercisesClassification+9).joinToString("\n").replace("\\t","\t").replace("\\n", "\n")
-            exercisesCreation = lines[indexExercisesCreation+1].replace("\\n","\n")
-            exercisesDeletion = lines[indexExercisesDeletion+1].replace("\\n","\n")
-            sessionsOverview = lines.subList(indexSessionsOverview+1, indexSessionsOverview+9).joinToString("\n").replace("\\t","\t").replace("\\n", "\n")
-            sessionsLimits = lines.subList(indexSessionsLimits+1, indexSessionsLimits+4).joinToString("\n").replace("\\t","\t").replace("\\n", "\n")
+            joints = lines
+                .sliceFor(indexJoints + 1, 10)
+                .joinToString("\n") { removeEscapes(it) }
+            musclesOverview = lines
+                .sliceFor(indexMusclesOverview + 1, 3)
+                .joinToString("\n") { removeEscapes(it) }
+            musclesCreation = removeEscapes(lines[indexMusclesCreation + 1])
+            musclesDeletion = removeEscapes(lines[indexMusclesDeletion + 1])
+            exercisesOverview = lines
+                .sliceFor(indexExercisesOverview + 1, 6)
+                .joinToString("\n") { removeEscapes(it) }
+            exercisesClassification = lines
+                .sliceFor(indexExercisesClassification + 1, 8)
+                .joinToString("\n") { removeEscapes(it) }
+            exercisesCreation = removeEscapes(lines[indexExercisesCreation + 1])
+            exercisesDeletion = removeEscapes(lines[indexExercisesDeletion + 1])
+            sessionsOverview = lines
+                .sliceFor(indexSessionsOverview + 1, 8)
+                .joinToString("\n") { removeEscapes(it) }
+            sessionsLimits = lines
+                .sliceFor(indexSessionsLimits + 1, 3)
+                .joinToString("\n") { removeEscapes(it) }
             true
         } catch (e: Exception){
             e.printStackTrace()
             false
         }
     }
+
+    private fun removeEscapes(str: String) = str.replace("\\t","\t").replace("\\n", "\n")
+
+    private fun List<String>.sliceFor(start: Int, length: Int) = this.subList(start, start + length)
 }
