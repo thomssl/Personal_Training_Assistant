@@ -18,12 +18,18 @@ import com.trainingapp.trainingassistant.objects.Session
  * @param clickListener Function used by ScheduleFragment to handle item onClick event (ie edit session)
  * @param longClickListener Function used by ScheduleFragment to handle item onLongClick event (ie cancel session)
  */
-class ScheduleRVAdapter(private val context: Context?, private val day: Day, private val clickListener: (Int) -> Unit, private val longClickListener: (Int) -> Boolean): RecyclerView.Adapter<ScheduleRVAdapter.ScheduleViewHolder>() {
+class ScheduleRVAdapter(
+    private val context: Context?,
+    private val day: Day,
+    private val clickListener: (Int) -> Unit,
+    private val longClickListener: (Int) -> Boolean
+): RecyclerView.Adapter<ScheduleRVAdapter.ScheduleViewHolder>() {
 
     private lateinit var conflicts: List<Int>
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScheduleViewHolder {
-        conflicts = day.conflicts//fills list with sessions indices that have a conflict with another session
+        // Fills list with sessions indices that have a conflict with another session
+        conflicts = day.conflicts
         return ScheduleViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.schedule_row, parent, false))
     }
 
@@ -40,7 +46,8 @@ class ScheduleRVAdapter(private val context: Context?, private val day: Day, pri
             itemView.findViewById<TextView>(R.id.scheduleRowTime).text = StaticFunctions.getStrTimeAMPM(session.time, session.duration)
             itemView.setOnClickListener{clickListener(position)}
             itemView.setOnLongClickListener { longClickListener(position) }
-            if (conflicts.contains(position))//if this session index was flagged as a conflict set background to be highlighted
+            // If this session index was flagged as a conflict set background to be highlighted
+            if (conflicts.contains(position))
                 itemView.background = context?.getDrawable(R.drawable.border_day_conflict)
         }
     }

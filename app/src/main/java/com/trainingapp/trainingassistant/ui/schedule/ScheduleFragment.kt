@@ -41,14 +41,16 @@ class ScheduleFragment : Fragment(), CalendarView.OnDateChangeListener, Coroutin
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setAdapter()
-        calSchedule.setOnDateChangeListener(this)//set CalendarView's date change event handler to this (onSelectedDayChange function)
+        calSchedule.setOnDateChangeListener(this)
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        try{//if cast successful, this Interface will be used to send date updates to MainActivity
+        // If cast successful, this Interface will be used to send date updates to MainActivity
+        // If error during cast (cannot cast context to interface) log and notify user
+        try{
             iFragmentToActivity = context as IFragmentToActivity
-        } catch (e: ClassCastException){//if error during cast (cannot cast context to interface) log and notify user
+        } catch (e: ClassCastException){
             e.printStackTrace()
             Toast.makeText(context, "Could not cast context as IFragmentToActivity", Toast.LENGTH_LONG).show()
         }
