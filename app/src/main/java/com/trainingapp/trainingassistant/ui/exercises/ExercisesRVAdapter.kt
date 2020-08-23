@@ -14,7 +14,11 @@ import com.trainingapp.trainingassistant.objects.Exercise
  * @param clickListener Function used by ExercisesFragment to handle item onClick event (ie edit exercise)
  * @param longClickListener Function used by ExercisesFragment to handle item onLongClick event (ie delete exercise)
  */
-class ExercisesRVAdapter(private val exercises: List<Exercise>, private val clickListener: (Int) -> Unit, private val longClickListener: (Exercise) -> Boolean): RecyclerView.Adapter<ExercisesRVAdapter.ExerciseViewHolder>() {
+class ExercisesRVAdapter(
+    private val exercises: List<Exercise>,
+    private val clickListener: (Int) -> Unit,
+    private val longClickListener: (Exercise) -> Boolean
+): RecyclerView.Adapter<ExercisesRVAdapter.ExerciseViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExerciseViewHolder {
         return ExerciseViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.exercises_row, parent, false))
