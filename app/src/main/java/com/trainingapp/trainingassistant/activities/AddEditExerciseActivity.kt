@@ -12,10 +12,8 @@ import com.trainingapp.trainingassistant.database.DatabaseOperations
 import com.trainingapp.trainingassistant.enumerators.ExerciseType
 import com.trainingapp.trainingassistant.objects.Exercise
 import com.trainingapp.trainingassistant.objects.MuscleJoint
-import com.trainingapp.trainingassistant.ui.adapters.AddExercisePrimaryRVAdapter
-import com.trainingapp.trainingassistant.ui.adapters.AddExerciseSecondaryRVAdapter
-import com.trainingapp.trainingassistant.ui.adapters.EditExercisePrimaryRVAdapter
-import com.trainingapp.trainingassistant.ui.adapters.EditExerciseSecondaryRVAdapter
+import com.trainingapp.trainingassistant.ui.adapters.AddEditExercisePrimaryRVAdapter
+import com.trainingapp.trainingassistant.ui.adapters.AddEditExerciseSecondaryRVAdapter
 import kotlinx.android.synthetic.main.activity_add_edit_exercise.*
 
 /**
@@ -67,22 +65,22 @@ class AddEditExerciseActivity : AppCompatActivity(), AdapterView.OnItemSelectedL
             if (!isNew) {
                 // If is edit exercise, populate secondary movers with temp list and send secondary movers already selected
                 val temp = muscles.filter { it != exercise.primaryMover }
-                rvAddEditExerciseSecondaryMover.adapter = EditExerciseSecondaryRVAdapter(temp, exercise.lstSecondaryMovers) {
+                rvAddEditExerciseSecondaryMover.adapter = AddEditExerciseSecondaryRVAdapter(temp, exercise.lstSecondaryMovers) {
                         muscleJoint, isSelected -> onSecondaryItemClick( muscleJoint, isSelected )
                 }
             }
-            rvAddEditExercisePrimeMover.adapter = EditExercisePrimaryRVAdapter(muscles, muscles.indexOf(exercise.primaryMover)) {
+            rvAddEditExercisePrimeMover.adapter = AddEditExercisePrimaryRVAdapter(muscles, muscles.indexOf(exercise.primaryMover)) {
                     muscleJoint -> onPrimaryItemClick(muscleJoint)
             }
         } else {
             if (!isNew) {
                 // If it is edit exercise, populate secondary movers with temp list and send secondary movers already selected
                 val temp = joints.filter { it != exercise.primaryMover }
-                rvAddEditExerciseSecondaryMover.adapter = EditExerciseSecondaryRVAdapter(temp, exercise.lstSecondaryMovers) {
+                rvAddEditExerciseSecondaryMover.adapter = AddEditExerciseSecondaryRVAdapter(temp, exercise.lstSecondaryMovers) {
                         muscleJoint, isSelected -> onSecondaryItemClick(muscleJoint, isSelected)
                 }
             }
-            rvAddEditExercisePrimeMover.adapter = EditExercisePrimaryRVAdapter(joints, joints.indexOf(exercise.primaryMover)) {
+            rvAddEditExercisePrimeMover.adapter = AddEditExercisePrimaryRVAdapter(joints, joints.indexOf(exercise.primaryMover)) {
                     muscleJoint -> onPrimaryItemClick(muscleJoint)
             }
         }
@@ -172,25 +170,25 @@ class AddEditExerciseActivity : AppCompatActivity(), AdapterView.OnItemSelectedL
             when (position) {
                 0 -> {
                     exercise.type = ExerciseType.STRENGTH
-                    rvAddEditExercisePrimeMover.adapter = AddExercisePrimaryRVAdapter(muscles) {
+                    rvAddEditExercisePrimeMover.adapter = AddEditExercisePrimaryRVAdapter(muscles, -1) {
                             muscleJoint -> onPrimaryItemClick(muscleJoint)
                     }
                 }
                 1 -> {
                     exercise.type = ExerciseType.MOBILITY
-                    rvAddEditExercisePrimeMover.adapter = AddExercisePrimaryRVAdapter(joints) {
+                    rvAddEditExercisePrimeMover.adapter = AddEditExercisePrimaryRVAdapter(joints, -1) {
                             muscleJoint -> onPrimaryItemClick(muscleJoint)
                     }
                 }
                 2 -> {
                     exercise.type = ExerciseType.STABILITY
-                    rvAddEditExercisePrimeMover.adapter = AddExercisePrimaryRVAdapter(joints) {
+                    rvAddEditExercisePrimeMover.adapter = AddEditExercisePrimaryRVAdapter(joints, -1) {
                             muscleJoint -> onPrimaryItemClick(muscleJoint)
                     }
                 }
             }
             // In all cases the secondary movers RecyclerView will be assigned to blank
-            rvAddEditExerciseSecondaryMover.adapter = AddExerciseSecondaryRVAdapter(listOf()) {
+            rvAddEditExerciseSecondaryMover.adapter = AddEditExerciseSecondaryRVAdapter(listOf(), listOf()) {
                     muscleJoint, isSelected -> onSecondaryItemClick(muscleJoint, isSelected)
             }
         }
@@ -207,7 +205,7 @@ class AddEditExerciseActivity : AppCompatActivity(), AdapterView.OnItemSelectedL
             muscles.filter { it != muscleJoint }
         else
             joints.filter { it != muscleJoint }
-        rvAddEditExerciseSecondaryMover.adapter = AddExerciseSecondaryRVAdapter(temp) {
+        rvAddEditExerciseSecondaryMover.adapter = AddEditExerciseSecondaryRVAdapter(temp, listOf()) {
                 muscleJointAdapter, isSelected -> onSecondaryItemClick(muscleJointAdapter, isSelected)
         }
     }

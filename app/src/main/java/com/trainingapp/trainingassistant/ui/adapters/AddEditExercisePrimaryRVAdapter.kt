@@ -14,12 +14,14 @@ import com.trainingapp.trainingassistant.objects.MuscleJoint
  * @param indexSelected index of the primary mover contained within the Exercise that need to be set as selected upon init
  * @param clickListener Function that handles the onClick event of an item within the AddEditExerciseActivity
  */
-class EditExercisePrimaryRVAdapter(
+class AddEditExercisePrimaryRVAdapter(
     val muscleJoints: MutableList<MuscleJoint>,
-    indexSelected: Int, private val clickListener: (MuscleJoint) -> Unit
-): RecyclerView.Adapter<EditExercisePrimaryRVAdapter.AddExercisePrimaryViewHolder>() {
+    indexSelected: Int,
+    private val clickListener: (MuscleJoint) -> Unit
+): RecyclerView.Adapter<AddEditExercisePrimaryRVAdapter.AddExercisePrimaryViewHolder>() {
 
-    var selectedPosition: Int = if (indexSelected >= 0) indexSelected else -1//used to tell which item is selected. init as -1 if passed index is invalid, else set as invalid index
+    // Used to tell which item is selected. init as -1 if passed index is invalid, else set as invalid index
+    var selectedPosition: Int = if (indexSelected >= 0) indexSelected else -1
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AddExercisePrimaryViewHolder {
         return AddExercisePrimaryViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.mover_row, parent, false))
@@ -35,7 +37,8 @@ class EditExercisePrimaryRVAdapter(
 
         fun onBindItems(muscleJoint: MuscleJoint, position: Int){
             itemView.findViewById<TextView>(R.id.txtExerciseMoverName).text = muscleJoint.name
-            itemView.setOnClickListener(this)//used to internally handle the onClick event and use passed function
+            // Used to internally handle the onClick event and use passed function
+            itemView.setOnClickListener(this)
             itemView.isSelected = selectedPosition == position
         }
 
@@ -43,7 +46,8 @@ class EditExercisePrimaryRVAdapter(
             val position = adapterPosition
             selectedPosition = position
             clickListener(muscleJoints[position])
-            notifyDataSetChanged()//needed to update all items to new selected item
+            // Needed to update all items to new selected item
+            notifyDataSetChanged()
         }
     }
 }

@@ -24,14 +24,16 @@ class SearchForExerciseAutoComplete(
     val exercises: List<Exercise>
 ) : ArrayAdapter<String>(context, resource) {
 
-    var resultData = exercises.toMutableList()//used to fill the FilterResults object
+    // Used to fill the FilterResults object
+    var resultData = exercises.toMutableList()
 
     override fun getCount(): Int = resultData.size
 
     override fun getItem(position: Int): String = resultData[position].name
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        return if (convertView == null){//if item view happens to be null, fill with expected values
+        // If item view happens to be null, fill with expected values
+        return if (convertView == null) {
             val view = LayoutInflater.from(context).inflate(resource, parent, false)
             val txtName = view.findViewById<TextView>(R.id.txtSimpleAutocompleteItem)
             txtName.text = getItem(position)
@@ -66,8 +68,8 @@ class SearchForExerciseAutoComplete(
                 val isMobility = input == "Mobility"
                 val isStability = input == "Stability"
                 exercises.forEach {
-                    //for each exercise, if the input can be found within the name or the input can be found in the primary movers name add the exercise to the results
-                    //special cases, if the input is mobility or stability, add any exercise with the respective ExerciseType to the results
+                    // For each exercise, if the input can be found within the name or the input can be found in the primary movers name add the
+                    // exercise to the results. If the input is mobility or stability, add any exercise with the respective ExerciseType to results
                     if (it.name.toLowerCase(Locale.ROOT).contains(input.toString().toLowerCase(Locale.ROOT)) ||
                         it.primaryMover.name.toLowerCase(Locale.ROOT).contains(input.toString().toLowerCase(Locale.ROOT)) ||
                         (isMobility && it.type == ExerciseType.MOBILITY) ||

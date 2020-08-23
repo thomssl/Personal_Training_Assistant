@@ -33,7 +33,11 @@ class SessionExercisesRVAdapter(
 
     inner class SessionExercisesViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
 
-        fun onBindItems(exerciseSession: ExerciseSession, clickListener: (ExerciseSession, Int) -> Unit, position: Int, longClickListener: (ExerciseSession) -> Boolean){
+        fun onBindItems(
+            exerciseSession: ExerciseSession,
+            clickListener: (ExerciseSession, Int) -> Unit,
+            position: Int, longClickListener: (ExerciseSession) -> Boolean
+        ){
             itemView.findViewById<TextView>(R.id.txtSessionExerciseOrder).text = exerciseSession.order.toString()
             itemView.findViewById<TextView>(R.id.txtSessionExerciseName).text = exerciseSession.name
             itemView.findViewById<TextView>(R.id.txtSessionExerciseResistance).text = exerciseSession.resistance

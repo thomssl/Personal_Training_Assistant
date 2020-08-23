@@ -16,7 +16,7 @@ import com.trainingapp.trainingassistant.objects.Program
  * @param longClickListener Function from AddEditProgramActivity to handle the onLongClick event of an item
  */
 class ProgramExercisesRVAdapter(
-    var program: Program,
+    private val program: Program,
     private val clickListener: (ExerciseProgram, Int) -> Unit,
     private val longClickListener: (ExerciseProgram) -> Boolean
 ) : RecyclerView.Adapter<ProgramExercisesRVAdapter.ProgramExercisesViewHolder>() {
@@ -33,7 +33,11 @@ class ProgramExercisesRVAdapter(
 
     inner class ProgramExercisesViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
 
-        fun onBindItems(exerciseProgram: ExerciseProgram, clickListener: (ExerciseProgram, Int) -> Unit, position: Int, longClickListener: (ExerciseProgram) -> Boolean){
+        fun onBindItems(
+            exerciseProgram: ExerciseProgram,
+            clickListener: (ExerciseProgram, Int) -> Unit,
+            position: Int, longClickListener: (ExerciseProgram) -> Boolean
+        ){
             itemView.findViewById<TextView>(R.id.txtProgramExerciseOrder).text = exerciseProgram.order.toString()
             itemView.findViewById<TextView>(R.id.txtProgramExerciseName).text = exerciseProgram.name
             itemView.findViewById<TextView>(R.id.txtProgramExerciseDays).text = exerciseProgram.day.toString()
