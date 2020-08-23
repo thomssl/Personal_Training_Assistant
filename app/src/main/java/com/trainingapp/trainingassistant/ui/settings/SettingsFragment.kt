@@ -41,9 +41,11 @@ class SettingsFragment: Fragment(), View.OnClickListener, CompoundButton.OnCheck
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (userSettings[1] == 1)//userSettings[1] is 0 or 1 (true or false) for 24 hour clock
+        // UserSettings[1] is 0 or 1 (true or false) for 24 hour clock
+        if (userSettings[1] == 1)
             swIs24Hour.isChecked = true
-        if (userSettings[0] > 0)//userSettings[0] is the default duration (1-120)
+        // UserSettings[0] is the default duration (1-120)
+        if (userSettings[0] > 0)
             etxtDefaultSessionDuration.setText(userSettings[0].toString())
         btnConfirmUserSettings.setOnClickListener(this)
         swIs24Hour.setOnCheckedChangeListener(this)
@@ -56,24 +58,24 @@ class SettingsFragment: Fragment(), View.OnClickListener, CompoundButton.OnCheck
      */
     override fun onClick(view: View) {
         val strDuration = etxtDefaultSessionDuration.text.toString()
-        if (strDuration.isDigitsOnly() && strDuration.isNotBlank()) {
-            try {
-                val duration = strDuration.toInt()
-                if (duration in 1..120) {
-                    userSettings[0] = duration
-                    Snackbar.make(view, "Default Duration: ${userSettings[0]}, 24Hour: ${userSettings[1] == 1}", Snackbar.LENGTH_LONG).setAction("Action", null).show()
-                    if (databaseOperations.setUserSettings(userSettings))
-                        iFragmentToActivity.returnToSchedule()
-                    else
-                        Snackbar.make(view, "Error. User settings update failed", Snackbar.LENGTH_LONG).show()
-                } else
-                    Snackbar.make(view, "Error. Duration is not valid. See Wiki 'Input Fields'", Snackbar.LENGTH_LONG).show()
-            } catch (ex: NumberFormatException){
-                ex.printStackTrace()
+        when {
+            !strDuration.isDigitsOnly() || strDuration.isBlank() ->
                 Snackbar.make(view, "Error. Duration is not an integer", Snackbar.LENGTH_LONG).show()
+            strDuration.toInt() in 1..120 ->
+                Snackbar.make(view, "Error. Duration is not valid. See Wiki 'Input Fields'", Snackbar.LENGTH_LONG).show()
+            else -> {
+                userSettings[0] = strDuration.toInt()
+                Snackbar.make(
+                    view,
+                    "Default Duration: ${userSettings[0]}, 24Hour: ${userSettings[1] == 1}",
+                    Snackbar.LENGTH_LONG
+                ).setAction("Action", null).show()
+                if (databaseOperations.setUserSettings(userSettings))
+                    iFragmentToActivity.returnToSchedule()
+                else
+                    Snackbar.make(view, "Error. User settings update failed", Snackbar.LENGTH_LONG).show()
             }
-        } else
-            Snackbar.make(view, "Error. Duration is not an integer", Snackbar.LENGTH_LONG).show()
+        }
     }
 
     override fun onCheckedChanged(view: CompoundButton?, checked: Boolean) {
