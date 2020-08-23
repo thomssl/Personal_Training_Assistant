@@ -39,16 +39,20 @@ class ProgramsFragment : Fragment(), CoroutineScope {
 
     override fun onResume() {
         super.onResume()
-        setAdapter()//calls UI coroutine to get ExercisesRVAdapter
+        //calls UI coroutine to get ExercisesRVAdapter
+        setAdapter()
     }
 
     /**
      * UI coroutine to get and set rvPrograms adapter
      */
     private fun setAdapter() = launch{
-        val result = getAdapter()//awaits IO coroutine to get adapter
-        rvPrograms.adapter = result//displays adapter once coroutine has finished
-        prgProgramData.visibility = View.GONE//makes progress bar disappear once data received
+        // Awaits IO coroutine to get adapter
+        val result = getAdapter()
+        // Displays adapter once coroutine has finished
+        rvPrograms.adapter = result
+        // Makes progress bar disappear once data received
+        prgProgramData.visibility = View.GONE
     }
 
     /**
