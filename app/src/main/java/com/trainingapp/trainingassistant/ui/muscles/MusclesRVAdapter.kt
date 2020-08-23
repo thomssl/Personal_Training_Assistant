@@ -14,7 +14,11 @@ import com.trainingapp.trainingassistant.objects.MuscleJoint
  * @param clickListener Function used by MusclesFragment to handle item onClick event (ie edit muscle)
  * @param longClickListener Function used by MusclesFragment to handle item onLongClick event (ie delete muscle)
  */
-class MusclesRVAdapter(private val muscles: List<MuscleJoint>, private val clickListener: (MuscleJoint) -> Unit, private val longClickListener: (MuscleJoint, View) -> Boolean): RecyclerView.Adapter<MusclesRVAdapter.MuscleViewHolder>() {
+class MusclesRVAdapter(
+    private val muscles: List<MuscleJoint>,
+    private val clickListener: (MuscleJoint) -> Unit,
+    private val longClickListener: (MuscleJoint, View) -> Boolean
+): RecyclerView.Adapter<MusclesRVAdapter.MuscleViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MuscleViewHolder {
         return MuscleViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.muscles_row, parent, false))

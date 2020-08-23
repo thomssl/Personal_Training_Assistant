@@ -39,7 +39,8 @@ class MusclesFragment : Fragment(), CoroutineScope {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setAdapter()//calls UI coroutine to get MusclesRVAdapter
+        // Calls UI coroutine to get MusclesRVAdapter
+        setAdapter()
     }
 
     override fun onResume() {
@@ -51,20 +52,27 @@ class MusclesFragment : Fragment(), CoroutineScope {
      * UI coroutine to get and set rvMuscles adapter
      */
     private fun setAdapter() = launch{
-        val result = getAdapter()//awaits IO coroutine to get adapter
-        rvMuscles.adapter = result//displays adapter once coroutine has finished
-        prgMusclesData.visibility = View.GONE//makes progress bar disappear once data received
+        // Awaits IO coroutine to get adapter
+        val result = getAdapter()
+        // Displays adapter once coroutine has finished
+        rvMuscles.adapter = result
+        // Makes progress bar disappear once data received
+        prgMusclesData.visibility = View.GONE
     }
 
     /**
      * Suspendable IO coroutine to get an MusclesRVAdapter for rvMuscles
      */
     private suspend fun getAdapter(): MusclesRVAdapter = withContext(Dispatchers.IO){
-        MusclesRVAdapter(databaseOperations.getAllMuscles(), { muscleJoint -> onItemClick(muscleJoint) }, {muscleJoint, view -> onItemLongClick(muscleJoint, view) })
+        MusclesRVAdapter(
+            databaseOperations.getAllMuscles(),
+            { muscleJoint -> onItemClick(muscleJoint) },
+            { muscleJoint, view -> onItemLongClick(muscleJoint, view) }
+        )
     }
 
     /**
-     * Method passed to MusclesRVAdapter to handle item onClick event. Opens AddEditMuscleDialog with the MuscleJoint object of the muscle to be edited
+     * Method passed to MusclesRVAdapter to handle item onClick event. Opens AddEditMuscleDialog with the MuscleJoint object to be edited
      * @param muscleJoint MuscleJoint object filled with data for muscle to be updated, from adapter
      */
     private fun onItemClick(muscleJoint: MuscleJoint){
@@ -105,8 +113,15 @@ class MusclesFragment : Fragment(), CoroutineScope {
         alertDialog.setPositiveButton(R.string.confirm) { _, _ ->
             when (databaseOperations.removeMuscle(muscleJoint)){
                 0 -> Snackbar.make(view, "SQL error deleting ${muscleJoint.name}", Snackbar.LENGTH_LONG).show()
-                1 -> {Snackbar.make(view, "${muscleJoint.name} successfully deleted", Snackbar.LENGTH_LONG).show(); setAdapter()}
-                2 -> Snackbar.make(view, "${muscleJoint.name} is used to define an exercise. Delete that exercise in order to remove the muscle", Snackbar.LENGTH_LONG).show()
+                1 -> {
+                    Snackbar.make(view, "${muscleJoint.name} successfully deleted", Snackbar.LENGTH_LONG).show()
+                    setAdapter()
+                }
+                2 -> Snackbar.make(
+                    view,
+                    "${muscleJoint.name} is used to define an exercise. Delete that exercise in order to remove the muscle",
+                    Snackbar.LENGTH_LONG
+                ).show()
             }
         }
         alertDialog.setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss()}
