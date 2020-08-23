@@ -29,7 +29,9 @@ class AddExerciseSessionDialog(
             val txtNames = view.findViewById<AutoCompleteTextView>(R.id.actxtAddExerciseName)
             txtNames.setAdapter(SearchForExerciseAutoComplete(context!!, R.layout.simple_autocomplete_item, exercises))
             txtNames.setOnItemClickListener{ _, _, _, _ ->
-                val exerciseSession = databaseOperations.getLastOccurrence(exercises[exerciseNames.indexOf(txtNames.text.toString())], clientID)
+                // Tries to find the selected exercise based upon name. If not found assign to empty Exercise
+                val exercise = exercises.find { exercise -> exercise.name == txtNames.text.toString() } ?: Exercise.empty
+                val exerciseSession = databaseOperations.getLastOccurrence(exercise, clientID)
                 if (exerciseSession.hasData) {
                     view.findViewById<EditText>(R.id.etxtAddResistance).setText(exerciseSession.resistance)
                     view.findViewById<EditText>(R.id.etxtAddReps).setText(exerciseSession.reps)

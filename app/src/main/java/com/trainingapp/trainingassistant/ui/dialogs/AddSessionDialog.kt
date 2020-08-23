@@ -68,33 +68,27 @@ class AddSessionDialog(
         super.onStart()
         (dialog as AlertDialog).getButton(Dialog.BUTTON_POSITIVE).setOnClickListener {
             val strDuration = txtDuration.text.toString()
-            if (btnTime.text != getString(R.string.time_format)) {
-                if (strDuration.isDigitsOnly() && strDuration.isNotBlank()) {
-                    val duration = strDuration.toInt()
-                    val client = clients[spnNames.selectedItemPosition]
-                    if (duration in 1..120) {
-                        if (confirmListener(
-                                Session(
-                                    0,
-                                    client.id,
-                                    client.name,
-                                    StaticFunctions.getStrDateTime(calendar.time),
-                                    "",
-                                    strDuration.toInt(),
-                                    mutableListOf()
-                                ),
-                                client.scheduleType
-                            )
-                        )
-                            dismiss()
-                    } else {
-                        Toast.makeText(context, "Duration not valid. See Wiki 'Input Fields'", Toast.LENGTH_LONG).show()
-                    }
-                } else {
+            when {
+                btnTime.text == getString(R.string.time_format) ->
+                    Toast.makeText(context, "No Time Selected", Toast.LENGTH_LONG).show()
+                !strDuration.isDigitsOnly() || strDuration.isBlank() ->
                     Toast.makeText(context, "Duration is blank or not an integer", Toast.LENGTH_LONG).show()
+                strDuration.toInt() in 1..120 ->
+                    Toast.makeText(context, "Duration not valid. See Wiki 'Input Fields'", Toast.LENGTH_LONG).show()
+                else -> {
+                    val client = clients[spnNames.selectedItemPosition]
+                    val session = Session(
+                        0,
+                        client.id,
+                        client.name,
+                        StaticFunctions.getStrDateTime(calendar.time),
+                        "",
+                        strDuration.toInt(),
+                        mutableListOf()
+                    )
+                    if (confirmListener(session, client.scheduleType))
+                        dismiss()
                 }
-            } else {
-                Toast.makeText(context, "No Time Selected", Toast.LENGTH_LONG).show()
             }
         }
     }

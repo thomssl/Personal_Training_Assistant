@@ -13,7 +13,11 @@ import com.trainingapp.trainingassistant.database.DatabaseOperations
 import com.trainingapp.trainingassistant.objects.Exercise
 import com.trainingapp.trainingassistant.objects.ExerciseSession
 
-class EditExerciseSessionDialog(val exerciseSession: ExerciseSession, private val position: Int, private val  confirmListener: (EditExerciseSessionDialog, Int) -> Boolean): DialogFragment() {
+class EditExerciseSessionDialog(
+    val exerciseSession: ExerciseSession,
+    private val position: Int,
+    private val confirmListener: (EditExerciseSessionDialog, Int) -> Boolean
+): DialogFragment() {
 
     private lateinit var databaseOperations: DatabaseOperations
     lateinit var exercises: List<Exercise>

@@ -17,7 +17,7 @@ class AddExerciseProgramDialog(private val  confirmListener: (AddExerciseProgram
 
     private lateinit var databaseOperations: DatabaseOperations
     lateinit var exercises: List<Exercise>
-    lateinit var exerciseNames: List<String>
+    private lateinit var exerciseNames: List<String>
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity.let {
