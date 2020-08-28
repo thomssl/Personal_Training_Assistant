@@ -18,27 +18,30 @@ object StaticFunctions {
      */
     fun getDate(strDate: String) : Calendar{
         val cal = Calendar.getInstance()
-        val dateFormatter: SimpleDateFormat = if (strDate.length > 10)//if String passed to function contains the time
+        // If String passed to function contains the time
+        val dateFormatter: SimpleDateFormat = if (strDate.length > 10)
             SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CANADA)
-        else//if String passed to function does not contain the time
+        // If String passed to function does not contain the time
+        else
             SimpleDateFormat("yyyy-MM-dd", Locale.CANADA)
         cal.time = dateFormatter.parse(strDate)!!
         return cal
     }
 
-    //date/time format format functions. Takes input and formats to desired date/time format
+    // Date/time format format functions. Takes input and formats to desired date/time format
     fun getStrDate(date: Date): String = SimpleDateFormat("yyyy-MM-dd", Locale.CANADA).format(date)
     fun getStrDateTime(time: Date): String = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CANADA).format(time)
     fun getStrDateTimeAMPM(date: Date): String = SimpleDateFormat("yyyy-MM-dd hh:mm a", Locale.CANADA).format(date)
     fun getStrTime(date: Date): String = SimpleDateFormat("hh:mm", Locale.CANADA).format(date)
     fun getStrTimeAMPM(time: Date, duration: Int = 0): String {
         val df = SimpleDateFormat("hh:mm a", Locale.CANADA)
-         return if (duration > 0){//if no duration has been specified, format as 'time am/pm -(time+duration) am/pm'
+        // If duration has been specified, format as 'time am/pm - (time+duration) am/pm', Else return as 'time am/pm'
+         return if (duration > 0){
              val cal = Calendar.getInstance()
              cal.time = time
              cal[Calendar.MINUTE] = cal[Calendar.MINUTE] + duration
              "${df.format(time)} - ${df.format(cal.time)}"
-        } else//if optional parameter not set, return as 'time am/pm'
+        } else
              df.format(time)
     }
 
@@ -64,22 +67,9 @@ object StaticFunctions {
      * Method to convert csv string to a List of Int. Can return null if input is empty
      */
     fun toListInt(str: String): List<Int>{
-        //if not empty string, proceed to separate by ','. if empty string, return empty list
+        // If not empty string, proceed to separate by ','. if empty string, return empty list
         if (str.isEmpty()) return listOf()
         return str.split(",").map { it.toInt() }
-    }
-
-    /**
-     * Not Needed
-     * Method to format a checked sql to account for any apostrophes
-     * @param strSQL String to be used in database operation
-     * @return String formatted to be acceptable for database operation
-     */
-    fun formatForSQL(strSQL: String): String{
-        var temp = strSQL
-        if (strSQL.contains("'"))
-            temp = strSQL.replace("'", "''")
-        return temp
     }
 
     /**
@@ -100,11 +90,13 @@ object StaticFunctions {
      * @return true if overlap found, false if no overlap found
      */
     fun compareTimeRanges(range1: IntRange, range2: IntRange): Boolean{
-        //for each value in range 1, check if it can be found in range 2. If found, return true
-        for (num in range1){
-            if (num in range2)
-                return true
-        }
-        return false//if no overlap found within loop, return false
+        // For each value in range 1, check if it can be found in range 2. If found, return true
+//        for (num in range1){
+//            if (num in range2)
+//                return true
+//        }
+        return range1.any { it in range2 }
+        // If no overlap found within loop, return false
+        //return false
     }
 }
