@@ -565,24 +565,32 @@ class DatabaseOperations(val context: Context) {
     }
 
     fun insertChange(oldSession: Session, newSession: Session): Boolean {
-        return trySQLCommand(DBQueries.insertChange(oldSession.clientID,
-                                                            oldSession.strDayTime,
-                                                            newSession.strDayTime,
-                                                            newSession.duration))
+        return trySQLCommand(
+            DBQueries.insertChange(
+                oldSession.clientID,
+                oldSession.strDayTime,
+                newSession.strDayTime,
+                newSession.duration
+            )
+        )
     }
     fun updateChange(oldSession: Session, newSession: Session): Boolean {
-        return trySQLCommand(DBQueries.updateChange(
-            newSession.clientID,
-            newSession.strDayTime,
-            oldSession.strDayTime,
-            newSession.duration
-        ))
+        return trySQLCommand(
+            DBQueries.updateChange(
+                newSession.clientID,
+                newSession.strDayTime,
+                oldSession.strDayTime,
+                newSession.duration
+            )
+        )
     }
     private fun deleteChange(session: Session): Boolean {
-        return trySQLCommand(DBQueries.deleteChange(
-            session.clientID,
-            session.strDayTime
-        ))
+        return trySQLCommand(
+            DBQueries.deleteChange(
+                session.clientID,
+                session.strDayTime
+            )
+        )
     }
 
     /**
@@ -646,13 +654,7 @@ class DatabaseOperations(val context: Context) {
     fun getProgram(id: Int): Program {
         var cursor = db.rawQuery(DBQueries.getProgram(id), null)
         val program: Program = if (cursor.moveToFirst()){
-            Program(
-                cursor.getInt(cursor.getColumnIndex(DBInfo.ProgramsTable.ID)),
-                cursor.getString(cursor.getColumnIndex(DBInfo.ProgramsTable.NAME)),
-                cursor.getInt(cursor.getColumnIndex(DBInfo.ProgramsTable.DAYS)),
-                cursor.getString(cursor.getColumnIndex(DBInfo.ProgramsTable.DESC)),
-                mutableListOf()
-            )
+            Program.withCursor(cursor)
         } else {
             Program.empty
         }
