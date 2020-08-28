@@ -31,8 +31,8 @@ object StaticFunctions {
     // Date/time format format functions. Takes input and formats to desired date/time format
     fun getStrDate(date: Date): String = SimpleDateFormat("yyyy-MM-dd", Locale.CANADA).format(date)
     fun getStrDateTime(time: Date): String = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CANADA).format(time)
-    fun getStrDateTimeAMPM(date: Date): String = SimpleDateFormat("yyyy-MM-dd hh:mm a", Locale.CANADA).format(date)
-    fun getStrTime(date: Date): String = SimpleDateFormat("hh:mm", Locale.CANADA).format(date)
+//    fun getStrDateTimeAMPM(date: Date): String = SimpleDateFormat("yyyy-MM-dd hh:mm a", Locale.CANADA).format(date)
+//    fun getStrTime(date: Date): String = SimpleDateFormat("hh:mm", Locale.CANADA).format(date)
     fun getStrTimeAMPM(time: Date, duration: Int = 0): String {
         val df = SimpleDateFormat("hh:mm a", Locale.CANADA)
         // If duration has been specified, format as 'time am/pm - (time+duration) am/pm', Else return as 'time am/pm'
