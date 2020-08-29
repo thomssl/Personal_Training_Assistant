@@ -126,13 +126,12 @@
 
     <Button
         android:id="@+id/btnChangeDate"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/btnChangeSessionDate"
-        android:layout_marginEnd="@dimen/base_pad"
-        android:layout_marginStart="@dimen/base_pad"
         app:layout_constraintTop_toTopOf="@id/btnChangeTime"
-        app:layout_constraintEnd_toStartOf="@id/btnChangeSessionDuration"
+        app:layout_constraintStart_toStartOf="@id/btnAddExerciseSession"
+        app:layout_constraintEnd_toEndOf="@id/btnAddExerciseSession"
         android:onClick="clickBtnChangeDate"/>
 
     <Button
@@ -147,12 +146,13 @@
 
     <Button
         android:id="@+id/btnAddExerciseSession"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/add_exercise"
+        android:layout_marginEnd="@dimen/base_pad"
+        android:layout_marginStart="@dimen/base_pad"
         app:layout_constraintTop_toBottomOf="@id/btnChangeDate"
-        app:layout_constraintStart_toStartOf="@id/btnChangeDate"
-        app:layout_constraintEnd_toEndOf="@id/btnChangeDate"
+        app:layout_constraintEnd_toStartOf="@id/btnChangeSessionDuration"
         android:onClick="clickBtnAddExerciseSession"/>
 
     <Button
