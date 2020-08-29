@@ -39,7 +39,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/lblSessionClientName"
-        android:textSize="@dimen/text_size_SW600dp"
         android:textAlignment="viewEnd"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -47,12 +46,12 @@
 
     <TextView
         android:id="@+id/txtSessionClientName"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/txtSessionClientName"
-        android:textSize="@dimen/text_size_SW600dp"
         app:layout_constraintStart_toEndOf="@id/lblSessionClientName"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btnChangeDate"
         android:paddingStart="@dimen/base_pad"
         android:paddingEnd="@dimen/base_pad"/>
 
@@ -61,7 +60,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/lblSessionDate"
-        android:textSize="@dimen/text_size_SW600dp"
         android:textAlignment="viewEnd"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/lblSessionClientName"
@@ -72,7 +70,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/txtSessionDate"
-        android:textSize="@dimen/text_size_SW600dp"
         app:layout_constraintStart_toEndOf="@id/lblSessionDate"
         app:layout_constraintTop_toBottomOf="@id/lblSessionClientName"
         android:paddingStart="@dimen/base_pad"
@@ -83,7 +80,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/lblSessionTime"
-        android:textSize="@dimen/text_size_SW600dp"
         android:textAlignment="viewEnd"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/lblSessionDate"/>
@@ -93,7 +89,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/txtSessionTime"
-        android:textSize="@dimen/text_size_SW600dp"
         app:layout_constraintStart_toEndOf="@id/lblSessionTime"
         app:layout_constraintTop_toBottomOf="@id/lblSessionDate"
         android:paddingStart="@dimen/base_pad"
@@ -104,7 +99,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/lblSessionDuration"
-        android:textSize="@dimen/text_size_SW600dp"
         android:textAlignment="viewEnd"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/lblSessionTime"
@@ -114,84 +108,70 @@
         android:id="@+id/txtSessionDuration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingStart="@dimen/base_pad"
-        android:paddingEnd="@dimen/base_pad"
         android:text="@string/txtSessionDurationPlaceHolder"
-        android:textSize="@dimen/text_size_SW600dp"
         app:layout_constraintStart_toEndOf="@id/lblSessionDuration"
-        app:layout_constraintTop_toBottomOf="@id/lblSessionTime" />
+        app:layout_constraintTop_toBottomOf="@id/lblSessionTime"
+        android:paddingStart="@dimen/base_pad"
+        android:paddingEnd="@dimen/base_pad"/>
 
     <Button
         android:id="@+id/btnChangeSessionDuration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/base_pad"
         android:onClick="clickBtnChangeDuration"
-        android:paddingStart="@dimen/base_pad"
-        android:paddingEnd="@dimen/base_pad"
         android:text="@string/btnChangeSessionDuration"
-        app:layout_constraintBottom_toBottomOf="@id/lblSessionDuration"
-        app:layout_constraintEnd_toStartOf="@id/btnChangeDate"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginEnd="@dimen/base_pad"
+        app:layout_constraintBottom_toBottomOf="@id/btnAddExerciseSession"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
         android:id="@+id/btnChangeDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/base_pad"
-        android:onClick="clickBtnChangeDate"
-        android:paddingStart="@dimen/base_pad"
-        android:paddingEnd="@dimen/base_pad"
         android:text="@string/btnChangeSessionDate"
-        app:layout_constraintBottom_toBottomOf="@id/lblSessionDuration"
-        app:layout_constraintEnd_toStartOf="@id/btnChangeTime"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginEnd="@dimen/base_pad"
+        android:layout_marginStart="@dimen/base_pad"
+        app:layout_constraintTop_toTopOf="@id/btnChangeTime"
+        app:layout_constraintEnd_toStartOf="@id/btnChangeSessionDuration"
+        android:onClick="clickBtnChangeDate"/>
 
     <Button
         android:id="@+id/btnChangeTime"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/base_pad"
-        android:onClick="clickBtnChangeTime"
-        android:paddingStart="@dimen/base_pad"
-        android:paddingEnd="@dimen/base_pad"
         android:text="@string/btnChangeSessionTime"
-        app:layout_constraintBottom_toBottomOf="@id/lblSessionDuration"
-        app:layout_constraintEnd_toStartOf="@id/btnAddExerciseSession"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="@id/btnChangeSessionDuration"
+        app:layout_constraintStart_toStartOf="@id/btnChangeSessionDuration"
+        app:layout_constraintTop_toTopOf="parent"
+        android:onClick="clickBtnChangeTime"/>
 
     <Button
         android:id="@+id/btnAddExerciseSession"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/base_pad"
-        android:onClick="clickBtnAddExerciseSession"
-        android:paddingStart="@dimen/base_pad"
-        android:paddingEnd="@dimen/base_pad"
         android:text="@string/add_exercise"
-        app:layout_constraintBottom_toBottomOf="@id/lblSessionDuration"
-        app:layout_constraintEnd_toStartOf="@id/btnConfirmSession"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/btnChangeDate"
+        app:layout_constraintStart_toStartOf="@id/btnChangeDate"
+        app:layout_constraintEnd_toEndOf="@id/btnChangeDate"
+        android:onClick="clickBtnAddExerciseSession"/>
 
     <Button
         android:id="@+id/btnConfirmSession"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/base_pad"
-        android:onClick="clickBtnConfirmSession"
         android:text="@string/confirm"
-        app:layout_constraintBottom_toBottomOf="@id/lblSessionDuration"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:onClick="clickBtnConfirmSession"/>
 
     <TextView
         android:id="@+id/lblExerciseOrderHeader"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/lblExerciseOrderHeader"
-        android:textSize="@dimen/text_size_SW600dp"
         android:textAlignment="center"
-        app:layout_constraintTop_toBottomOf="@id/lblSessionDuration"
+        app:layout_constraintTop_toBottomOf="@id/btnAddExerciseSession"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/glSession1"/>
 
@@ -201,39 +181,35 @@
         android:layout_height="wrap_content"
         android:text="@string/name_header_bold"
         android:textAlignment="center"
-        android:textSize="@dimen/text_size_SW600dp"
         app:layout_constraintEnd_toStartOf="@id/glSession2"
         app:layout_constraintStart_toEndOf="@id/glSession1"
         app:layout_constraintTop_toTopOf="@id/lblExerciseOrderHeader" />
-
-    <TextView
-        android:id="@+id/lblExerciseSetsHeader"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/lblExerciseSetsHeader"
-        android:textSize="@dimen/text_size_SW600dp"
-        android:textAlignment="center"
-        app:layout_constraintTop_toTopOf="@id/lblExerciseOrderHeader"
-        app:layout_constraintStart_toEndOf="@id/glSession2"
-        app:layout_constraintEnd_toStartOf="@id/glSession3"/>
-
-    <TextView
-        android:id="@+id/lblExerciseRepsHeader"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/lblExerciseRepsHeader"
-        android:textSize="@dimen/text_size_SW600dp"
-        android:textAlignment="center"
-        app:layout_constraintTop_toTopOf="@id/lblExerciseOrderHeader"
-        app:layout_constraintStart_toEndOf="@id/glSession3"
-        app:layout_constraintEnd_toStartOf="@id/glSession4"/>
 
     <TextView
         android:id="@+id/lblExerciseResistanceHeader"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/lblExerciseResistanceHeader"
-        android:textSize="@dimen/text_size_SW600dp"
+        android:textAlignment="center"
+        app:layout_constraintTop_toTopOf="@id/lblExerciseOrderHeader"
+        app:layout_constraintStart_toEndOf="@id/glSession2"
+        app:layout_constraintEnd_toStartOf="@id/glSession3"/>
+
+    <TextView
+        android:id="@+id/lblExerciseSetsHeader"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/lblExerciseSetsHeader"
+        android:textAlignment="center"
+        app:layout_constraintTop_toTopOf="@id/lblExerciseOrderHeader"
+        app:layout_constraintStart_toEndOf="@id/glSession3"
+        app:layout_constraintEnd_toStartOf="@id/glSession4"/>
+
+    <TextView
+        android:id="@+id/lblExerciseRepsHeader"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/lblExerciseRepsHeader"
         android:textAlignment="center"
         app:layout_constraintTop_toTopOf="@id/lblExerciseOrderHeader"
         app:layout_constraintStart_toEndOf="@id/glSession4"
@@ -254,10 +230,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/lblNotes"
-        android:textSize="@dimen/text_size_SW600dp"
         android:labelFor="@id/etxtNotes"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/etxtNotes"
         app:layout_constraintTop_toTopOf="@id/etxtNotes"/>
 
     <!-- Used to draw focus from the editText-->
@@ -277,7 +252,7 @@
         android:inputType="text"
         android:text=""
         android:lines="1"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btnConfirmSession"
         app:layout_constraintStart_toEndOf="@id/lblNotes"
         app:layout_constraintEnd_toEndOf="parent"/>
 
