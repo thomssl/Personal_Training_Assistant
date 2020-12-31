@@ -78,7 +78,7 @@ class Session (
         exercises.sort()
     }
 
-    fun addExercises(exerciseSessions: Iterable<ExerciseSession>){
+    fun addExercises(exerciseSessions: Sequence<ExerciseSession>){
         exercises.addAll(exerciseSessions)
         exercises.sort()
     }

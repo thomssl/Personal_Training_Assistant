@@ -347,10 +347,10 @@ class DatabaseOperations(val context: Context) {
         val session: Session = if (cursor.moveToFirst()){
             val session = Session.withCursor(cursor)
             val cursor1 = db.rawQuery(DBQueries.getSessionExercises(session.sessionID), null)
-            generateSequence { if (cursor1.moveToNext()) cursor1 else null }
-                .forEach {
-                    session.addExercise( ExerciseSession.withCursor(it) )
-                }
+            val exercises = generateSequence {
+                if (cursor1.moveToNext()) cursor1 else null
+            }.map { ExerciseSession.withCursor(it) }
+            session.addExercises(exercises)
             cursor1.close()
             session
 
