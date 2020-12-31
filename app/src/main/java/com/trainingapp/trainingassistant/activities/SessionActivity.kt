@@ -290,19 +290,19 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
         }
         // If update was successful, reset all the change flags
         result.first.let {
-            var status = when(true){
+            var status = when {
                 it && changeDate -> ChangeStatus.CONFIRMED
                 !changeDate ->  ChangeStatus.NOTHING
                 else -> ChangeStatus.ERROR
             }
             setDate(status)
-            status = when(true){
+            status = when {
                 it && changeDuration -> ChangeStatus.CONFIRMED
                 !changeDuration ->  ChangeStatus.NOTHING
                 else -> ChangeStatus.ERROR
             }
             setDuration(status)
-            status = when(true){
+            status = when {
                 it && changeTime -> ChangeStatus.CONFIRMED
                 !changeTime ->  ChangeStatus.NOTHING
                 else -> ChangeStatus.ERROR
