@@ -33,12 +33,12 @@ class Schedule (
         get() {
             return when (scheduleType) {
                 ScheduleType.WEEKLY_CONSTANT -> {
-                    daysList.mapIndexed { i, it ->
+                    daysList.mapIndexedNotNull { i, it ->
                         if (it > 0)
                             StaticFunctions.NumToDay[i + 1]
                         else
-                            ""
-                    }.filter { it != "" }.joinToString(separator = "\n")
+                            null
+                    }.joinToString(separator = "\n")
 //                    val builder = StringBuilder()
 //                    daysList.forEachIndexed { index, it ->
 //                        if (it > 0)
@@ -63,12 +63,12 @@ class Schedule (
         get() {
             return when (scheduleType) {
                 ScheduleType.WEEKLY_CONSTANT -> {
-                    daysList.mapIndexed { i, it ->
+                    daysList.mapIndexedNotNull { i, it ->
                         if (i > 0)
                             "${getTime(it)}/${getTime(i + durationsList[i])}"
                         else
-                            ""
-                    }.filter { it != "" }.joinToString(separator = "\n")
+                            null
+                    }.joinToString(separator = "\n")
 //                    val builder = StringBuilder()
 //                    //shows the start and end time
 //                    daysList.forEachIndexed { index, i ->
@@ -129,12 +129,12 @@ class Schedule (
     val checkClientConflictDays: String
         get() {
             if (scheduleType != ScheduleType.WEEKLY_CONSTANT) return ""
-            return daysList.mapIndexed { i, it ->
+            return daysList.mapIndexedNotNull { i, it ->
                 if (it > 0)
                     StaticFunctions.NumToDay[i + 1].toLowerCase(Locale.ROOT)
                 else
-                    ""
-            }.filter { it != "" }.joinToString(separator = " > 0 Or ", prefix = "(", postfix = ")")
+                    null
+            }.joinToString(separator = " > 0 Or ", prefix = "(", postfix = ")")
 //            val builder = StringBuilder("(")
 //            daysList.forEachIndexed { index, i ->
 //                if (i > 0)
@@ -145,7 +145,9 @@ class Schedule (
 
     private val updateDays: String
         get() {
-            return daysList.mapIndexed { i, it -> "${StaticFunctions.NumToDay[i + 1].toLowerCase(Locale.ROOT)}=$it" }.joinToString(separator = ",")
+            return daysList.mapIndexed { i, it ->
+                "${StaticFunctions.NumToDay[i + 1].toLowerCase(Locale.ROOT)}=$it"
+            }.joinToString(separator = ",")
 //            val builder = StringBuilder()
 //            daysList.forEachIndexed { index, i ->
 //                builder.append("${StaticFunctions.NumToDay[index + 1].toLowerCase(Locale.ROOT)}=$i,")
