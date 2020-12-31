@@ -259,7 +259,7 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
                         // If inserting returns an error flag, exit function with error flag
                             return@usingReturn false
                     }
-                    when (true){
+                    when {
                         // If change exists in DB for old session, update the change
                         databaseOperations.checkChange(session) -> databaseOperations.updateChange(session, it)
                         // If client type is WEEKLY_CONSTANT but change does not exist, create the change record
@@ -495,7 +495,7 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
         else
             //if not an Int or Blank assign order to -1 (will not pass validation)
             -1
-        when (true){
+        when {
             order <= 0 -> Toast.makeText(this, "Order must be a number greater than 0", Toast.LENGTH_LONG).show()
             StaticFunctions.badSQLText(resistance) -> Toast.makeText(
                 this,

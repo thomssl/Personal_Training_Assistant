@@ -93,7 +93,7 @@ class AddEditExerciseActivity : AppCompatActivity(), AdapterView.OnItemSelectedL
      */
     fun onConfirmClick(view: View) {
         val name = etxtAddEditExerciseName.text.toString()
-        when (true) {
+        when {
             // Checks if the name has invalid character or is blank
             StaticFunctions.badSQLText(name) ->
                 Snackbar.make(
