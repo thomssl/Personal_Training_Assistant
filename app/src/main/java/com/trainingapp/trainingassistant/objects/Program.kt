@@ -68,14 +68,8 @@ class Program (
      * if the index is invalid, do nothing
      */
     fun removeExercise(exercise: Exercise){
-        var index = -1
-        for (i in exercises.indices){
-            if (exercise.id == exercises[i].id){
-                index = i
-                break
-            }
-        }
-        if (index >= 0) {
+        val index = exercises.indexOfFirst { it.id == exercise.id }
+        if (index != -1) {
             exercises.removeAt(index)
             exercises.sort()
         }
@@ -88,14 +82,9 @@ class Program (
      * if the index is invalid, return an empty ExerciseProgram
      */
     fun getExercise(exercise: Exercise): ExerciseProgram {
-        var index = -1
-        for (i in exercises.indices){
-            if (exercise.id == exercises[i].id){
-                index = i
-                break
-            }
-        }
-        return if (index > -1) getExercise(index) else ExerciseProgram(exercise, "", "", 0, 0)
+        return exercises.firstOrNull {
+            it.id == exercise.id
+        } ?: ExerciseProgram.empty(exercise)
     }
 
     fun getExercise(index: Int): ExerciseProgram = exercises[index]
@@ -129,9 +118,10 @@ class Program (
     val updateProgramCommands: List<String>
         get() {
             return listOf(
-                "Update Programs " +
-                        "Set program_name = '$name', program_desc = '$desc', program_days = $days " +
-                        "Where program_id = $id;",
+                """
+                Update Programs
+                Set program_name = '$name', program_desc = '$desc', program_days = $days
+                Where program_id = $id;""".trimIndent(),
                 deleteProgramExercisesCommand,
                 insertProgramExercisesCommand
             )
