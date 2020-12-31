@@ -133,12 +133,13 @@ class Schedule (
 
     private val updateDays: String
         get() {
-            val builder = StringBuilder()
-            daysList.forEachIndexed { index, i ->
-                builder.append("${StaticFunctions.NumToDay[index + 1].toLowerCase(Locale.ROOT)}=$i,")
-            }
-            if (builder.isNotBlank()) builder.deleteCharAt(builder.lastIndex)
-            return builder.toString()
+            return daysList.mapIndexed { i, it -> "${StaticFunctions.NumToDay[i + 1].toLowerCase(Locale.ROOT)}=$it" }.joinToString(separator = ",")
+//            val builder = StringBuilder()
+//            daysList.forEachIndexed { index, i ->
+//                builder.append("${StaticFunctions.NumToDay[index + 1].toLowerCase(Locale.ROOT)}=$i,")
+//            }
+//            if (builder.isNotBlank()) builder.deleteCharAt(builder.lastIndex)
+//            return builder.toString()
         }
 
     private val updateDurations: String
