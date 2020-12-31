@@ -625,13 +625,13 @@ class DatabaseOperations(val context: Context) {
      * @param exercise Exercise object used to get the exercise id and to populate the ExerciseSession object
      * @param clientID id of the given client used to search Session_log table
      * @return ExerciseSession object containing the information about the all the occurrences of the given exercise
-     * Empty MutableList returned if the given exercise has been performed
+     * Empty List returned if the given exercise has been performed
      */
-    fun getAllOccurrences(exercise: Exercise, clientID: Int): MutableList<ExerciseSession> {
+    fun getAllOccurrences(exercise: Exercise, clientID: Int): List<ExerciseSession> {
         val cursor = db.rawQuery(DBQueries.getAllOccurrences(clientID, exercise.id), null)
         val exerciseSessions = generateSequence { if (cursor.moveToNext()) cursor else null }
             .map { ExerciseSession.withCursor(exercise, it) }
-            .toMutableList()
+            .toList()
         cursor.close()
         return exerciseSessions
     }
@@ -645,17 +645,21 @@ class DatabaseOperations(val context: Context) {
         var cursor = db.rawQuery(DBQueries.getAllPrograms, null)
         val programs = generateSequence { if (cursor.moveToNext()) cursor else null }
             .map { Program.withCursor(it) }
-            .toMutableList()
+            .toList()
         cursor.close()
-        if (programs.size > 0 ) {
-            val programIDS = programs.filter { it.id != 0 }.joinToString(",") { it.id.toString()}
+        if (programs.isNotEmpty()) {
+            val programIDS = programs.mapNotNull {  if (it.id != 0) it.id else null }.joinToString(",")
             cursor = db.rawQuery(DBQueries.getMultiProgramsExercises(programIDS), null)
-            generateSequence { if (cursor.moveToNext()) cursor else null }
-                .forEach {
-                    val programID = it.getInt(it.getColumnIndex(DBInfo.ProgramExercisesTable.PROGRAM_ID))
-                    val exerciseProgram = ExerciseProgram.withCursor(it)
-                    programs.find { p -> p.id == programID }.let { p -> p?.addExercise(exerciseProgram) }
-                }
+            generateSequence {
+                if (cursor.moveToNext()) cursor else null
+            }.map {
+                val programID = it.getInt(it.getColumnIndex(DBInfo.ProgramExercisesTable.PROGRAM_ID))
+                val exerciseProgram = ExerciseProgram.withCursor(it)
+                Pair(programID, exerciseProgram)
+            }.groupBy(
+                { it.first },
+                { it.second }
+            ).forEach { programs.find { p -> p.id == it.key }.let { p -> p?.addExercises(it.value) } }
             cursor.close()
         }
         return programs

@@ -36,8 +36,18 @@ class Program (
     private val hasExercises: Boolean
         get() = exercises.size > 0
 
-    fun addExercise(ExerciseProgram: ExerciseProgram){
-        exercises.add(ExerciseProgram)
+    fun addExercise(exerciseProgram: ExerciseProgram){
+        exercises.add(exerciseProgram)
+        exercises.sort()
+    }
+
+    fun addExercises(exercisePrograms: List<ExerciseProgram>){
+        exercises.addAll(exercisePrograms)
+        exercises.sort()
+    }
+
+    fun addExercises(exercisePrograms: Sequence<ExerciseProgram>){
+        exercises.addAll(exercisePrograms)
         exercises.sort()
     }
 
