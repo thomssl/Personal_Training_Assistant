@@ -269,28 +269,6 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
                         else -> true
                     }
                 }
-/*                // Create a temp session object to represent the new changes
-                val newSession = session.clone(dayTime = StaticFunctions.getStrDateTime(calendar.time), duration = duration)
-                // If the session already has a record in Session_log, update the record. If not insert the new session
-                if (databaseOperations.checkSessionLog(session)) {
-                    if (!databaseOperations.updateSession(newSession))
-                        // If updating returns an error flag, exit function with error flag
-                        return false
-                }
-                else {
-                    if (!databaseOperations.insertSession(newSession))
-                        // If inserting returns an error flag, exit function with error flag
-                        return false
-                }
-                when (true){
-                    // If change exists in DB for old session, update the change
-                    databaseOperations.checkChange(session) -> databaseOperations.updateChange(session, newSession)
-                    // If client type is WEEKLY_CONSTANT but change does not exist, create the change record
-                    databaseOperations.getClientType(session.clientID) == ScheduleType.WEEKLY_CONSTANT ->
-                        databaseOperations.insertChange(session, newSession)
-                    // No change record needed, set result to true
-                    else -> true
-                }*/
             }
             // If no date, duration or time changes happened, update the session record with the current Session object
             // ie only update the exercises information
@@ -311,12 +289,6 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
             session = result.second
         }
         // If update was successful, reset all the change flags
-/*        if (result.first) {
-            changeDate = false
-            changeDuration = false
-            changeTime = false
-            changeExercise = false
-        }*/
         result.first.let {
             var status = when(true){
                 it && changeDate -> ChangeStatus.CONFIRMED
@@ -464,11 +436,11 @@ class SessionActivity : AppCompatActivity(), CoroutineScope, TimePickerDialog.On
         val orderText = dialogView.findViewById<EditText>(R.id.etxtAddExerciseOrder).text
         val order: Int = if(orderText.isDigitsOnly() && orderText.isNotBlank())
             //if input in the exercise order field is digits (ie Int) and not blank convert the value to Int
-            dialogView.findViewById<EditText>(R.id.etxtAddExerciseOrder).text.toString().toInt()
+            orderText.toString().toInt()
         else
             //if not an Int or Blank assign order to -1 (will not pass validation)
             -1
-        when (true){
+        when {
             order <= 0 -> Toast.makeText(this, "Order must be a number greater than 0", Toast.LENGTH_LONG).show()
             StaticFunctions.badSQLText(resistance) -> Toast.makeText(
                 this,
