@@ -448,14 +448,20 @@ class DatabaseOperations(val context: Context) {
             .map { Session.withCursor(it) }
             .toList()
         cursor.close()
-        val sessionIDs = sessions.filter { it.sessionID != 0 }.joinToString(",")
-        cursor = db.rawQuery(DBQueries.getMultiSessionsExercises(sessionIDs), null)
-        generateSequence { if (cursor.moveToNext()) cursor else null }
-            .forEach {
-                val sessionID = it.getInt(it.getColumnIndex(DBInfo.SessionExercisesTable.SESSION_ID))
-                val exerciseSession = ExerciseSession.withCursor(it)
-                sessions.find { s -> s.sessionID == sessionID }.let { s -> s?.addExercise(exerciseSession) }
-            }
+        val sessionIDs = sessions.mapNotNull { if (it.sessionID != 0) it.sessionID else null }
+        cursor = db.rawQuery(DBQueries.getMultiSessionsExercises(sessionIDs.joinToString(",")), null)
+        generateSequence {
+            if (cursor.moveToNext()) cursor else null
+        }.map {
+            val sessionID = it.getInt(it.getColumnIndex(DBInfo.SessionExercisesTable.SESSION_ID))
+            val exerciseSession = ExerciseSession.withCursor(it)
+            Pair(sessionID, exerciseSession)
+        }.groupBy(
+            { it.first },
+            { it.second }
+        ).forEach {
+            sessions.find { s -> s.sessionID == it.key }.let { s -> s?.addExercises(it.value.asSequence()) }
+        }
         cursor.close()
         return sessions
     }
