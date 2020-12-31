@@ -39,14 +39,6 @@ class Schedule (
                         else
                             null
                     }.joinToString(separator = "\n")
-//                    val builder = StringBuilder()
-//                    daysList.forEachIndexed { index, it ->
-//                        if (it > 0)
-//                            builder.append("${StaticFunctions.NumToDay[index + 1]}\n")
-//                    }
-//                    if (builder.isNotBlank())
-//                        builder.deleteCharAt(builder.lastIndex)
-//                    builder.toString()
                 }
                 ScheduleType.WEEKLY_VARIABLE -> "$days/week"
                 ScheduleType.MONTHLY_VARIABLE -> "$days/month"
@@ -69,15 +61,6 @@ class Schedule (
                         else
                             null
                     }.joinToString(separator = "\n")
-//                    val builder = StringBuilder()
-//                    //shows the start and end time
-//                    daysList.forEachIndexed { index, i ->
-//                        if (i > 0)
-//                            builder.append("${getTime(i)}/${getTime(i + durationsList[index])}\n")
-//                    }
-//                    if (builder.isNotBlank())
-//                        builder.deleteCharAt(builder.lastIndex)
-//                    return builder.toString()
                 }
                 ScheduleType.WEEKLY_VARIABLE, ScheduleType.MONTHLY_VARIABLE, ScheduleType.NO_SCHEDULE -> ""
                 ScheduleType.BLANK -> "Error"
@@ -135,12 +118,6 @@ class Schedule (
                 else
                     null
             }.joinToString(separator = " > 0 Or ", prefix = "(", postfix = ")")
-//            val builder = StringBuilder("(")
-//            daysList.forEachIndexed { index, i ->
-//                if (i > 0)
-//                    builder.append("${StaticFunctions.NumToDay[index + 1].toLowerCase(Locale.ROOT)} > 0 Or ")
-//            }
-//            return "${builder.substring(0..(builder.length - 3))})"
         }
 
     private val updateDays: String
@@ -148,12 +125,6 @@ class Schedule (
             return daysList.mapIndexed { i, it ->
                 "${StaticFunctions.NumToDay[i + 1].toLowerCase(Locale.ROOT)}=$it"
             }.joinToString(separator = ",")
-//            val builder = StringBuilder()
-//            daysList.forEachIndexed { index, i ->
-//                builder.append("${StaticFunctions.NumToDay[index + 1].toLowerCase(Locale.ROOT)}=$i,")
-//            }
-//            if (builder.isNotBlank()) builder.deleteCharAt(builder.lastIndex)
-//            return builder.toString()
         }
 
     private val updateDurations: String
@@ -161,12 +132,6 @@ class Schedule (
             return daysList.mapIndexed { i, it ->
                 "${StaticFunctions.NumToDay[i + 1].toLowerCase(Locale.ROOT)}_duration=$it"
             }.joinToString(separator = ",")
-//            val builder = StringBuilder()
-//            durationsList.forEachIndexed { index, i ->
-//                builder.append("${StaticFunctions.NumToDay[index + 1].toLowerCase(Locale.ROOT)}_duration=$i,")
-//            }
-//            if (builder.isNotBlank()) builder.deleteCharAt(builder.lastIndex)
-//            return builder.toString()
         }
 
     val insertCommand: String
