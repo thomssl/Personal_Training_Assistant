@@ -105,14 +105,8 @@ class Session (
      * if the index is invalid, do nothing
      */
     fun removeExercise(exercise: Exercise){
-        var index = -1
-        for (i in exercises.indices){
-            if (exercise.id == exercises[i].id){
-                index = i
-                break
-            }
-        }
-        if (index >= 0) {
+        val index = exercises.indexOfFirst { it.id == exercise.id }
+        if (index != -1) {
             exercises.removeAt(index)
             exercises.sort()
         }
@@ -125,14 +119,9 @@ class Session (
      * if the index is invalid, return an empty ExerciseSession
      */
     fun getExercise(exercise: Exercise): ExerciseSession {
-        var index = -1
-        for (i in exercises.indices){
-            if (exercise.id == exercises[i].id){
-                index = i
-                break
-            }
-        }
-        return if (index > -1) getExercise(index) else ExerciseSession(exercise, "", "", "", 0)
+        return exercises.firstOrNull {
+            it.id == exercise.id
+        } ?: ExerciseSession.empty(exercise)
     }
 
     fun getExercise(index: Int): ExerciseSession = exercises[index]
@@ -222,8 +211,10 @@ class Session (
         )
     val updateCommands
         get() = listOf(
-            "Update Session_log Set dayTime = '$dayTime', notes = '$notes', duration = $duration " +
-                    "Where session_id = $sessionID;",
+            """
+            Update Session_log
+            Set dayTime = '$dayTime', notes = '$notes', duration = $duration
+            Where session_id = $sessionID;""".trimIndent(),
             deleteSessionExercisesCommand,
             insertExercisesCommand
         )
