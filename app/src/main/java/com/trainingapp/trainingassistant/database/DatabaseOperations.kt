@@ -460,7 +460,7 @@ class DatabaseOperations(val context: Context) {
             { it.first },
             { it.second }
         ).forEach {
-            sessions.find { s -> s.sessionID == it.key }.let { s -> s?.addExercises(it.value.asSequence()) }
+            sessions.find { s -> s.sessionID == it.key }.let { s -> s?.addExercises(it.value) }
         }
         cursor.close()
         return sessions
@@ -498,57 +498,64 @@ class DatabaseOperations(val context: Context) {
 
         val date = StaticFunctions.getStrDateTime(calendarChosen.time)
         var cursor = db.rawQuery(DBQueries.getScheduleByDaySessionLog(date), null)
-        generateSequence { if (cursor.moveToNext()) cursor else null }
-            .forEach {
-                sessions.add( Session.withCursor(it) )
-            }
+        generateSequence {
+            if (cursor.moveToNext()) cursor else null
+        }.forEach { sessions.add(Session.withCursor(it)) }
         cursor.close()
-        if (sessions.size > 0) {
-            val sessionIDs = sessions.filter { it.sessionID != 0 }.joinToString(",") { it.sessionID.toString()}
+        if (sessions.isNotEmpty()) {
+            val sessionIDs = sessions.mapNotNull { if (it.sessionID != 0) it.sessionID else null }.joinToString(",")
             cursor = db.rawQuery(DBQueries.getMultiSessionsExercises(sessionIDs), null)
-            generateSequence { if (cursor.moveToNext()) cursor else null }
-                .forEach {
-                    val sessionID = it.getInt(it.getColumnIndex(DBInfo.SessionExercisesTable.SESSION_ID))
-                    val exerciseSession = ExerciseSession.withCursor(it)
-                    sessions.find { s -> s.sessionID == sessionID }.let { s -> s?.addExercise(exerciseSession) }
-                }
+            generateSequence {
+                if (cursor.moveToNext()) cursor else null
+            }.map {
+                val sessionID = it.getInt(it.getColumnIndex(DBInfo.SessionExercisesTable.SESSION_ID))
+                val exerciseSession = ExerciseSession.withCursor(it)
+                Pair(sessionID, exerciseSession)
+            }.groupBy(
+                { it.first },
+                { it.second }
+            ).forEach {
+                sessions.find { s -> s.sessionID == it.key }.let { s -> s?.addExercises(it.value) }
+            }
         }
         if (chosenDate >= currentDate) {
             val dayOfWeek = StaticFunctions.NumToDay[calendarChosen[Calendar.DAY_OF_WEEK]].toLowerCase(Locale.ROOT)
             cursor = db.rawQuery(DBQueries.getScheduleByDayClients(date, dayOfWeek), null)
-            generateSequence { if (cursor.moveToNext()) cursor else null }
-                .forEach {
-                    val time = it.getInt(it.getColumnIndex(dayOfWeek))
-                    val duration = it.getInt(it.getColumnIndex("${dayOfWeek}_duration"))
-                    val minutes = time % 60
-                    calendarChosen[Calendar.HOUR_OF_DAY] = (time - minutes) / 60
-                    calendarChosen[Calendar.MINUTE] = minutes
-                    sessions.add(
-                        Session.withCursor(
-                            it,
-                            sessionID = 0,
-                            dayTime = StaticFunctions.getStrDateTime(calendarChosen.time),
-                            notes = "",
-                            duration = duration
-                        )
+            generateSequence {
+                if (cursor.moveToNext()) cursor else null
+            }.forEach {
+                val time = it.getInt(it.getColumnIndex(dayOfWeek))
+                val duration = it.getInt(it.getColumnIndex("${dayOfWeek}_duration"))
+                val minutes = time % 60
+                calendarChosen[Calendar.HOUR_OF_DAY] = (time - minutes) / 60
+                calendarChosen[Calendar.MINUTE] = minutes
+                sessions.add(
+                    Session.withCursor(
+                        it,
+                        sessionID = 0,
+                        dayTime = StaticFunctions.getStrDateTime(calendarChosen.time),
+                        notes = "",
+                        duration = duration
                     )
-                }
+                )
+            }
             cursor.close()
             cursor = db.rawQuery(DBQueries.getScheduleByDaySessionChanges(date), null)
-            generateSequence { if (cursor.moveToNext()) cursor else null }
-                .forEach {
-                    val dayTime = it.getString(it.getColumnIndex(DBInfo.SessionChangesTable.CHANGE_DAYTIME))
-                    val duration = it.getInt(it.getColumnIndex(DBInfo.SessionChangesTable.DURATION))
-                    sessions.add(
-                        Session.withCursor(
-                            it,
-                            sessionID = 0,
-                            dayTime = dayTime,
-                            notes = "",
-                            duration = duration
-                        )
+            generateSequence {
+                if (cursor.moveToNext()) cursor else null
+            }.forEach {
+                val dayTime = it.getString(it.getColumnIndex(DBInfo.SessionChangesTable.CHANGE_DAYTIME))
+                val duration = it.getInt(it.getColumnIndex(DBInfo.SessionChangesTable.DURATION))
+                sessions.add(
+                    Session.withCursor(
+                        it,
+                        sessionID = 0,
+                        dayTime = dayTime,
+                        notes = "",
+                        duration = duration
                     )
-                }
+                )
+            }
             cursor.close()
         }
 

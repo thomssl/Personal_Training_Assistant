@@ -78,6 +78,11 @@ class Session (
         exercises.sort()
     }
 
+    fun addExercises(exerciseSessions: List<ExerciseSession>){
+        exercises.addAll(exerciseSessions)
+        exercises.sort()
+    }
+
     fun addExercises(exerciseSessions: Sequence<ExerciseSession>){
         exercises.addAll(exerciseSessions)
         exercises.sort()
