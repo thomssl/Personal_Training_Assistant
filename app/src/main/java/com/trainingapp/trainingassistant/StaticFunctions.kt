@@ -9,7 +9,8 @@ import java.util.*
  * Also provides ability to convert day of the week as a number to the String representation
  */
 object StaticFunctions {
-    val NumToDay = listOf("Empty","Sun","Mon","Tue","Wed","Thu","Fri","Sat")
+    val NumToDay = listOf("Empty", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
+    private val badSqlChars = listOf(',', ';', '"', '_', '\'')
 
     /**
      * Method to return a calendar object representing a datetime formatted String
@@ -80,9 +81,10 @@ object StaticFunctions {
     fun badSQLText(strSQL: String): Boolean{
         if (strSQL.isBlank())
             return true
-        for (character in strSQL.toCharArray())
-            if (character == ',' || character == ';' || character == '"' || character == '_' || character == '\'') return true
-        return false
+        return strSQL.toCharArray().intersect(badSqlChars).isEmpty()
+//        for (character in strSQL.toCharArray())
+//            if (character == ',' || character == ';' || character == '"' || character == '_' || character == '\'') return true
+//        return false
     }
 
     /**
