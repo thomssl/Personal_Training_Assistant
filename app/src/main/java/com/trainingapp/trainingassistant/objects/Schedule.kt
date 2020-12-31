@@ -117,12 +117,18 @@ class Schedule (
     val checkClientConflictDays: String
         get() {
             if (scheduleType != ScheduleType.WEEKLY_CONSTANT) return ""
-            val builder = StringBuilder("(")
-            daysList.forEachIndexed { index, i ->
-                if (i > 0)
-                    builder.append("${StaticFunctions.NumToDay[index + 1].toLowerCase(Locale.ROOT)} > 0 Or ")
-            }
-            return "${builder.substring(0..(builder.length - 3))})"
+            return daysList.mapIndexed { i, it ->
+                if (it > 0)
+                    StaticFunctions.NumToDay[i + 1].toLowerCase(Locale.ROOT)
+                else
+                    ""
+            }.filter { it != "" }.joinToString(separator = " > 0 Or ", prefix = "(", postfix = ")")
+//            val builder = StringBuilder("(")
+//            daysList.forEachIndexed { index, i ->
+//                if (i > 0)
+//                    builder.append("${StaticFunctions.NumToDay[index + 1].toLowerCase(Locale.ROOT)} > 0 Or ")
+//            }
+//            return "${builder.substring(0..(builder.length - 3))})"
         }
 
     private val updateDays: String
