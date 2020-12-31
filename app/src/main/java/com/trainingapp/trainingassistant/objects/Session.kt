@@ -78,6 +78,11 @@ class Session (
         exercises.sort()
     }
 
+    fun addExercises(exerciseSessions: Iterable<ExerciseSession>){
+        exercises.addAll(exerciseSessions)
+        exercises.sort()
+    }
+
     fun updateExercise(exerciseSession: ExerciseSession, position: Int){
         exercises[position] = exerciseSession
         exercises.sort()
