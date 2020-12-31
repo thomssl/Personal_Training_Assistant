@@ -230,7 +230,6 @@ class DatabaseOperations(val context: Context) {
     fun checkClientConflict(client: Client): String {
         // If the client passed does not have a WEEKLY_CONSTANT schedule return no conflict
         if (client.scheduleType != ScheduleType.WEEKLY_CONSTANT) return ""
-        val conflicts = StringBuilder()
         // Get the schedule's sessionDays as a list of ClientConflictData (ie a list of days as 0-6 and the IntRange for the session time
         val sessionDays = client.sessionDays
         // Get all the day abbreviations (ie mon, tue, wed, etc) that appear in sessionDays. Used to get the possible conflict data for the cursor
@@ -253,18 +252,16 @@ class DatabaseOperations(val context: Context) {
                 )
             }
         cursor.close()
-        posConflicts.forEach { p ->
-            p.second.forEachIndexed { i, range ->
-                if (StaticFunctions.compareTimeRanges(range, sessionDays[i].range) && !conflicts.contains(p.first)){
-                    conflicts.append("${p.first},")
-                    return@forEachIndexed
-                }
-            }
-        }
-        // If conflicts are found return the conflicts string omitting the trailing ',' character
-        return if (conflicts.isNotEmpty()) conflicts.substring(0 until conflicts.lastIndex)
-        // If no conflicts are found return the empty string to signify no conflicts
-        else return ""
+        // Look through every possible conflict and accumulate the names of other clients that create a scheduling conflict.
+        return posConflicts.fold(listOf<String>()) { acc, p ->
+            // Look through every range for the current client map every instance with a conflict. Only keep 1 instance of the name due to distinct
+            acc + p.second.mapIndexedNotNull { i, range ->
+                if (StaticFunctions.compareTimeRanges(range, sessionDays[i].range))
+                    p.first
+                else
+                    null
+            }.distinct()
+        }.joinToString()
     }
 
 
