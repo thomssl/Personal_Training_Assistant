@@ -144,12 +144,15 @@ class Schedule (
 
     private val updateDurations: String
         get() {
-            val builder = StringBuilder()
-            durationsList.forEachIndexed { index, i ->
-                builder.append("${StaticFunctions.NumToDay[index + 1].toLowerCase(Locale.ROOT)}_duration=$i,")
-            }
-            if (builder.isNotBlank()) builder.deleteCharAt(builder.lastIndex)
-            return builder.toString()
+            return daysList.mapIndexed { i, it ->
+                "${StaticFunctions.NumToDay[i + 1].toLowerCase(Locale.ROOT)}_duration=$it"
+            }.joinToString(separator = ",")
+//            val builder = StringBuilder()
+//            durationsList.forEachIndexed { index, i ->
+//                builder.append("${StaticFunctions.NumToDay[index + 1].toLowerCase(Locale.ROOT)}_duration=$i,")
+//            }
+//            if (builder.isNotBlank()) builder.deleteCharAt(builder.lastIndex)
+//            return builder.toString()
         }
 
     val insertCommand: String
